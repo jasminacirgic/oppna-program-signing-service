@@ -26,7 +26,6 @@ public class SignatureService implements ApplicationContextAware {
 
     private void setupIOBacker(String protocol) {
         String beanName = protocol + "-signature-storage";
-        System.out.println("sigstore: " + beanName);
         if (applicationContext.containsBean(beanName)) {
             storage = (SignatureStorage) applicationContext.getBean(beanName);
         }

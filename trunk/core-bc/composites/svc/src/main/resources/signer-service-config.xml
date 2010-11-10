@@ -7,6 +7,4 @@
 
     <context:component-scan base-package="se.vgregion.security.services" />
     
-    <import resource="http-storage-config.xml"/>
-
 </beans>
