@@ -2,18 +2,33 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <bean id="schemeReg" class="org.apache.http.conn.scheme.SchemeRegistry" />
-  <bean id="params" class="se.vgregion.http.config.HttpParamsFactoryBean">
-    <property name="maxTotalConnections" value="100" />
-    <property name="connectionTimeout" value="10000" />
-    <property name="soTimeout" value="10000" />
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="ignoreUnresolvablePlaceholders" value="true" />
+    <property name="locations">
+      <list>
+        <value>classpath:http-connection.properties</value>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="params" class="org.apache.http.params.BasicHttpParams" />
+  <bean class="org.apache.http.params.HttpConnectionParamBean">
+    <constructor-arg ref="params" />
+    <property name="connectionTimeout" value="${connectionTimeout}" />
+    <property name="soTimeout" value="${soTimeout}" />
+  </bean>
+  <bean class="org.apache.http.conn.params.ConnManagerParamBean">
+    <constructor-arg ref="params" />
+    <property name="maxTotalConnections" value="${maxTotalConnections}" />
   </bean>
 
+  <bean id="schemeReg" class="org.apache.http.conn.scheme.SchemeRegistry" />
+
   <bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
-  <bean id="scheme-https" class="org.apache.http.conn.scheme.Scheme">
-    <constructor-arg value="https" />
-    <constructor-arg ref="sslSocketFactory" />
-    <constructor-arg type="int" value="443" />
+  <bean id="scheme-http" class="org.apache.http.conn.scheme.Scheme">
+    <constructor-arg value="http" />
+    <constructor-arg ref="plainSocketFactory" />
+    <constructor-arg type="int" value="${port.standard}" />
   </bean>
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
@@ -27,12 +42,11 @@
     </property>
   </bean>
 
-
   <bean id="sslSocketFactory" class="org.apache.http.conn.ssl.SSLSocketFactory" factory-method="getSocketFactory" />
-  <bean id="scheme-http" class="org.apache.http.conn.scheme.Scheme">
-    <constructor-arg value="http" />
-    <constructor-arg ref="plainSocketFactory" />
-    <constructor-arg type="int" value="80" />
+  <bean id="scheme-https" class="org.apache.http.conn.scheme.Scheme">
+    <constructor-arg value="https" />
+    <constructor-arg ref="sslSocketFactory" />
+    <constructor-arg type="int" value="${port.ssl}" />
   </bean>
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
