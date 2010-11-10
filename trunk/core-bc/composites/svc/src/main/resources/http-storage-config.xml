@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="schemeReg" class="org.apache.http.conn.scheme.SchemeRegistry" />
+  <bean id="params" class="se.vgregion.http.config.HttpParamsFactoryBean">
+    <property name="maxTotalConnections" value="100" />
+    <property name="connectionTimeout" value="10000" />
+    <property name="soTimeout" value="10000" />
+  </bean>
+
+  <bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
+  <bean id="scheme-https" class="org.apache.http.conn.scheme.Scheme">
+    <constructor-arg value="https" />
+    <constructor-arg ref="sslSocketFactory" />
+    <constructor-arg type="int" value="443" />
+  </bean>
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject">
+      <ref local="schemeReg" />
+    </property>
+    <property name="targetMethod" value="register" />
+    <property name="arguments">
+      <list>
+        <ref bean="scheme-http" />
+      </list>
+    </property>
+  </bean>
+
+
+  <bean id="sslSocketFactory" class="org.apache.http.conn.ssl.SSLSocketFactory" factory-method="getSocketFactory" />
+  <bean id="scheme-http" class="org.apache.http.conn.scheme.Scheme">
+    <constructor-arg value="http" />
+    <constructor-arg ref="plainSocketFactory" />
+    <constructor-arg type="int" value="80" />
+  </bean>
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject">
+      <ref local="schemeReg" />
+    </property>
+    <property name="targetMethod" value="register" />
+    <property name="arguments">
+      <list>
+        <ref bean="scheme-https" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+    <constructor-arg>
+      <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager">
+        <constructor-arg ref="params" />
+        <constructor-arg ref="schemeReg" />
+      </bean>
+    </constructor-arg>
+    <constructor-arg ref="params" />
+  </bean>
+
+  <bean id="http-signature-storage" class="se.vgregion.security.services.HttpSignatureStorage">
+    <constructor-arg ref="httpClient" />
+  </bean>
+
+  <bean id="ftp-signature-storage" class="se.vgregion.security.services.FtpSignatureStorage" />
+
+</beans>
