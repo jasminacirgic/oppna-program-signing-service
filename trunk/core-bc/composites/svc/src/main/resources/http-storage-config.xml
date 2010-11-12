@@ -51,10 +51,10 @@
     <constructor-arg ref="params" />
   </bean>
 
-  <bean id="http-signature-storage" class="se.vgregion.web.signaturestorage.impl.HttpSignatureStorage">
+  <bean id="http-signature-storage" name="https-signature-storage" class="se.vgregion.web.signaturestorage.impl.HttpSignatureStorage">
     <constructor-arg ref="httpClient" />
   </bean>
 
-  <bean id="ftp-signature-storage" class="se.vgregion.web.signaturestorage.impl.FtpSignatureStorage" />
+  <bean id="ftp-signature-storage" name="ftps-signature-storage" class="se.vgregion.web.signaturestorage.impl.FtpSignatureStorage" />
 
 </beans>

@@ -3,6 +3,7 @@ package se.vgregion.security.sign;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.SignatureException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class SignController {
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public String postback(@RequestParam(value = "signedData") String signedData,
-            @RequestParam(value = "submitUri") String submitUri) throws URISyntaxException {
+            @RequestParam(value = "submitUri") String submitUri) throws URISyntaxException, SignatureException {
 
         byte[] pkcs7 = Base64.decodeBase64(signedData);
         String redirectLocation = signatureService.save(new URI(submitUri), pkcs7);

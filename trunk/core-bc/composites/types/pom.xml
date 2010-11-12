@@ -1,11 +1,5 @@
 <?xml version="1.0"?>
-<!--
-This is the common Types-composite Maven POM.
-
-
-Template version: 1.4
-Generation time : 2010-10-03 17:10:18 CEST
--->
+<!-- This is the common Types-composite Maven POM. Template version: 1.4 Generation time : 2010-10-03 17:10:18 CEST -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -18,4 +12,12 @@ Generation time : 2010-10-03 17:10:18 CEST
   <artifactId>signer-service-core-bc-composite-types</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>se.vgregion.daoframework</groupId>
+      <artifactId>dao-framework</artifactId>
+      <version>3.3-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>

@@ -1,6 +1,7 @@
 package se.vgregion.web.security.services;
 
 import java.net.URI;
+import java.security.SignatureException;
 import java.util.UUID;
 
 import org.springframework.beans.BeansException;
@@ -17,20 +18,21 @@ public class SignatureService implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    public String save(URI submitUrl, byte[] pkcs7) {
+    public String save(URI submitUrl, byte[] pkcs7) throws SignatureException {
         return save(submitUrl, pkcs7, UUID.nameUUIDFromBytes(pkcs7).toString());
     }
 
-    public String save(URI submitUrl, byte[] pkcs7, String signatureName) {
+    public String save(URI submitUrl, byte[] pkcs7, String signatureName) throws SignatureException {
         setupIOBackend(submitUrl.getScheme());
         if (storage == null) {
-            throw new IllegalStateException("No storage is configured for the specified protocol");
+            throw new SignatureException(new IllegalStateException(
+                    "No storage is configured for the specified protocol"));
         }
         String forwardString = null;
         try {
             forwardString = storage.save(submitUrl, pkcs7, signatureName);
         } catch (SignatureStoreageException e) {
-            e.printStackTrace();
+            throw new SignatureException(e.getMessage(), e);
         }
         return forwardString;
     }
