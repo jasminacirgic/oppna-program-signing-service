@@ -1,12 +1,15 @@
-package se.vgregion.security.services;
+package se.vgregion.web.security.services;
 
-import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.util.UUID;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+
+import se.vgregion.web.signaturestorage.SignatureStorage;
+import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
 @Service
 public class SignatureService implements ApplicationContextAware {
@@ -14,17 +17,25 @@ public class SignatureService implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    public String save(URL submitUrl, byte[] pkcs7) throws IOException {
-        setupIOBacker(submitUrl.getProtocol());
+    public String save(URI submitUrl, byte[] pkcs7) {
+        return save(submitUrl, pkcs7, UUID.nameUUIDFromBytes(pkcs7).toString());
+    }
+
+    public String save(URI submitUrl, byte[] pkcs7, String signatureName) {
+        setupIOBackend(submitUrl.getScheme());
         if (storage == null) {
             throw new IllegalStateException("No storage is configured for the specified protocol");
         }
-
-        return storage.save(submitUrl.toString(), pkcs7);
-
+        String forwardString = null;
+        try {
+            forwardString = storage.save(submitUrl, pkcs7, signatureName);
+        } catch (SignatureStoreageException e) {
+            e.printStackTrace();
+        }
+        return forwardString;
     }
 
-    private void setupIOBacker(String protocol) {
+    private void setupIOBackend(String protocol) {
         String beanName = protocol + "-signature-storage";
         if (applicationContext.containsBean(beanName)) {
             storage = (SignatureStorage) applicationContext.getBean(beanName);

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="userName" class="java.lang.String">
+    <constructor-arg value="user" />
+  </bean>
+
+  <bean id="password" class="java.lang.String">
+    <constructor-arg value="password" />
+  </bean>
+  
+  <bean id="port" class="java.lang.String">
+    <constructor-arg value="9981" />
+  </bean>
+
+  <bean id="fakeFtpServer" class="org.mockftpserver.fake.FakeFtpServer">
+    <property name="serverControlPort" ref="port" />
+    <property name="systemName" value="UNIX" />
+    <property name="userAccounts">
+      <list>
+        <bean class="org.mockftpserver.fake.UserAccount">
+          <property name="username" ref="userName" />
+          <property name="password" ref="password" />
+          <property name="homeDirectory" value="/" />
+        </bean>
+      </list>
+    </property>
+
+    <property name="fileSystem">
+      <bean class="org.mockftpserver.fake.filesystem.UnixFakeFileSystem">
+        <property name="entries">
+          <list>
+            <bean class="org.mockftpserver.fake.filesystem.DirectoryEntry">
+              <property name="path" value="/signatures" />
+            </bean>
+          </list>
+        </property>
+      </bean>
+    </property>
+
+  </bean>
+</beans>

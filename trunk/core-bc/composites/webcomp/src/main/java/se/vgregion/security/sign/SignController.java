@@ -1,9 +1,8 @@
 package se.vgregion.security.sign;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import se.vgregion.security.services.SignatureService;
+import se.vgregion.web.security.services.SignatureService;
 
 @Controller
 @RequestMapping("sign/*")
@@ -64,7 +63,7 @@ public class SignController {
         return "netmaker-netid_4";
     }
 
-    private String buildPkiPostBackUrl(String submitUri) throws UnsupportedEncodingException {
+    private String buildPkiPostBackUrl(String submitUri) {
         StringBuilder pkiPostUrl = new StringBuilder();
         pkiPostUrl.append("verify?submitUri=");
         pkiPostUrl.append(submitUri);
@@ -74,10 +73,10 @@ public class SignController {
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public String postback(@RequestParam(value = "signedData") String signedData,
-            @RequestParam(value = "submitUri") String submitUri) throws IOException, GeneralSecurityException {
+            @RequestParam(value = "submitUri") String submitUri) throws URISyntaxException {
 
         byte[] pkcs7 = Base64.decodeBase64(signedData);
-        String redirectLocation = signatureService.save(new URL(submitUri), pkcs7);
+        String redirectLocation = signatureService.save(new URI(submitUri), pkcs7);
         if (redirectLocation != null) {
             return "redirect:" + redirectLocation;
         }

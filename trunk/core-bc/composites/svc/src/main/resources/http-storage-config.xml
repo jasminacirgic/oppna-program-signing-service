@@ -9,7 +9,7 @@
   <bean id="scheme-http" class="org.apache.http.conn.scheme.Scheme">
     <constructor-arg value="http" />
     <constructor-arg ref="plainSocketFactory" />
-    <constructor-arg type="int" value="${port.standard}" />
+    <constructor-arg type="int" value="80" />
   </bean>
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
@@ -27,7 +27,7 @@
   <bean id="scheme-https" class="org.apache.http.conn.scheme.Scheme">
     <constructor-arg value="https" />
     <constructor-arg ref="sslSocketFactory" />
-    <constructor-arg type="int" value="${port.ssl}" />
+    <constructor-arg type="int" value="443" />
   </bean>
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
@@ -51,10 +51,10 @@
     <constructor-arg ref="params" />
   </bean>
 
-  <bean id="http-signature-storage" class="se.vgregion.security.services.HttpSignatureStorage">
+  <bean id="http-signature-storage" class="se.vgregion.web.signaturestorage.impl.HttpSignatureStorage">
     <constructor-arg ref="httpClient" />
   </bean>
 
-  <bean id="ftp-signature-storage" class="se.vgregion.security.services.FtpSignatureStorage" />
+  <bean id="ftp-signature-storage" class="se.vgregion.web.signaturestorage.impl.FtpSignatureStorage" />
 
 </beans>
