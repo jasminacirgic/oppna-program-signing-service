@@ -1,4 +1,4 @@
-package se.vgregion.web;
+package se.vgregion.domain.web;
 
 import org.apache.commons.lang.StringUtils;
 

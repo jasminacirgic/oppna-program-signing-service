@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import se.vgregion.security.domain.pkiclient.ELegType;
-import se.vgregion.security.domain.pkiclient.ELegTypeRepository;
-import se.vgregion.web.BrowserType;
+import se.vgregion.domain.security.pkiclient.ELegType;
+import se.vgregion.domain.security.pkiclient.ELegTypeRepository;
+import se.vgregion.domain.web.BrowserType;
 import se.vgregion.web.security.services.SignatureService;
 
 @Controller
