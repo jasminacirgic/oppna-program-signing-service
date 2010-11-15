@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import se.vgregion.domain.security.pkiclient.ELegType;
-import se.vgregion.domain.security.pkiclient.ELegTypeRepository;
+import se.vgregion.security.domain.pkiclient.ELegType;
+import se.vgregion.security.domain.pkiclient.ELegTypeRepository;
 import se.vgregion.web.BrowserType;
 import se.vgregion.web.security.services.SignatureService;
 
@@ -44,7 +44,8 @@ public class SignController {
 
     @ModelAttribute("browserType")
     public BrowserType getBrowserType(HttpServletRequest request) {
-        return BrowserType.getBrowser(request);
+        String userAgent = request.getHeader("User-Agent");
+        return BrowserType.fromUserAgent(userAgent);
     }
 
     @RequestMapping(value = "/prepare", method = RequestMethod.POST)

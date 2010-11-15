@@ -1,7 +1,5 @@
 package se.vgregion.web;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -13,8 +11,7 @@ import org.apache.commons.lang.StringUtils;
 public enum BrowserType {
     SAFARI, CHROME, FIREFOX, MSIE, OTHER;
 
-    public static BrowserType getBrowser(HttpServletRequest request) {
-        String userAgent = request.getHeader("User-Agent");
+    public static BrowserType fromUserAgent(String userAgent) {
         BrowserType browser = OTHER;
         if (StringUtils.isBlank(userAgent)) {
             return browser;
