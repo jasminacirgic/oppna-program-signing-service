@@ -26,6 +26,5 @@ Generation time : 2010-10-03 17:10:18 CEST
     <module>composites/webcomp</module>
     <module>composites/schema</module>
     <module>modules/web</module>
-    <module>modules/test-web-client</module>
   </modules>
 </project>
