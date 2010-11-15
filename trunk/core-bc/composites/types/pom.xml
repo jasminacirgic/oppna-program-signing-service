@@ -17,7 +17,11 @@
     <dependency>
       <groupId>se.vgregion.daoframework</groupId>
       <artifactId>dao-framework</artifactId>
-      <version>3.3-SNAPSHOT</version>
+      <version>3.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
     </dependency>
   </dependencies>
 </project>

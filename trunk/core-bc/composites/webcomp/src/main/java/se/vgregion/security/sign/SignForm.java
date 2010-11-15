@@ -10,12 +10,12 @@ package se.vgregion.security.sign;
 public class SignForm {
     private String pkiPostBackUrl;
     private String tbs;
-    private int clientType;
+    private String clientType;
 
     public SignForm() {
     }
 
-    public SignForm(int clientType, String tbs, String pkiPostBackUrl) {
+    public SignForm(String clientType, String tbs, String pkiPostBackUrl) {
         this.clientType = clientType;
         this.tbs = tbs;
         this.pkiPostBackUrl = pkiPostBackUrl;
@@ -29,19 +29,19 @@ public class SignForm {
         this.tbs = tbs;
     }
 
-    public int getClientType() {
-        return clientType;
-    }
-
-    public void setClientType(int clientType) {
-        this.clientType = clientType;
-    }
-
     public String getPkiPostBackUrl() {
         return pkiPostBackUrl;
     }
 
     public void setPkiPostBackUrl(String pkiPostBackUrl) {
         this.pkiPostBackUrl = pkiPostBackUrl;
+    }
+
+    public String getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(String clientType) {
+        this.clientType = clientType;
     }
 }

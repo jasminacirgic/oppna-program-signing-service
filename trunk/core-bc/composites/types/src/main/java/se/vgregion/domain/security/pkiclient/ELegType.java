@@ -1,51 +1,22 @@
 package se.vgregion.domain.security.pkiclient;
 
 import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
-import se.vgregion.dao.domain.patterns.entity.EntityBuilder;
 
-public class ELegType extends AbstractEntity<ELegType, Integer> {
+public class ELegType extends AbstractEntity<ELegType, String> {
 
-    public static class ELegTypeBuilder implements EntityBuilder<ELegTypeBuilder, ELegType> {
-
-        private ELegType entity = new ELegType();
-
-        public ELegTypeBuilder id(Integer id) {
-            entity.id = id;
-            return this;
-        }
-
-        public ELegTypeBuilder name(String name) {
-            entity.name = name;
-            return this;
-        }
-
-        public ELegTypeBuilder description(String description) {
-            entity.description = description;
-            return this;
-        }
-
-        public ELegType build() {
-            return entity;
-        }
-    }
-
-    private Integer id;
     private String name;
     private String description;
+    private String pkiClientName;
 
-    private ELegType() {
-        // Used by the builder pattern
-    }
-
-    public ELegType(Integer id, String name, String description) {
-        this.id = id;
+    public ELegType(String name, String description, String pkiClientName) {
         this.name = name;
         this.description = description;
+        this.pkiClientName = pkiClientName;
     }
 
     @Override
-    public Integer getId() {
-        return id;
+    public String getId() {
+        return name;
     }
 
     public String getName() {
@@ -54,5 +25,9 @@ public class ELegType extends AbstractEntity<ELegType, Integer> {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getPkiClientName() {
+        return pkiClientName;
     }
 }

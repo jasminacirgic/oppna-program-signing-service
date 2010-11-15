@@ -5,9 +5,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.SignatureException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
@@ -20,37 +20,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
+import se.vgregion.domain.security.pkiclient.ELegType;
+import se.vgregion.domain.security.pkiclient.ELegTypeRepository;
+import se.vgregion.web.BrowserType;
 import se.vgregion.web.security.services.SignatureService;
 
 @Controller
 @RequestMapping("sign/*")
+@SessionAttributes({ "browserType", "clientTypes" })
 public class SignController {
-    private static final Map<ClientType, String> CLIENT_TYPES = new HashMap<ClientType, String>();
     @Autowired
     private SignatureService signatureService;
 
-    static {
-        CLIENT_TYPES
-                .put(new ClientType(
-                        1,
-                        "BankID",
-                        "Danske Bank/Östgöta Enskilda Bank, Handelsbanken, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank"),
-                        "nexus_personal_4");
-        CLIENT_TYPES.put(new ClientType(2, "Nordea", ""), "netmaker-netid_4");
-        CLIENT_TYPES.put(new ClientType(3, "Telia", "ICA Banken, Posten, SEB, Skatteverket"), "nexus_personal_4");
-    }
+    @Autowired
+    private ELegTypeRepository eLegTypes;
 
     @ModelAttribute("clientTypes")
-    public Collection<ClientType> getClientTypes() {
-        return CLIENT_TYPES.keySet();
+    public Collection<ELegType> getClientTypes() {
+        return Collections.unmodifiableCollection(eLegTypes.findAll());
+    }
+
+    @ModelAttribute("browserType")
+    public BrowserType getBrowserType(HttpServletRequest request) {
+        return BrowserType.getBrowser(request);
     }
 
     @RequestMapping(value = "/prepare", method = RequestMethod.POST)
     public String prepareSign(@RequestParam("tbs") String tbs,
             @RequestParam(value = "submitUri") String submitUri,
-            @RequestParam(value = "clientType", required = false) Integer clientType, Model model)
-            throws IOException {
+            @RequestParam(value = "clientType", required = false) String clientType, Model model,
+            HttpServletRequest request) throws IOException {
 
         if (clientType == null) {
             model.addAttribute("tbs", tbs);
@@ -58,23 +59,17 @@ public class SignController {
             return "clientTypeSelection";
         }
 
+        ELegType eLegType = eLegTypes.find(clientType);
         String pkiPostBackUrl = buildPkiPostBackUrl(submitUri);
         SignForm signData = new SignForm(clientType, tbs, pkiPostBackUrl);
         model.addAttribute("signData", signData);
-        return "netmaker-netid_4";
-    }
-
-    private String buildPkiPostBackUrl(String submitUri) {
-        StringBuilder pkiPostUrl = new StringBuilder();
-        pkiPostUrl.append("verify?submitUri=");
-        pkiPostUrl.append(submitUri);
-
-        return pkiPostUrl.toString();
+        return eLegType.getPkiClientName();
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public String postback(@RequestParam(value = "signedData") String signedData,
-            @RequestParam(value = "submitUri") String submitUri) throws URISyntaxException, SignatureException {
+    public String postback(@RequestParam(value = "SignedData", required = false) String signedData,
+            @RequestParam(value = "submitUri", required = false) String submitUri) throws URISyntaxException,
+            SignatureException {
 
         byte[] pkcs7 = Base64.decodeBase64(signedData);
         String redirectLocation = signatureService.save(new URI(submitUri), pkcs7);
@@ -89,5 +84,13 @@ public class SignController {
     public void postback(HttpServletResponse response,
             @RequestParam(value = "signature", required = false) String signature) {
         response.setHeader("Location", "http://www.google.se");
+    }
+
+    private String buildPkiPostBackUrl(String submitUri) {
+        StringBuilder pkiPostUrl = new StringBuilder();
+        pkiPostUrl.append("verify?submitUri=");
+        pkiPostUrl.append(submitUri);
+
+        return pkiPostUrl.toString();
     }
 }

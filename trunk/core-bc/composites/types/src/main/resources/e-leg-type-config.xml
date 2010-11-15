@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- TODO Dokumentera konfiguration -->
+
+  <bean id="e-leg-repo" class="se.vgregion.domain.security.pkiclient.ELegTypeRepository" />
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="e-leg-repo" />
+    <property name="targetMethod" value="store" />
+    <property name="arguments">
+      <list>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="name" value="BankId" />
+          <constructor-arg name="description"
+            value="Danske Bank/Östgöta Enskilda Bank, Handelsbanken, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank" />
+          <constructor-arg name="pkiClientName" value="nexus-personal" />
+        </bean>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="name" value="Nordea" />
+          <constructor-arg name="description" value="Nordea" />
+          <constructor-arg name="pkiClientName" value="netid" />
+        </bean>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="name" value="Telia" />
+          <constructor-arg name="description" value="ICA Banken, Posten, SEB, Skatteverket" />
+          <constructor-arg name="pkiClientName" value="netid" />
+        </bean>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="name" value="SITHS" />
+          <constructor-arg name="description" value="TjänsteId" />
+          <constructor-arg name="pkiClientName" value="netid" />
+        </bean>
+      </list>
+    </property>
+  </bean>
+</beans>
