@@ -5,7 +5,11 @@
     <OBJECT NAME='iid' WIDTH=0 HEIGHT=0 TYPE='application/x-iid'>
   </c:when>
   <c:when test="${browserType == 'CHROME'}">
-    <h1>NOT SUPPORTED</h1>
+    <h1>NOT SUPPORTED!</h1>
+    <object>
+  </c:when>
+  <c:when test="${browserType == 'SAFARI'}">
+    <h1>NOT SUPPORTED!</h1>
     <object>
   </c:when>
   <c:when test="${browserType == 'MSIE'}">
@@ -23,5 +27,5 @@
   <param name='IncludeRootCaCert' value='true' />
   <param name='PostURL' value='${signData.pkiPostBackUrl}' />
   <param name='Base64' value='true' /> 
-<!--  <param name='password' value='433876' />-->
+  <param name='password' value='433876' />
 </object>

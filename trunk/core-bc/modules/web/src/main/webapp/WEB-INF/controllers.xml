@@ -8,9 +8,6 @@
   <import resource="classpath:signer-service-config.xml" />
   <import resource="classpath:e-leg-type-config.xml" />
 
-  <!-- Maps '/' requests to the 'home' view -->
-  <mvc:view-controller path="/" view-name="home" />
-
   <context:component-scan base-package="se.vgregion.security.sign" />
 
 </beans>

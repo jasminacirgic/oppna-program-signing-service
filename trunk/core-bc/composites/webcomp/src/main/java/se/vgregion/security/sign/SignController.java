@@ -8,19 +8,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.ELegTypeRepository;
@@ -29,7 +25,6 @@ import se.vgregion.web.security.services.SignatureService;
 
 @Controller
 @RequestMapping("sign/*")
-@SessionAttributes({ "browserType", "clientTypes" })
 public class SignController {
     @Autowired
     private SignatureService signatureService;
@@ -40,12 +35,6 @@ public class SignController {
     @ModelAttribute("clientTypes")
     public Collection<ELegType> getClientTypes() {
         return Collections.unmodifiableCollection(eLegTypes.findAll());
-    }
-
-    @ModelAttribute("browserType")
-    public BrowserType getBrowserType(HttpServletRequest request) {
-        String userAgent = request.getHeader("User-Agent");
-        return BrowserType.fromUserAgent(userAgent);
     }
 
     @RequestMapping(value = "/prepare", method = RequestMethod.POST)
@@ -60,10 +49,14 @@ public class SignController {
             return "clientTypeSelection";
         }
 
-        ELegType eLegType = eLegTypes.find(clientType);
+        String userAgent = request.getHeader("User-Agent");
+        model.addAttribute("browserType", BrowserType.fromUserAgent(userAgent));
+
         String pkiPostBackUrl = buildPkiPostBackUrl(submitUri);
-        SignForm signData = new SignForm(clientType, tbs, pkiPostBackUrl);
-        model.addAttribute("signData", signData);
+        SignForm signForm = new SignForm(clientType, tbs, pkiPostBackUrl);
+        model.addAttribute("signData", signForm);
+
+        ELegType eLegType = eLegTypes.find(clientType);
         return eLegType.getPkiClientName();
     }
 
@@ -78,13 +71,6 @@ public class SignController {
             return "redirect:" + redirectLocation;
         }
         return "verified";
-    }
-
-    @RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.MOVED_TEMPORARILY)
-    public void postback(HttpServletResponse response,
-            @RequestParam(value = "signature", required = false) String signature) {
-        response.setHeader("Location", "http://www.google.se");
     }
 
     private String buildPkiPostBackUrl(String submitUri) {

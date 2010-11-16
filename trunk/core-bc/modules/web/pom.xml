@@ -21,7 +21,7 @@
         <artifactId>maven-jetty-plugin</artifactId>
         <version>6.1.8</version>
         <configuration>
-          <contextPath>/ss</contextPath>
+          <contextPath>/</contextPath>
           <scanIntervalSeconds>1</scanIntervalSeconds>
         </configuration>
       </plugin>
