@@ -24,7 +24,6 @@ import se.vgregion.domain.web.BrowserType;
 import se.vgregion.web.security.services.SignatureService;
 
 @Controller
-@RequestMapping("sign/*")
 public class SignController {
     @Autowired
     private SignatureService signatureService;
@@ -52,7 +51,8 @@ public class SignController {
         String userAgent = request.getHeader("User-Agent");
         model.addAttribute("browserType", BrowserType.fromUserAgent(userAgent));
 
-        String pkiPostBackUrl = buildPkiPostBackUrl(submitUri);
+        String pkiPostBackUrl = buildPkiPostBackUrl(submitUri, request);
+        System.out.println(pkiPostBackUrl);
         SignForm signForm = new SignForm(clientType, tbs, pkiPostBackUrl);
         model.addAttribute("signData", signForm);
 
@@ -73,9 +73,9 @@ public class SignController {
         return "verified";
     }
 
-    private String buildPkiPostBackUrl(String submitUri) {
+    private String buildPkiPostBackUrl(String submitUri, HttpServletRequest req) {
         StringBuilder pkiPostUrl = new StringBuilder();
-        pkiPostUrl.append("verify?submitUri=");
+        pkiPostUrl.append("http://" + req.getLocalName() + ":" + req.getLocalPort() + "/sign/verify?submitUri=");
         pkiPostUrl.append(submitUri);
 
         return pkiPostUrl.toString();

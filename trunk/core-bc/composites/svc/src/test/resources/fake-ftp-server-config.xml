@@ -1,43 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:ftp="http://mina.apache.org/ftpserver/spring/v1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+                            http://mina.apache.org/ftpserver/spring/v1 http://mina.apache.org/ftpserver/ftpserver-1.0.xsd">
 
   <bean id="userName" class="java.lang.String">
-    <constructor-arg value="user" />
+    <constructor-arg value="admin" />
   </bean>
 
   <bean id="password" class="java.lang.String">
     <constructor-arg value="password" />
   </bean>
-  
-  <bean id="port" class="java.lang.String">
-    <constructor-arg value="9981" />
+
+  <bean id="port" class="java.lang.Integer">
+    <constructor-arg value="2222" />
   </bean>
 
-  <bean id="fakeFtpServer" class="org.mockftpserver.fake.FakeFtpServer">
-    <property name="serverControlPort" ref="port" />
-    <property name="systemName" value="UNIX" />
-    <property name="userAccounts">
-      <list>
-        <bean class="org.mockftpserver.fake.UserAccount">
-          <property name="username" ref="userName" />
-          <property name="password" ref="password" />
-          <property name="homeDirectory" value="/" />
-        </bean>
-      </list>
-    </property>
-
-    <property name="fileSystem">
-      <bean class="org.mockftpserver.fake.filesystem.UnixFakeFileSystem">
-        <property name="entries">
-          <list>
-            <bean class="org.mockftpserver.fake.filesystem.DirectoryEntry">
-              <property name="path" value="/signatures" />
-            </bean>
-          </list>
-        </property>
-      </bean>
-    </property>
-
-  </bean>
+  <!-- <ftp:server id="ftpServer"> -->
+  <!-- Use this section to define custom listeners, or to redefine the default listener, aptly named "default" -->
+  <!-- <ftp:listeners> -->
+  <!-- <ftp:nio-listener name="default" port="2222" implicit-ssl="false" idle-timeout="60"> -->
+  <!-- <ftp:ssl protocol="TLS" client-authentication="NEED"> -->
+  <!-- <ftp:keystore file="src/test/resources/ftpserver.jks" password="password" key-password="password" /> -->
+  <!-- <ftp:truststore file="src/test/resources/truststore.jks" password="password" /> -->
+  <!-- </ftp:ssl> -->
+  <!-- <ftp:data-connection idle-timeout="60" /> -->
+  <!-- </ftp:nio-listener> -->
+  <!-- </ftp:listeners> -->
+<!---->
+  <!-- The user manager, choose one -->
+  <!-- <ftp:file-user-manager file="src/test/resources/user.properties" encrypt-passwords="false" /> -->
+<!---->
+<!--  The file system-->
+  <!-- <ftp:native-filesystem case-insensitive="false" create-home="true" /> -->
+  <!-- </ftp:server> -->
 </beans>

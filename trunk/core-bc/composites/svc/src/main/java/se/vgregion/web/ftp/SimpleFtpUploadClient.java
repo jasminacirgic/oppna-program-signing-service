@@ -2,11 +2,15 @@ package se.vgregion.web.ftp;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
+import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +29,16 @@ public class SimpleFtpUploadClient {
     private Formatter formatter = new Formatter();
 
     public SimpleFtpUploadClient(URI uri) {
-        ftpClient = new FTPClient();
+        if (uri.getScheme().equals("ftps")) {
+            try {
+                ftpClient = new FTPSClient("TLS", false);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        } else {
+            ftpClient = new FTPClient();
+        }
+        ftpClient.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         this.uri = uri;
         userName = URIUtils.extractUserName(uri);
         password = URIUtils.extractPassword(uri);
