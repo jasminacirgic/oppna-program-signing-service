@@ -86,7 +86,6 @@ public class SimpleFtpUploadTest {
         if (ftpServer != null) {
             ftpServer.stop();
         }
-
     }
 
     public static File getBaseDir() {
@@ -121,6 +120,7 @@ public class SimpleFtpUploadTest {
         listenerFactory.setDataConnectionConfiguration(new DataConnectionConfigurationFactory()
                 .createDataConnectionConfiguration());
         listenerFactory.setSslConfiguration(createSslConfiguration().createSslConfiguration());
+        listenerFactory.setImplicitSsl(false);
 
         serverFactory.addListener("default", listenerFactory.createListener());
 
@@ -166,16 +166,17 @@ public class SimpleFtpUploadTest {
         clientKeyManager = keyManagerFactory.getKeyManagers()[0];
 
         ftpClient.setKeyManager(clientKeyManager);
-
         ftpClient.setAuthValue("TLS");
         return ftpClient;
     }
 
     @Test
     public void shouldConnectAndLoginToSecureFtpServer() throws Exception {
-        System.out.println("ASDFASDFASDASDF");
         ftpClient.login("admin", "admin");
+        ftpClient.enterLocalActiveMode();
+        ftpClient.execPROT("P");
         ftpClient.noop();
+        ftpClient.execPROT("C");
         ftpClient.logout();
         // boolean success = ftpClient.storeFile("xyz.p7",
         // new ByteArrayInputStream("anders testar en fil på ftp".getBytes()));

@@ -16,22 +16,22 @@
     <constructor-arg value="2222" />
   </bean>
 
-  <!-- <ftp:server id="ftpServer"> -->
-  <!-- Use this section to define custom listeners, or to redefine the default listener, aptly named "default" -->
-  <!-- <ftp:listeners> -->
-  <!-- <ftp:nio-listener name="default" port="2222" implicit-ssl="false" idle-timeout="60"> -->
-  <!-- <ftp:ssl protocol="TLS" client-authentication="NEED"> -->
-  <!-- <ftp:keystore file="src/test/resources/ftpserver.jks" password="password" key-password="password" /> -->
-  <!-- <ftp:truststore file="src/test/resources/truststore.jks" password="password" /> -->
-  <!-- </ftp:ssl> -->
-  <!-- <ftp:data-connection idle-timeout="60" /> -->
-  <!-- </ftp:nio-listener> -->
-  <!-- </ftp:listeners> -->
-<!---->
-  <!-- The user manager, choose one -->
-  <!-- <ftp:file-user-manager file="src/test/resources/user.properties" encrypt-passwords="false" /> -->
-<!---->
-<!--  The file system-->
-  <!-- <ftp:native-filesystem case-insensitive="false" create-home="true" /> -->
-  <!-- </ftp:server> -->
+<!--  <ftp:server id="ftpServer">-->
+<!--     Use this section to define custom listeners, or to redefine the default listener, aptly named "default" -->
+<!--    <ftp:listeners>-->
+<!--      <ftp:nio-listener name="default" port="2222" implicit-ssl="false" idle-timeout="60">-->
+<!--        <ftp:ssl protocol="TLS" client-authentication="NEED">-->
+<!--          <ftp:keystore file="src/test/resources/ftpserver.jks" password="password" key-password="password" />-->
+<!--          <ftp:truststore file="src/test/resources/truststore.jks" password="password" />-->
+<!--        </ftp:ssl>-->
+<!--        <ftp:data-connection idle-timeout="60" />-->
+<!--      </ftp:nio-listener>-->
+<!--    </ftp:listeners>-->
+
+<!--     The user manager, choose one -->
+<!--    <ftp:file-user-manager file="src/test/resources/user.properties" encrypt-passwords="false" />-->
+
+<!--     The file system -->
+<!--    <ftp:native-filesystem case-insensitive="false" create-home="true" />-->
+<!--  </ftp:server>-->
 </beans>
