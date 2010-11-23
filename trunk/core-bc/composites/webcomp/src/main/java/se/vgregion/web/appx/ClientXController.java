@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,9 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
-
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 @Controller
 public class ClientXController {
@@ -49,9 +47,9 @@ public class ClientXController {
 
     @RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.MOVED_TEMPORARILY)
-    public void postback(HttpServletResponse response, @RequestBody String pkcs7) throws Base64DecodingException {
+    public void postback(HttpServletResponse response, @RequestBody String pkcs7) {
         System.out.println(pkcs7);
-        byte[] decodedPkcs7 = Base64.decode(pkcs7);
+        byte[] decodedPkcs7 = Base64.decodeBase64(pkcs7);
         signatures.add(new Signature(decodedPkcs7));
         response.setHeader("Location", "/appx/showSignStatus");
     }
