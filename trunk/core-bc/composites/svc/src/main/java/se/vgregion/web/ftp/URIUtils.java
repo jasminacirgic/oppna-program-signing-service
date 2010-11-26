@@ -5,7 +5,6 @@ import java.net.URI;
 import org.apache.commons.lang.StringUtils;
 
 public class URIUtils {
-
     private enum UserInfoType {
         USERNAME(0), PASSWORD(1);
         int value;

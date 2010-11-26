@@ -55,6 +55,4 @@
     <constructor-arg ref="httpClient" />
   </bean>
 
-  <bean id="ftp-signature-storage" name="ftps-signature-storage" class="se.vgregion.web.signaturestorage.impl.FtpSignatureStorage" />
-
 </beans>

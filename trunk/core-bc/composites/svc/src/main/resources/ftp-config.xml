@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="ftp-signature-storage" name="ftps-signature-storage" class="se.vgregion.web.signaturestorage.impl.FtpSignatureStorage"
+    scope="prototype">
+    <constructor-arg ref="ftpUploadClient" />
+  </bean>
+
+  <bean id="ftpUploadClient" class="se.vgregion.web.ftp.SimpleFtpUploadClient" />
+
+  <!-- FTPS Client Setup -->
+  <bean id="ftps-client" class="org.apache.commons.net.ftp.FTPSClient" scope="prototype">
+    <property name="keyManager" ref="keyManager" />
+    <property name="authValue" value="${cryptoProtocol}" />
+    <property name="defaultPort" value="990" />
+  </bean>
+
+  <bean id="keyManager" class="se.vgregion.web.ftp.KeyManagerFactoryBean">
+    <property name="keyStore" ref="keyStore" />
+    <property name="password" value="${keyStore.password}" />
+  </bean>
+
+  <bean id="keyStore" factory-bean="keyStoreFactoryBean" factory-method="newInstance" />
+
+  <bean id="keyStoreFactoryBean" class="org.apache.mina.filter.ssl.KeyStoreFactory">
+    <property name="type" value="JKS" />
+    <property name="password" value="${keyStore.password}" />
+    <property name="dataFile" value="src/test/resources/signer-service.jks" />
+  </bean>
+
+  <!-- FTP Client Setup -->
+  <bean id="ftp-client" class="org.apache.commons.net.ftp.FTPClient" scope="prototype">
+    <property name="defaultPort" value="21" />
+  </bean>
+</beans>
