@@ -2,7 +2,7 @@ package se.vgregion.domain.security.pkiclient;
 
 import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
 
-public class ELegType extends AbstractEntity<ELegType, String> {
+public class ELegType extends AbstractEntity<String> {
 
     private String name;
     private String description;

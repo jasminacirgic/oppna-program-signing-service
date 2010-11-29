@@ -26,7 +26,7 @@
   <bean id="keyStoreFactoryBean" class="org.apache.mina.filter.ssl.KeyStoreFactory">
     <property name="type" value="JKS" />
     <property name="password" value="${keyStore.password}" />
-    <property name="dataFile" value="src/test/resources/signer-service.jks" />
+    <property name="dataFile" value="classpath:signer-service.jks" />
   </bean>
 
   <!-- FTP Client Setup -->

@@ -15,24 +15,4 @@
 
   <import resource="classpath:ftp-config.xml" />
 
-  <!-- FTP Server Setup -->
-<!--  <ftp:server id="ftpServer">-->
-<!--     Use this section to define custom listeners, or to redefine the default listener, aptly named "default" -->
-<!--    <ftp:listeners>-->
-<!---->
-<!--      <ftp:nio-listener name="secure" port="2222" implicit-ssl="false">-->
-<!--        <ftp:ssl protocol="TLS" client-authentication="NEED">-->
-<!--          <ftp:keystore file="src/test/resources/ftpserver.jks" password="password" key-password="password" />-->
-<!--        </ftp:ssl>-->
-<!--        <ftp:data-connection />-->
-<!--      </ftp:nio-listener>-->
-<!--      -->
-<!--      <ftp:nio-listener name="default" port="2221">-->
-<!--        <ftp:data-connection />-->
-<!--      </ftp:nio-listener>-->
-<!--    </ftp:listeners>-->
-<!--     The user manager, choose one -->
-<!--    <ftp:file-user-manager file="src/test/resources/user.properties" encrypt-passwords="false" />-->
-<!--  </ftp:server>-->
-
 </beans>

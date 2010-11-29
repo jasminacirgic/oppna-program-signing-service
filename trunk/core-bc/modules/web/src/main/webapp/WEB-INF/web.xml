@@ -28,24 +28,6 @@
     <servlet-name>sign</servlet-name>
     <url-pattern>/sign/*</url-pattern>
   </servlet-mapping>
- 
-  <servlet>
-    <servlet-name>appx</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>/WEB-INF/appx/app-x-servlet.xml</param-value>
-    </init-param>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>appx</servlet-name>
-    <url-pattern>/appx</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>appx</servlet-name>
-    <url-pattern>/appx/*</url-pattern>
-  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>jsp</servlet-name>
