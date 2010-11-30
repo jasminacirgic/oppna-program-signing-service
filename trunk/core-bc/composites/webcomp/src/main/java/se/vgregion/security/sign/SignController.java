@@ -42,6 +42,8 @@ public class SignController {
             @RequestParam(value = "clientType", required = false) String clientType, Model model,
             HttpServletRequest request) throws IOException {
 
+        System.setProperty("javax.net.debug", "ssl");
+
         if (clientType == null) {
             model.addAttribute("tbs", tbs);
             model.addAttribute("submitUri", submitUri);
@@ -52,7 +54,7 @@ public class SignController {
         model.addAttribute("browserType", BrowserType.fromUserAgent(userAgent));
 
         String pkiPostBackUrl = buildPkiPostBackUrl(submitUri, request);
-        System.out.println(pkiPostBackUrl);
+        System.out.println("postback-uri: " + pkiPostBackUrl);
         SignForm signForm = new SignForm(clientType, tbs, pkiPostBackUrl);
         model.addAttribute("signData", signForm);
 
@@ -64,9 +66,10 @@ public class SignController {
     public String postback(@RequestParam(value = "SignedData", required = false) String signedData,
             @RequestParam(value = "submitUri", required = false) String submitUri) throws URISyntaxException,
             SignatureException {
-
+        System.out.println("SignController.postback()");
         byte[] pkcs7 = Base64.decodeBase64(signedData);
         String redirectLocation = signatureService.save(new URI(submitUri), pkcs7);
+        System.out.println("Redirect Location: " + redirectLocation);
         if (redirectLocation != null) {
             return "redirect:" + redirectLocation;
         }
@@ -75,7 +78,8 @@ public class SignController {
 
     private String buildPkiPostBackUrl(String submitUri, HttpServletRequest req) {
         StringBuilder pkiPostUrl = new StringBuilder();
-        pkiPostUrl.append("http://" + req.getLocalName() + ":" + req.getLocalPort() + "/sign/verify?submitUri=");
+        pkiPostUrl.append("http" + (req.isSecure() ? "s" : "") + "://" + req.getLocalName() + ":"
+                + req.getLocalPort() + "/sign/verify?submitUri=");
         pkiPostUrl.append(submitUri);
 
         return pkiPostUrl.toString();

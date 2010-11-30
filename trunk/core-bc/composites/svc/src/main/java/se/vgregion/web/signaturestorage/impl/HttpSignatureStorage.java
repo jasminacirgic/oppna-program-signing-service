@@ -33,6 +33,7 @@ public class HttpSignatureStorage implements SignatureStorage {
             httpPost.setEntity(entity);
             response = httpClient.execute(httpPost);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new SignatureStoreageException(e);
         }
 
