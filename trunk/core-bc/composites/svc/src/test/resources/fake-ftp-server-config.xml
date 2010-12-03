@@ -4,6 +4,8 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
                             http://mina.apache.org/ftpserver/spring/v1 http://mina.apache.org/ftpserver/ftpserver-1.0.xsd">
 
+  <import resource="classpath:ftp-config.xml" />
+
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="ignoreUnresolvablePlaceholders" value="true" />
     <property name="locations">
@@ -13,6 +15,10 @@
     </property>
   </bean>
 
-  <import resource="classpath:ftp-config.xml" />
+  <bean id="keyStoreFactory" class="org.apache.mina.filter.ssl.KeyStoreFactory" primary="true">
+    <property name="password" value="password" />
+    <property name="dataFile" value="classpath:signer-service.jks" />
+  </bean>
+
 
 </beans>
