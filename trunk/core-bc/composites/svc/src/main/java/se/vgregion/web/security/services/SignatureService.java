@@ -1,5 +1,6 @@
 package se.vgregion.web.security.services;
 
+import java.io.IOException;
 import java.net.URI;
 import java.security.SignatureException;
 import java.util.UUID;
@@ -32,6 +33,8 @@ public class SignatureService implements ApplicationContextAware {
         try {
             forwardString = storage.save(submitUrl, pkcs7, signatureName);
         } catch (SignatureStoreageException e) {
+            throw new SignatureException(e.getMessage(), e);
+        } catch (IOException e) {
             throw new SignatureException(e.getMessage(), e);
         }
         return forwardString;

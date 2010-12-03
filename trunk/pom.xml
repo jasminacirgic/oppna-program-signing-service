@@ -19,6 +19,7 @@
 
   <modules>
     <module>core-bc</module>
+    <module>reference-application</module>
   </modules>
 
   <pluginRepositories>
@@ -58,10 +59,5 @@
     <developerConnection>scm:svn:https://signer-service.googlecode.com/svn/trunk</developerConnection>
     <url>http://signer-service.googlecode.com/svn/trunk</url>
   </scm>
-
-  <dependencyManagement>
-    <dependencies>
-    </dependencies>
-  </dependencyManagement>
 
 </project>

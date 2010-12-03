@@ -78,8 +78,10 @@ public class SignController {
 
     private String buildPkiPostBackUrl(String submitUri, HttpServletRequest req) {
         StringBuilder pkiPostUrl = new StringBuilder();
-        pkiPostUrl.append("http" + (req.isSecure() ? "s" : "") + "://" + req.getLocalName() + ":"
-                + req.getLocalPort() + "/sign/verify?submitUri=");
+        String verifyUrl = "http" + (req.isSecure() ? "s" : "") + "://" + req.getServerName() + ":"
+                + req.getServerPort() + req.getContextPath() + "/sign/verify?submitUri=";
+        System.out.println("verifyUrl: " + verifyUrl);
+        pkiPostUrl.append(verifyUrl);
         pkiPostUrl.append(submitUri);
 
         return pkiPostUrl.toString();

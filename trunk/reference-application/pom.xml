@@ -3,19 +3,19 @@
 This is the Business Component Maven POM.
 
 
-Template version: 1.4
-Generation time : 2010-10-03 17:10:18 CEST
+Template version: 1.5-SNAPSHOT
+Generation time : 2010-10-14 11:29:06 CEST
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>se.vgregion.signer-service</groupId>
-    <artifactId>signer-service-system</artifactId>
+    <groupId>se.vgregion.sign-service-reference-app</groupId>
+    <artifactId>sign-service-reference-app-system</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>se.vgregion.signer-service</groupId>
-  <artifactId>signer-service-core-bc</artifactId>
+  <groupId>se.vgregion.sign-service-reference-app</groupId>
+  <artifactId>sign-service-reference-app-core-bc</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>${project.artifactId}</name>
