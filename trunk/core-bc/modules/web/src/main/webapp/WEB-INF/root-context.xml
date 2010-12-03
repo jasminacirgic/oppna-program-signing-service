@@ -9,7 +9,8 @@
     <property name="ignoreUnresolvablePlaceholders" value="true" />
     <property name="locations">
       <list>
-        <value>classpath:http-connection.properties</value>
+        <value>classpath:connection.properties</value>
+        <value>classpath:security.properties</value>
       </list>
     </property>
   </bean>

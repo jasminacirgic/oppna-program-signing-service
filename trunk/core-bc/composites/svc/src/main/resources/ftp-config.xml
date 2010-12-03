@@ -6,13 +6,13 @@
 
   <bean id="keyManager" class="se.vgregion.web.ftp.KeyManagerFactoryBean">
     <property name="keyStore" ref="keyStore" />
-    <property name="password" value="${keyStore.password}" />
+    <property name="password" value="${keystore.password}" />
   </bean>
 
   <!-- FTPS Client Setup -->
   <bean id="ftps-client" class="org.apache.commons.net.ftp.FTPSClient" scope="prototype">
     <property name="keyManager" ref="keyManager" />
-    <property name="authValue" value="${cryptoProtocol}" />
+    <property name="authValue" value="TLS" />
     <property name="defaultPort" value="990" />
   </bean>
 
