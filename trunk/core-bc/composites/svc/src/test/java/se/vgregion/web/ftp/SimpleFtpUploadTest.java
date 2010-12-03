@@ -106,14 +106,14 @@ public class SimpleFtpUploadTest {
     public void shouldNotConnectToSecureFtpServerWithInvalidPort() throws Exception {
         String errorMsg = failConnectToFtpServer(new URI("ftps://" + validUserName + ":" + validPassword
                 + "@localhost:" + invalidPort + "/"));
-        assertEquals("Connection refused", errorMsg);
+        assertTrue(errorMsg.contains("Connection refused"));
     }
 
     @Test
     public void shouldNotConnectToFtpServerWithInvalidPort() throws Exception {
         String errorMsg = failConnectToFtpServer(new URI("ftp://" + validUserName + ":" + validPassword
                 + "@localhost:" + invalidPort + "/"));
-        assertEquals("Connection refused", errorMsg);
+        assertTrue(errorMsg.contains("Connection refused"));
     }
 
     @Test
