@@ -37,7 +37,7 @@ public class MyFtpServerFactory {
         return sslConfigFactory;
     }
 
-    static FtpServerFactory createServer() throws Exception {
+    public static FtpServerFactory createServer() throws Exception {
         assertTrue(USERS_FILE.getAbsolutePath() + " must exist", USERS_FILE.exists());
 
         FtpServerFactory serverFactory = new FtpServerFactory();

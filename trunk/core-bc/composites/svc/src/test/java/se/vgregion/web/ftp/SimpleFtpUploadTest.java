@@ -2,9 +2,12 @@ package se.vgregion.web.ftp;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 import org.apache.ftpserver.FtpServer;
+import org.apache.ftpserver.util.IoUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class SimpleFtpUploadTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleFtpUploadTest.class);
+    private static final File TMP_TEST_DIR = new File("tmp-test");
 
     private static FtpServer ftpServer;
 
@@ -39,6 +43,7 @@ public class SimpleFtpUploadTest {
         if (LOGGER.isDebugEnabled()) {
             System.setProperty("javax.net.debug", "ssl");
         }
+        initDirs();
         ftpServer = MyFtpServerFactory.createServer().createServer();
         ftpServer.start();
     }
@@ -46,6 +51,19 @@ public class SimpleFtpUploadTest {
     @AfterClass
     public static void tearDown() throws Exception {
         ftpServer.stop();
+        cleanTmpDirs();
+    }
+
+    private static void initDirs() throws IOException {
+        cleanTmpDirs();
+
+        TMP_TEST_DIR.mkdirs();
+    }
+
+    private static void cleanTmpDirs() throws IOException {
+        if (TMP_TEST_DIR.exists()) {
+            IoUtils.delete(TMP_TEST_DIR);
+        }
     }
 
     @Test
