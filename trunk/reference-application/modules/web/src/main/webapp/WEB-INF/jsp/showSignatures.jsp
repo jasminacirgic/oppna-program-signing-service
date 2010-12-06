@@ -10,7 +10,7 @@
 <body>
   <form action="clean" method="post">
     <a href="/appx/appx/">Tillbaka</a>&nbsp;
-    <button type="submit">Rensa Certifikat</button>
+    <button type="submit">Rensa Signaturer</button>
   </form>
   <ul>
     <c:forEach items="${signatures}" var="signature">
