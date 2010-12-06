@@ -21,6 +21,7 @@ Generation time : 2010-10-03 17:10:18 CEST
   <name>${project.artifactId}</name>
 
   <modules>
+    <module>composites/schema</module>
     <module>composites/types</module>
     <module>composites/svc</module>
     <module>composites/webcomp</module>
