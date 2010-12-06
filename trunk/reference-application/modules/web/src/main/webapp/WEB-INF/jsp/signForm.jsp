@@ -13,7 +13,7 @@
 
 <body>
   <h2>Demo signering</h2>
-  <form method="post" action="https://localhost:9443/sign/prepare">
+  <form method="post" action="https://antonio.vgregion.se:7443/ss/sign/prepare">
     <fieldset>   
       <ul>
         <li>
@@ -21,9 +21,9 @@
           <input type="text" id="tbs" name="tbs" value="Hej">
         </li>
         <li>
-          <input type="radio" name="submitUri" id="submitUri_http" value="http://localhost:7080/appx/saveSignature" class="radio"/>
+          <input type="radio" name="submitUri" id="submitUri_http" value="http://ant.vgregion.se:7080/appx/appx/saveSignature" class="radio"/>
           <label for="submitUri_http">http</label>
-          <input type="radio" name="submitUri" id="submitUri_http" value="https://localhost:7443/appx/saveSignature" checked="checked" class="radio"/>
+          <input type="radio" name="submitUri" id="submitUri_http" value="https://ant.vgregion.se:7443/appx/appx/saveSignature" checked="checked" class="radio"/>
           <label for="submitUri_http">https</label>
 <!--          <input type="radio" name="submitUri" id="submitUri_ftp" value="ftp://@140.166.209.181:21/tmp" class="radio"/>-->
 <!--          <label for="submitUri_ftp">ftp</label>-->

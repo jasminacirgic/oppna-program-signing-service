@@ -61,12 +61,18 @@ public class ClientXController {
 
     @RequestMapping(value = "/showSignStatus", method = RequestMethod.GET)
     public String status() {
-        System.setProperty("javax.net.debug", "ssl");
         return "showSignatures";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String signForm() {
         return "signForm";
+    }
+
+    @RequestMapping(value = "/clean", method = RequestMethod.POST)
+    public String cleanSignatures() {
+        System.out.println("ClientXController.cleanSignatures()");
+        signatures.clear();
+        return "showSignatures";
     }
 }

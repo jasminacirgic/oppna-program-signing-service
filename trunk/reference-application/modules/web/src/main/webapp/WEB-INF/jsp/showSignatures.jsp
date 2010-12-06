@@ -8,10 +8,14 @@
 <title>Insert title here</title>
 </head>
 <body>
-<ul>
-<c:forEach items="${signatures}" var="signature">
-<li>${signature}</li><br/>    
-</c:forEach>
-</ul>
+  <form action="clean" method="post">
+    <a href="/appx/appx/">Tillbaka</a>&nbsp;
+    <button type="submit">Rensa Certifikat</button>
+  </form>
+  <ul>
+    <c:forEach items="${signatures}" var="signature">
+      <li>${signature}</li><br/>    
+    </c:forEach>
+  </ul>
 </body>
 </html>
