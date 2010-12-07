@@ -1,38 +1,36 @@
 package se.vgregion.web.security.verification;
 
-import java.net.URL;
 import java.security.SignatureException;
-
-import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.sll.wsdl.soap.osif.Osif;
-import se.sll.wsdl.soap.osif.OsifService;
 import se.sll.wsdl.soap.osif.VerifySignatureRequest;
 import se.sll.wsdl.soap.osif.VerifySignatureResponse;
 import se.vgregion.domain.security.pkiclient.PkiClient;
-import se.vgregion.web.security.OsifUtil;
 
 public class SignatureValidator {
-
     private static Logger LOGGER = LoggerFactory.getLogger(SignatureValidator.class);
 
-    public static void validate(String signature, String tbs, PkiClient pkiClient) throws SignatureException {
-        URL wsdl = OsifService.class.getResource("/se/sll/wsdl/soap/osif/osif.wsdl");
-        OsifService service = new OsifService(wsdl, new QName("urn:www.sll.se/wsdl/soap/osif", "OsifService"));
-        Osif osif = service.getOsif();
-        OsifUtil.setEndpointAddress(osif, "http://193.44.157.195:18899/osif/");
+    private Osif osif;
+    private String policy;
 
-        VerifySignatureRequest request = new VerifySignatureRequest();
-        request.setTbsText(tbs);
-        request.setNonce("AFASDFASDF");
-        request.setProvider(pkiClient.getId());
-        request.setSignature(signature);
-        request.setPolicy("logtest014");
+    public SignatureValidator(Osif osif) {
+        this.osif = osif;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+
+    public void validate(String signature, String tbs, PkiClient pkiClient) throws SignatureException {
+        VerifySignatureRequest request = createSignatureRequest(signature, tbs, pkiClient);
         VerifySignatureResponse response = osif.verifySignature(request);
+        validateResponse(response);
+    }
 
+    private void validateResponse(VerifySignatureResponse response) throws SignatureException {
         if (response.getStatus().getErrorCode() != 0) {
             String errorMsg = response.getStatus().getErrorGroupDescription() + ": "
                     + response.getStatus().getErrorCodeDescription();
@@ -40,6 +38,22 @@ public class SignatureValidator {
 
             throw new SignatureException(response.getStatus().getErrorGroupDescription());
         }
-
     }
+
+    private VerifySignatureRequest createSignatureRequest(String signature, String tbs, PkiClient pkiClient) {
+        VerifySignatureRequest request = new VerifySignatureRequest();
+        request.setTbsText(tbs);
+        request.setNonce("asdfasdfdsa");
+        request.setProvider(pkiClient.getId());
+        request.setSignature(signature);
+        System.out.println("Policy: " + policy);
+        request.setPolicy(policy);
+        return request;
+    }
+
+    // private String getNounce() {
+    // GenerateChallengeResponse resp = osif.generateChallenge(new GenerateChallengeRequest());
+    // System.out.println(resp.getChallenge());
+    // return resp.getChallenge();
+    // }
 }

@@ -62,6 +62,7 @@ public class SignController {
             @RequestParam(value = "tbs", required = false) String tbs,
             @RequestParam(value = "submitUri", required = false) String submitUri) throws URISyntaxException,
             SignatureException {
+
         String redirectLocation = signatureService.save(tbs, new URI(submitUri), signedData);
         if (redirectLocation != null) {
             return "redirect:" + redirectLocation;

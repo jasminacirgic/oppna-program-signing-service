@@ -15,17 +15,16 @@
   </bean>
 
   <!-- https client setup -->
-  <bean id="scheme-https" class="org.apache.http.conn.scheme.Scheme">
-    <constructor-arg value="https" />
-    <constructor-arg ref="sslSocketFactory" />
-    <constructor-arg type="int" value="443" />
-  </bean>
-
   <bean id="sslSocketFactory" class="org.apache.http.conn.ssl.SSLSocketFactory">
     <constructor-arg ref="sslContext" />
     <property name="hostnameVerifier">
       <bean class="org.apache.http.conn.ssl.AllowAllHostnameVerifier" />
     </property>
+  </bean>
+  <bean id="scheme-https" class="org.apache.http.conn.scheme.Scheme">
+    <constructor-arg value="https" />
+    <constructor-arg ref="sslSocketFactory" />
+    <constructor-arg type="int" value="443" />
   </bean>
 
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

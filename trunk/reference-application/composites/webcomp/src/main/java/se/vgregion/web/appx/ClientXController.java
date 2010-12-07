@@ -51,11 +51,8 @@ public class ClientXController {
     public void postback(HttpServletRequest req, HttpServletResponse response, @RequestBody String pkcs7) {
         byte[] decodedPkcs7 = Base64.decodeBase64(pkcs7);
         signatures.add(new Signature(decodedPkcs7));
-        System.out.println("Ctxpath: " + req.getContextPath());
-        System.out.println("svrlpath: " + req.getServletPath());
         String relocate = "http://" + req.getLocalName() + ":7080" + req.getContextPath() + req.getServletPath()
                 + "/showSignStatus";
-        System.out.println("Redirecting to: " + relocate);
         response.setHeader("Location", relocate);
     }
 
@@ -71,7 +68,6 @@ public class ClientXController {
 
     @RequestMapping(value = "/clean", method = RequestMethod.POST)
     public String cleanSignatures() {
-        System.out.println("ClientXController.cleanSignatures()");
         signatures.clear();
         return "showSignatures";
     }

@@ -39,7 +39,7 @@ Generation time : 2010-12-06 10:30:41 CET
               <sourceRoot>${project.build.directory}/generated/wsdl</sourceRoot>
               <wsdlOptions>
                 <wsdlOption>
-                  <wsdl>${basedir}/src/main/wsdl/osif.wsdl</wsdl>
+                  <wsdl>${basedir}/src/main/resources/osif.wsdl</wsdl>
                 </wsdlOption>
               </wsdlOptions>
             </configuration>

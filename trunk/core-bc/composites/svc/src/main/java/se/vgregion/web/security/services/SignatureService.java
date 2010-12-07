@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class SignatureService implements ApplicationContextAware {
     private SignatureStorage storage = null;
 
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private SignatureValidator validator;
 
     public String buildPkiPostBackUri(String tbs, String submitUri) {
         StringBuilder pkiPostUrl = new StringBuilder();
@@ -39,7 +43,7 @@ public class SignatureService implements ApplicationContextAware {
 
     public String save(String tbs, URI submitUrl, String signature, String signatureName)
             throws SignatureException {
-        SignatureValidator.validate(signature, tbs, PkiClient.NETMAKER_NETID_4);
+        validator.validate(signature, tbs, PkiClient.NETMAKER_NETID_4);
 
         setupIOBackend(submitUrl.getScheme());
         byte[] pkcs7 = Base64.decodeBase64(signature);
