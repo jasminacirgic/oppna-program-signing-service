@@ -9,7 +9,6 @@ import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,8 +41,6 @@ public class SignController {
             @RequestParam(value = "clientType", required = false) String clientType, Model model,
             HttpServletRequest request) throws IOException {
 
-        System.setProperty("javax.net.debug", "ssl");
-
         if (clientType == null) {
             model.addAttribute("tbs", tbs);
             model.addAttribute("submitUri", submitUri);
@@ -52,9 +49,7 @@ public class SignController {
 
         String userAgent = request.getHeader("User-Agent");
         model.addAttribute("browserType", BrowserType.fromUserAgent(userAgent));
-
-        String pkiPostBackUrl = buildPkiPostBackUrl(submitUri, request);
-        System.out.println("postback-uri: " + pkiPostBackUrl);
+        String pkiPostBackUrl = buildPkiPostBackUrl(tbs, submitUri, request);
         SignForm signForm = new SignForm(clientType, tbs, pkiPostBackUrl);
         model.addAttribute("signData", signForm);
 
@@ -64,25 +59,24 @@ public class SignController {
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public String postback(@RequestParam(value = "SignedData", required = false) String signedData,
+            @RequestParam(value = "tbs", required = false) String tbs,
             @RequestParam(value = "submitUri", required = false) String submitUri) throws URISyntaxException,
             SignatureException {
-        System.out.println("SignController.postback()");
-        byte[] pkcs7 = Base64.decodeBase64(signedData);
-        String redirectLocation = signatureService.save(new URI(submitUri), pkcs7);
-        System.out.println("Redirect Location: " + redirectLocation);
+        String redirectLocation = signatureService.save(tbs, new URI(submitUri), signedData);
         if (redirectLocation != null) {
             return "redirect:" + redirectLocation;
         }
         return "verified";
     }
 
-    private String buildPkiPostBackUrl(String submitUri, HttpServletRequest req) {
+    private String buildPkiPostBackUrl(String tbs, String submitUri, HttpServletRequest req) {
         StringBuilder pkiPostUrl = new StringBuilder();
         String verifyUrl = "http" + (req.isSecure() ? "s" : "") + "://" + req.getServerName() + ":"
                 + req.getServerPort() + req.getContextPath() + "/sign/verify?submitUri=";
-        System.out.println("verifyUrl: " + verifyUrl);
         pkiPostUrl.append(verifyUrl);
         pkiPostUrl.append(submitUri);
+        pkiPostUrl.append("&tbs=");
+        pkiPostUrl.append(tbs);
 
         return pkiPostUrl.toString();
     }

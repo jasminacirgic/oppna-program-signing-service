@@ -27,7 +27,6 @@ public class HttpSignatureStorage implements SignatureStorage {
     public String save(URI submitUri, byte[] pkcs7, String signatureName) throws SignatureStoreageException,
             IOException {
         HttpPost httpPost = new HttpPost(submitUri);
-        System.out.println("Posting signature to: " + submitUri);
         HttpEntity entity = HttpUtil.createEntity(Base64.encode(pkcs7));
         httpPost.setEntity(entity);
         HttpResponse response = httpClient.execute(httpPost);

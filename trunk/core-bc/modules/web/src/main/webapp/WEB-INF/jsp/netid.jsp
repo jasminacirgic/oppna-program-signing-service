@@ -27,6 +27,6 @@
   <param name='IncludeRootCaCert' value='true' />
   <param name='PostURL' value='${signData.pkiPostBackUrl}' />
   <param name='Base64' value='true' />
-  <param name='Certificate' value='SITHS'/>
+  <param name='Detached' value='true' />
 <!--  <param name='password' value='433876' />-->
 </object>

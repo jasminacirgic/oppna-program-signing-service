@@ -5,11 +5,14 @@ import java.net.URI;
 import java.security.SignatureException;
 import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
+import se.vgregion.domain.security.pkiclient.PkiClient;
+import se.vgregion.web.security.verification.SignatureValidator;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
@@ -19,12 +22,28 @@ public class SignatureService implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    public String save(URI submitUrl, byte[] pkcs7) throws SignatureException {
-        return save(submitUrl, pkcs7, UUID.nameUUIDFromBytes(pkcs7).toString());
+    public String buildPkiPostBackUri(String tbs, String submitUri) {
+        StringBuilder pkiPostUrl = new StringBuilder();
+        String verifyUrl = "/sign/verify?submitUri=";
+        pkiPostUrl.append(verifyUrl);
+        pkiPostUrl.append(submitUri);
+        pkiPostUrl.append("&tbs=");
+        pkiPostUrl.append(Base64.decodeBase64(tbs));
+
+        return pkiPostUrl.toString();
     }
 
-    public String save(URI submitUrl, byte[] pkcs7, String signatureName) throws SignatureException {
+    public String save(String tbs, URI submitUrl, String signature) throws SignatureException {
+        return save(tbs, submitUrl, signature, UUID.nameUUIDFromBytes(signature.getBytes()).toString());
+    }
+
+    public String save(String tbs, URI submitUrl, String signature, String signatureName)
+            throws SignatureException {
+        SignatureValidator.validate(signature, tbs, PkiClient.NETMAKER_NETID_4);
+
         setupIOBackend(submitUrl.getScheme());
+        byte[] pkcs7 = Base64.decodeBase64(signature);
+
         if (storage == null) {
             throw new SignatureException(new IllegalStateException(
                     "No storage is configured for the specified protocol"));
