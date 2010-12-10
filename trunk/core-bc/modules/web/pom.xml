@@ -32,8 +32,8 @@
               <port>9443</port>
               <maxIdleTime>60000</maxIdleTime>
               <keystore>${user.home}/.ss/signer-service.jks</keystore>
-              <password>password</password>
-              <keyPassword>password</keyPassword>
+              <password>${keystore.password}</password>
+              <keyPassword>${keystore.password}</keyPassword>
             </connector>
           </connectors>
         </configuration>

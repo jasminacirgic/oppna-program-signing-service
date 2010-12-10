@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.ELegTypeRepository;
-import se.vgregion.domain.web.BrowserType;
 import se.vgregion.web.security.services.SignatureService;
 
 @Controller
+@SessionAttributes("signData")
 public class SignController {
     @Autowired
     private SignatureService signatureService;
@@ -35,50 +36,39 @@ public class SignController {
         return Collections.unmodifiableCollection(eLegTypes.findAll());
     }
 
-    @RequestMapping(value = "/prepare", method = RequestMethod.POST)
-    public String prepareSign(@RequestParam("tbs") String tbs,
-            @RequestParam(value = "submitUri") String submitUri,
-            @RequestParam(value = "clientType", required = false) String clientType, Model model,
-            HttpServletRequest request) throws IOException {
+    @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = "clientType")
+    public String prepareSign(HttpServletRequest request, @RequestParam("tbs") String tbs,
+            @RequestParam("clientType") String clientType, Model model,
+            @RequestParam(value = "submitUri", required = false) String submitUri) throws IOException {
 
-        if (clientType == null) {
-            model.addAttribute("tbs", tbs);
-            model.addAttribute("submitUri", submitUri);
-            return "clientTypeSelection";
-        }
-
-        String userAgent = request.getHeader("User-Agent");
-        model.addAttribute("browserType", BrowserType.fromUserAgent(userAgent));
-        String pkiPostBackUrl = buildPkiPostBackUrl(tbs, submitUri, request);
-        SignForm signForm = new SignForm(clientType, tbs, pkiPostBackUrl);
+        SignForm signForm = new SignForm(tbs, submitUri, "nonce");
         model.addAttribute("signData", signForm);
 
         ELegType eLegType = eLegTypes.find(clientType);
-        return eLegType.getPkiClientName();
+        return eLegType.getPkiClient().toString();
+    }
+
+    @RequestMapping(value = "/prepare", method = RequestMethod.POST)
+    public String prepareSignNoClientType(HttpServletRequest request, Model model,
+            @RequestParam("tbs") String tbs, @RequestParam(value = "submitUri", required = false) String submitUri)
+            throws IOException {
+        model.addAttribute("tbs", tbs);
+        model.addAttribute("submitUri", submitUri);
+        return "clientTypeSelection";
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public String postback(@RequestParam(value = "SignedData", required = false) String signedData,
-            @RequestParam(value = "tbs", required = false) String tbs,
-            @RequestParam(value = "submitUri", required = false) String submitUri) throws URISyntaxException,
+            @ModelAttribute("signData") SignForm signData, HttpServletRequest req) throws URISyntaxException,
             SignatureException {
 
-        String redirectLocation = signatureService.save(tbs, new URI(submitUri), signedData);
+        // System.out.println(Collections.list(req.getParameterNames()));
+
+        String redirectLocation = signatureService.save(signData.getTbs(), new URI(signData.getSubmitUri()),
+                signedData);
         if (redirectLocation != null) {
             return "redirect:" + redirectLocation;
         }
         return "verified";
-    }
-
-    private String buildPkiPostBackUrl(String tbs, String submitUri, HttpServletRequest req) {
-        StringBuilder pkiPostUrl = new StringBuilder();
-        String verifyUrl = "http" + (req.isSecure() ? "s" : "") + "://" + req.getServerName() + ":"
-                + req.getServerPort() + req.getContextPath() + "/sign/verify?submitUri=";
-        pkiPostUrl.append(verifyUrl);
-        pkiPostUrl.append(submitUri);
-        pkiPostUrl.append("&tbs=");
-        pkiPostUrl.append(tbs);
-
-        return pkiPostUrl.toString();
     }
 }

@@ -6,12 +6,12 @@ public class ELegType extends AbstractEntity<String> {
 
     private String name;
     private String description;
-    private String pkiClientName;
+    private PkiClient pkiClient;
 
-    public ELegType(String name, String description, String pkiClientName) {
+    public ELegType(String name, String description, PkiClient pkiClient) {
         this.name = name;
         this.description = description;
-        this.pkiClientName = pkiClientName;
+        this.pkiClient = pkiClient;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class ELegType extends AbstractEntity<String> {
         return description;
     }
 
-    public String getPkiClientName() {
-        return pkiClientName;
+    public PkiClient getPkiClient() {
+        return pkiClient;
     }
 }

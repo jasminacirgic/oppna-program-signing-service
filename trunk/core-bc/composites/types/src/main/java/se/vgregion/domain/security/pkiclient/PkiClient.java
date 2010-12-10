@@ -11,4 +11,9 @@ public enum PkiClient {
     public int getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return name().toLowerCase();
+    }
 }

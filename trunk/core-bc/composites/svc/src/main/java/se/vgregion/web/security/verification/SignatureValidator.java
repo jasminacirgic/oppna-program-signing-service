@@ -43,10 +43,9 @@ public class SignatureValidator {
     private VerifySignatureRequest createSignatureRequest(String signature, String tbs, PkiClient pkiClient) {
         VerifySignatureRequest request = new VerifySignatureRequest();
         request.setTbsText(tbs);
-        request.setNonce("asdfasdfdsa");
+        request.setNonce("MTIzNDU2Nzg5MGFiYw==");
         request.setProvider(pkiClient.getId());
         request.setSignature(signature);
-        System.out.println("Policy: " + policy);
         request.setPolicy(policy);
         return request;
     }

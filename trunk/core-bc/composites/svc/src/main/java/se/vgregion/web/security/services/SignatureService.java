@@ -43,7 +43,7 @@ public class SignatureService implements ApplicationContextAware {
 
     public String save(String tbs, URI submitUrl, String signature, String signatureName)
             throws SignatureException {
-        validator.validate(signature, tbs, PkiClient.NETMAKER_NETID_4);
+        validator.validate(signature, tbs, PkiClient.NEXUS_PERSONAL_4X);
 
         setupIOBackend(submitUrl.getScheme());
         byte[] pkcs7 = Base64.decodeBase64(signature);

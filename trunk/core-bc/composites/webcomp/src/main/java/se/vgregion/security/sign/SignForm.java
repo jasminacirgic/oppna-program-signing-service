@@ -8,17 +8,17 @@ package se.vgregion.security.sign;
  * 
  */
 public class SignForm {
-    private String pkiPostBackUrl;
+    private String submitUri;
+    private String nonce;
     private String tbs;
-    private String clientType;
 
     public SignForm() {
     }
 
-    public SignForm(String clientType, String tbs, String pkiPostBackUrl) {
-        this.clientType = clientType;
+    public SignForm(String tbs, String submitUri, String nonce) {
         this.tbs = tbs;
-        this.pkiPostBackUrl = pkiPostBackUrl;
+        this.submitUri = submitUri;
+        this.setNonce(nonce);
     }
 
     public String getTbs() {
@@ -29,19 +29,19 @@ public class SignForm {
         this.tbs = tbs;
     }
 
-    public String getPkiPostBackUrl() {
-        return pkiPostBackUrl;
+    public void setSubmitUri(String submitUri) {
+        this.submitUri = submitUri;
     }
 
-    public void setPkiPostBackUrl(String pkiPostBackUrl) {
-        this.pkiPostBackUrl = pkiPostBackUrl;
+    public String getSubmitUri() {
+        return submitUri;
     }
 
-    public String getClientType() {
-        return clientType;
+    public void setNonce(String nonce) {
+        this.nonce = nonce;
     }
 
-    public void setClientType(String clientType) {
-        this.clientType = clientType;
+    public String getNonce() {
+        return nonce;
     }
 }

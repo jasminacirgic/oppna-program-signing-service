@@ -15,22 +15,22 @@
           <constructor-arg name="name" value="BankId" />
           <constructor-arg name="description"
             value="Danske Bank/Östgöta Enskilda Bank, Handelsbanken, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank" />
-          <constructor-arg name="pkiClientName" value="nexus-personal" />
+          <constructor-arg name="pkiClient" value="NEXUS_PERSONAL_4X" />
         </bean>
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">
           <constructor-arg name="name" value="Nordea" />
           <constructor-arg name="description" value="Nordea" />
-          <constructor-arg name="pkiClientName" value="netid" />
+          <constructor-arg name="pkiClient" value="NEXUS_PERSONAL_4" />
         </bean>
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">
           <constructor-arg name="name" value="Telia" />
           <constructor-arg name="description" value="ICA Banken, Posten, SEB, Skatteverket" />
-          <constructor-arg name="pkiClientName" value="netid" />
+          <constructor-arg name="pkiClient" value="NETMAKER_NETID_4" />
         </bean>
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">
           <constructor-arg name="name" value="SITHS" />
           <constructor-arg name="description" value="TjänsteId" />
-          <constructor-arg name="pkiClientName" value="netid" />
+          <constructor-arg name="pkiClient" value="NETMAKER_NETID_4" />
         </bean>
       </list>
     </property>

@@ -9,7 +9,6 @@
     directory -->
   <mvc:resources mapping="/resources/**" location="classpath:/resources/" />
   
-  <!-- <context:component-scan base-package="se.vgregion.web.appx" /> -->
   <bean class="se.vgregion.web.appx.ClientXController" />
   
   <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
