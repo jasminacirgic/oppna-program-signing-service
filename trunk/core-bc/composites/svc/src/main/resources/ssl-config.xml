@@ -19,7 +19,5 @@
   </bean>
 
   <bean id="sslContext" factory-bean="sslContextFactory" factory-method="newInstance" />
-  
   <bean id="trustManagerFactory" class="${ssl.trustManagerFactoryImpl}" />
-
 </beans>

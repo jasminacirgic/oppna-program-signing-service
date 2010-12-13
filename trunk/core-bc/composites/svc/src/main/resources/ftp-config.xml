@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <import resource="classpath:tls-keystore-config.xml" />
+  <import resource="classpath:ssl-config.xml" />
 
   <bean id="keyManager" class="se.vgregion.web.ftp.KeyManagerFactoryBean">
     <property name="keyStore" ref="keyStore" />

@@ -64,25 +64,23 @@ function startSign(tbs, hiddentbs, nonce) {
     
 // Sätt parametrarna till klienten och kolla om det gick bra.
 
-        // Todo Byt detta värde!!
         Plugin.SetParam('Nonce', nonce);
         Checkerror("Nonce", Plugin.GetLastError());
         
-        // Texten som visas för användaren. "Vänligen överför 1000 kronor till konto 123456-7"
         Plugin.SetParam('TextToBeSigned', tbs);
         Checkerror("TBS", Plugin.GetLastError());
 
         // Text som signeras men inte visas för användaren t.ex. XML-data.
         Plugin.SetParam('NonVisibleData',hiddentbs);
         Checkerror("NVD", Plugin.GetLastError());
-
+        
         // Starta signeringen
         retVal = Plugin.PerformAction('Sign');
         if (!retVal) {
           signature = Plugin.GetParam('Signature');
           if (Checkerror("hämtning av signatur", Plugin.GetLastError())) {
             // Lägg in din kod för att skicka transaktionen till din BICS här.
-            document.signerData.SignedData.value = signature;
+            document.signerData.signature.value = signature;
             document.signerData.submit();
             return true;
           }

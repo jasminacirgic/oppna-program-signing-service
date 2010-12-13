@@ -27,6 +27,11 @@
           <div class="e-leg-type-description">${clientType.description}</div>
         </li>
       </c:forEach>
+        <li class="e-leg-type">
+          <input type="radio" name="clientType" id="clientType_invalid" value="invalid" class="radio"/>
+          <label for="clientType_invalid">Invalid client</label>
+          <div class="e-leg-type-description">Invalid client used for testing</div>
+        </li>
       </ul>
     </fieldset>
     <fieldset class="submit">   

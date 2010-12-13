@@ -6,55 +6,88 @@ import java.security.SignatureException;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Service;
 
-import se.vgregion.domain.security.pkiclient.PkiClient;
-import se.vgregion.web.security.verification.SignatureValidator;
+import se.sll.wsdl.soap.osif.Osif;
+import se.sll.wsdl.soap.osif.VerifySignatureRequest;
+import se.sll.wsdl.soap.osif.VerifySignatureResponse;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
-@Service
 public class SignatureService implements ApplicationContextAware {
+    private static Logger LOGGER = LoggerFactory.getLogger(SignatureService.class);
+
     private SignatureStorage storage = null;
 
     private ApplicationContext applicationContext;
+    private Osif osif;
+    private String policy;
 
-    @Autowired
-    private SignatureValidator validator;
-
-    public String buildPkiPostBackUri(String tbs, String submitUri) {
-        StringBuilder pkiPostUrl = new StringBuilder();
-        String verifyUrl = "/sign/verify?submitUri=";
-        pkiPostUrl.append(verifyUrl);
-        pkiPostUrl.append(submitUri);
-        pkiPostUrl.append("&tbs=");
-        pkiPostUrl.append(Base64.decodeBase64(tbs));
-
-        return pkiPostUrl.toString();
+    public SignatureService(Osif osif, String policy) {
+        this.osif = osif;
+        this.policy = policy;
     }
 
-    public String save(String tbs, URI submitUrl, String signature) throws SignatureException {
-        return save(tbs, submitUrl, signature, UUID.nameUUIDFromBytes(signature.getBytes()).toString());
+    public String encodeTbs(String tbs) {
+        return Base64.encodeBase64String(tbs.getBytes()).trim();
     }
 
-    public String save(String tbs, URI submitUrl, String signature, String signatureName)
-            throws SignatureException {
-        validator.validate(signature, tbs, PkiClient.NEXUS_PERSONAL_4X);
+    public void validate(SignatureData signData) throws SignatureException {
+        VerifySignatureRequest request = createSignatureRequest(signData);
+        VerifySignatureResponse response = osif.verifySignature(request);
+        validateResponse(response);
+    }
 
-        setupIOBackend(submitUrl.getScheme());
-        byte[] pkcs7 = Base64.decodeBase64(signature);
+    private void validateResponse(VerifySignatureResponse response) throws SignatureException {
+        if (response.getStatus().getErrorCode() != 0) {
+            String errorMsg = response.getStatus().getErrorGroupDescription() + ": "
+                    + response.getStatus().getErrorCodeDescription();
+            LOGGER.error(errorMsg);
+
+            throw new SignatureException(response.getStatus().getErrorGroupDescription() + ": "
+                    + response.getStatus().getErrorCodeDescription());
+        }
+    }
+
+    private VerifySignatureRequest createSignatureRequest(SignatureData signData) {
+        VerifySignatureRequest request = new VerifySignatureRequest();
+        request.setTbsText(signData.getTbs());
+        request.setHiddenTbs(signData.getEncodedTbs());
+        request.setNonce(signData.getNonce());
+        request.setProvider(signData.getPkiClient().getId());
+        request.setSignature(signData.getSignature());
+        request.setPolicy(policy);
+        return request;
+    }
+
+    public String generateNonce() {
+        return Base64.encodeBase64String(UUID.randomUUID().toString().getBytes()).trim();
+    }
+
+    public String save(SignatureData signData) throws SignatureException {
+        String signature = signData.getSignature();
+        return save(signData, UUID.nameUUIDFromBytes(signature.getBytes()).toString());
+    }
+
+    public String save(SignatureData signData, String signatureName) throws SignatureException {
+
+        URI submitUri = signData.getSubmitUri();
+        setupIOBackend(submitUri.getScheme());
+        byte[] pkcs7 = Base64.decodeBase64(signData.getSignature());
 
         if (storage == null) {
             throw new SignatureException(new IllegalStateException(
                     "No storage is configured for the specified protocol"));
         }
         String forwardString = null;
+
         try {
-            forwardString = storage.save(submitUrl, pkcs7, signatureName);
+            System.out.println(submitUri);
+            forwardString = storage.save(submitUri, pkcs7, signatureName);
         } catch (SignatureStoreageException e) {
             throw new SignatureException(e.getMessage(), e);
         } catch (IOException e) {
