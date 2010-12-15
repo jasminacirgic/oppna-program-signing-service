@@ -1,17 +1,16 @@
 #summary Singeringstjänsten på 5 minuter
 #labels Phase-Implementation
 
+= Introduktion =
+
+Signeringstjänsten är framtagen för att andra system skall få hjälp med att signera viktig information och dokument. Detta görs i dagsläget genom att posta in signeringsdata till tjänsten. Nedan följer en kortfattad tutorial över hur man som konsument använder sig av signeringstjänsten.
+
 = Krav =
 
 För att kunna följa denna tutorial så krävs följande
  # En fungerande instans av signeringstjänsten.
  # [https://install.bankid.com BISP] är installerat på klienten.
  # Tillgång till antingen ett hårt eller mjukt !BankId-certifikat.
-
-= Introduktion =
-
-Signeringstjänsten är framtagen för att andra system skall få hjälp med att signera viktig information och dokument. Detta görs i dagsläget genom att posta in signeringsdata till tjänsten. Nedan följer en kortfattad tutorial över hur man som konsument använder sig av signeringstjänsten.
-
 
 = Klara, Färdiga, Gå! =
  * Anta att vi vill signera följande text: _Sätt in 1000 kronor på konto 123456-7_.
@@ -33,6 +32,22 @@ Skapa då en html-sida med följande formulär:
 ||submitUri||Url dit man vill skicka signaturen||
 ||clientType||Det certifikat som man vill signera med (!BankId, Telia, Nordea eller SITHS)||
 
-Följande fönster visas där du matar in lösenordet på ditt !BankId-certifikat:
+När man postat in formuläret så visas följande fönster där man matar in lösenordet på sitt !BankId-certifikat:
 
 <img src="http://oppna-program-signing-service.googlecode.com/svn/wiki/images/BankId-Sign.png" width="400"/>
+
+Signaturen skickas till den specificerade adressen i submitUri med parameternamnet _signature_.
+
+Ett exempel på hur en sådan mottagande servlet kan se ut visas nedan (här implementerad i springs mvc-ramverk):
+
+{{{
+    @RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.MOVED_TEMPORARILY)
+    public void postback(HttpServletRequest req, HttpServletResponse response, @RequestBody String pkcs7) {
+        byte[] decodedPkcs7 = Base64.decodeBase64(pkcs7);
+        signatures.add(new Signature(decodedPkcs7));
+        String relocate = "http://" + req.getLocalName() + ":7080" + req.getContextPath() + req.getServletPath()
+                + "/showSignStatus";
+        response.setHeader("Location", relocate);
+    }
+}}}
