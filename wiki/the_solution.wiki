@@ -11,7 +11,7 @@
  # Signaturen verifieras via en [http://sveid.episerverhotell.net/SVEIDtemplates/SVEIDpage.aspx?id=124  OSIF] tjänst.
  # Status för hur valideringen gick skickas tillbaka till SS.
  # SS skickar signaturen till submitUri för lagring, detta sker över ftps eller https. Om https väljs finns även en möjlighet för applikationen att själv presentera status för signeringen (se steg 7). I annat fall kommer SS att hantera presentationen av status.
- # Om X själv kan och vill presentera status för signeringen gör den en 302 redirect till en url som hanterar presentationen. Om X vill överlåta detta till SS räcker det med att svara med en vanlig 200 response.
+ # Om X själv kan och vill presentera status för signeringen gör den en 3[http://en.wikipedia.org/wiki/HTTP_302 302 redirect] till en url som hanterar presentationen. Om X vill överlåta detta till SS räcker det med att svara med en vanlig [http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 200 OK] response.
  # Om SS får en [http://en.wikipedia.org/wiki/HTTP_302 302 redirect] från X skickar även SS en [http://en.wikipedia.org/wiki/HTTP_302 302 redirect] tillbaka till klienten med samma location som X satte i sin redirect. Om SS får en [http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 200 OK] visar den en status sida för klienten.
  # 302 redirect till location satt av X.
  # X visar ett svar för klienten.
