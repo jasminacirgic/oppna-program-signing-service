@@ -8,23 +8,25 @@
 </head>
 
 <body>
-  <object name='iid' width=0 height=0 classid='CLSID:5BF56AD2-E297-416E-BC49-00B327C4426E'>
-    <param name='DataToBeSigned' value='${signData.tbs}' />
-    <param name='DirectActivation' value='Sign' />
-    <param name='IncludeCaCert' value='true' />
-    <param name='IncludeRootCaCert' value='true' />
-    <param name='PostURL' value='${signData.postbackUrl}' />
-    <param name='Base64' value='true' />
-    <param name='SignReturnName' value='signature'>
+  <object name="iid" width=0 height=0 classid="CLSID:5BF56AD2-E297-416E-BC49-00B327C4426E">
+    <param name="DataToBeSigned" value="${signData.encodedTbs}" />
+    <param name="DirectActivation" value="Sign" />
+    <param name="IncludeCaCert" value="true" />
+    <param name="IncludeRootCaCert" value="true" />
+    <param name='PostURL' value='${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}' />
+    <param name="Base64" value="true" />
+    <param name="SignReturnName" value="signature">
+    <param name="DataReturnName" value="encodedTbs">
   </object>
-  <object name='iid' width=0 height=0 type='application/x-iid'>
-    <param name='DataToBeSigned' value='${signData.tbs}' />
-    <param name='DirectActivation' value='Sign' />
-    <param name='IncludeCaCert' value='true' />
-    <param name='IncludeRootCaCert' value='true' />
-    <param name='PostURL' value='${signData.postbackUrl}' />
-    <param name='Base64' value='true' />
-    <param name='SignReturnName' value='signature'>
+  <object name="iid" width=0 height=0 type="application/x-iid">
+    <param name="DataToBeSigned" value="${signData.encodedTbs}" />
+    <param name="DirectActivation" value="Sign" />
+    <param name="IncludeCaCert" value="true" />
+    <param name="IncludeRootCaCert" value="true" />
+    <param name='PostURL' value='${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}' />
+    <param name="Base64" value="true" />
+    <param name="SignReturnName" value="signature">
+    <param name="DataReturnName" value="encodedTbs">
   </object>
   <jsp:include page="jsp/supportedBrowsers.jsp" />
 </body>

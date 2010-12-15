@@ -22,10 +22,8 @@
         <li>
           <input type="radio" name="submitUri" id="submitUri_http" value="http://localhost:7080/appx/saveSignature" class="radio"/>
           <label for="submitUri_http">http</label>
-          <input type="radio" name="submitUri" id="submitUri_http" value="https://localhost:7443/appx/saveSignature" checked="checked" class="radio"/>
+          <input type="radio" name="submitUri" id="submitUri_https" value="https://localhost:7443/appx/saveSignature" checked="checked" class="radio"/>
           <label for="submitUri_http">https</label>
-<!--          <input type="radio" name="submitUri" id="submitUri_ftp" value="ftp://@140.166.209.181:21/tmp" class="radio"/>-->
-<!--          <label for="submitUri_ftp">ftp</label>-->
         </li>
       </ul>
     </fieldset>

@@ -11,6 +11,7 @@ function initPlugin(typePlug){
   objHldr.setAttribute("height", "0");
   document.body.appendChild(objHldr);
 }
+
 // Kontrollerar om BISP är installerad genom att försöka så undviker man
 // beroende till webbläsarnamn o.s.v.
 function isInstalled (){
@@ -33,7 +34,7 @@ function isInstalled (){
 
 function Checkerror(paramName, errorMsg) {
   if (errorMsg) {
-    if ( errorMsg == 8002 ) { //Användaren avbryter
+    if ( errorMsg == 8002 ) { // Användaren avbryter
       return false;
     }
     else if (errorMsg == 8015) { // Sidan måste köras över SSL
@@ -51,7 +52,7 @@ function Checkerror(paramName, errorMsg) {
   }
 }
 
-function startSign(tbs, hiddentbs, nonce) {
+function startSign(tbs, nonce) {
   var typePlugin = isInstalled();
   if (typePlugin != false) {
 // pluginerna bör laddas enl. funktionen initPlugin() p.g.a. kompabilitet med
@@ -64,24 +65,19 @@ function startSign(tbs, hiddentbs, nonce) {
     
 // Sätt parametrarna till klienten och kolla om det gick bra.
 
-        Plugin.SetParam('Nonce', nonce);
+        Plugin.SetParam('Nonce', nonce)
         Checkerror("Nonce", Plugin.GetLastError());
-        
         Plugin.SetParam('TextToBeSigned', tbs);
         Checkerror("TBS", Plugin.GetLastError());
 
-        // Text som signeras men inte visas för användaren t.ex. XML-data.
-        Plugin.SetParam('NonVisibleData',hiddentbs);
-        Checkerror("NVD", Plugin.GetLastError());
-        
         // Starta signeringen
         retVal = Plugin.PerformAction('Sign');
         if (!retVal) {
           signature = Plugin.GetParam('Signature');
           if (Checkerror("hämtning av signatur", Plugin.GetLastError())) {
             // Lägg in din kod för att skicka transaktionen till din BICS här.
-            document.signerData.signature.value = signature;
-            document.signerData.submit();
+            document.signData.signature.value = signature;
+            document.signData.submit();
             return true;
           }
         }
@@ -90,6 +86,6 @@ function startSign(tbs, hiddentbs, nonce) {
         }
   }
   else {
-    alert("BankID säkerhetsprogram är inte installerat. Gå till https:// install.bankid.com")
+    alert("BankID säkerhetsprogram är inte installerat. Gå till https://install.bankid.com")
   }
 }

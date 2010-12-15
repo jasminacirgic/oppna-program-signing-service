@@ -5,9 +5,10 @@ package se.vgregion.web.security.services;
 
 import java.net.URI;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import se.vgregion.domain.security.pkiclient.PkiClient;
+import se.vgregion.domain.security.pkiclient.ELegType;
 
 /**
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
@@ -15,22 +16,11 @@ import se.vgregion.domain.security.pkiclient.PkiClient;
  */
 public class SignatureData {
     private URI submitUri;
-    private String postbackUrl;
-    private String nonce;
-    private String tbs;
-    private PkiClient pkiClient;
-    private String encodedTbs;
+    private String nonce = "";
+    private String tbs = "";
+    private String encodedTbs = "";
+    private ELegType clientType;
     private String signature;
-
-    public SignatureData(String tbs, String encocedTbs, URI submitUri, String nonce, String postbackUrl,
-            PkiClient pkiClient) {
-        this.tbs = tbs;
-        this.encodedTbs = encocedTbs;
-        this.submitUri = submitUri;
-        this.nonce = nonce;
-        this.postbackUrl = postbackUrl;
-        this.pkiClient = pkiClient;
-    }
 
     public String getTbs() {
         return tbs;
@@ -38,6 +28,14 @@ public class SignatureData {
 
     public void setTbs(String tbs) {
         this.tbs = tbs;
+    }
+
+    public void setEncodedTbs(String encodedTbs) {
+        this.encodedTbs = encodedTbs;
+    }
+
+    public String getEncodedTbs() {
+        return encodedTbs;
     }
 
     public void setSubmitUri(URI submitUri) {
@@ -56,28 +54,8 @@ public class SignatureData {
         return nonce;
     }
 
-    public void setPostbackUrl(String postbackUrl) {
-        this.postbackUrl = postbackUrl;
-    }
-
-    public String getPostbackUrl() {
-        return postbackUrl;
-    }
-
-    public void setPkiClient(PkiClient pkiClient) {
-        this.pkiClient = pkiClient;
-    }
-
-    public PkiClient getPkiClient() {
-        return pkiClient;
-    }
-
-    public void setEncodedTbs(String encodedTbs) {
-        this.encodedTbs = encodedTbs;
-    }
-
-    public String getEncodedTbs() {
-        return encodedTbs;
+    public String getEncodedNonce() {
+        return encode(nonce);
     }
 
     public void setSignature(String signature) {
@@ -88,8 +66,21 @@ public class SignatureData {
         return signature;
     }
 
+    private static String encode(String s) {
+        return Base64.encodeBase64String(s.getBytes()).trim();
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this).toString();
     }
+
+    public void setClientType(ELegType clientType) {
+        this.clientType = clientType;
+    }
+
+    public ELegType getClientType() {
+        return clientType;
+    }
+
 }

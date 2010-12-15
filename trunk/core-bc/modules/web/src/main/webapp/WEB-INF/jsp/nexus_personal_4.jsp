@@ -8,23 +8,25 @@
 </head>
 
 <body>
-  <object name='signer' width=0 height=0 classid='CLSID:6969E7D5-223A-4982-9B79-CC4FAC2D5E5E'>
-    <param name='DataToBeSigned' value='${signData.tbs}' />
-    <param name='CharacterEncoding' value='UTF-8' />
-    <param name='IncludeCaCert' value='true' />
-    <param name='IncludeRootCaCert' value='true' />
-    <param name='PostURL' value='${signData.postbackUrl}' />
-    <param name='Base64' value='true' />
-    <param name='SignReturnName' value='signature' />
+  <object name="signer" width=0 height=0 classid="CLSID:6969E7D5-223A-4982-9B79-CC4FAC2D5E5E">
+    <param name="DataToBeSigned" value="${signData.encodedTbs}" />
+    <param name="CharacterEncoding" value="UTF-8" />
+    <param name="IncludeCaCert" value="true" />
+    <param name="IncludeRootCaCert" value="true" />
+    <param name="PostURL" value="${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}" />
+    <param name="Base64" value="true" />
+    <param name="SignReturnName" value="signature" />
+    <param name="DataReturnName" value="encodedTbs">
   </object>
-  <object name='signer' width=0 height=0 type='application/x-personal-signer'>
-    <param name='DataToBeSigned' value='${signData.tbs}' />
-    <param name='SignReturnName' value='signature' />
-    <param name='IncludeCaCert' value='true' />
-    <param name='IncludeRootCaCert' value='true' />
-    <param name='PostURL' value='${signData.postbackUrl}' />
-    <param name='Base64' value='true' />
-    <param name='CharacterEncoding' value='UTF-8' />
+  <object name="signer" width=0 height=0 type="application/x-personal-signer">
+    <param name="DataToBeSigned" value="${signData.encodedTbs}" />
+    <param name="SignReturnName" value="signature" />
+    <param name="IncludeCaCert" value="true" />
+    <param name="IncludeRootCaCert" value="true" />
+    <param name="PostURL" value="${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}" />
+    <param name="Base64" value="true" />
+    <param name="CharacterEncoding" value="UTF-8" />
+    <param name="DataReturnName" value="encodedTbs">
   </object>
   <jsp:include page="jsp/supportedBrowsers.jsp" />
 </body>

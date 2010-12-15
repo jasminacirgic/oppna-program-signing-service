@@ -2,7 +2,7 @@ $(document).ready(function() {
   $form = $('form#sign-selection');
   
   //Replace radio buttons and label with a submit link
-  $('input[name=clientType]:radio', $form).each(function(i, radio) {
+  $('input:radio', $form).each(function(i, radio) {
     var $radio = $(radio);
     var $label = $('label[for=' + $radio.attr('id') + ']')
     $('<a></a>', {href: '#'}).append($label.text()).click(function() {

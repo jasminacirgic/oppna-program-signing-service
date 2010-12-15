@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 <head>
@@ -16,29 +17,23 @@
 </head>
 <body>
   <h2>Signera med e-legitimation från:</h2>
-  <form method="post" action="prepare" id="sign-selection">
+  <form:form commandName="signData" id="sign-selection" action="prepare" method="post">
     <fieldset>   
       <legend>e-legitimationer</legend>
       <ul id="e-leg-types">
       <c:forEach items="${clientTypes}" var="clientType">
         <li class="e-leg-type">
-          <input type="radio" name="clientType" id="clientType_${clientType.id}" value="${clientType.id}" class="radio"/>
-          <label for="clientType_${clientType.id}">${clientType.name}</label>
+        <form:radiobutton path="clientType" id="clientType_${clientType.id}" value="${clientType.id}" cssClass="radio" label="${clientType.name}"/>
           <div class="e-leg-type-description">${clientType.description}</div>
         </li>
       </c:forEach>
-        <li class="e-leg-type">
-          <input type="radio" name="clientType" id="clientType_invalid" value="invalid" class="radio"/>
-          <label for="clientType_invalid">Invalid client</label>
-          <div class="e-leg-type-description">Invalid client used for testing</div>
-        </li>
       </ul>
     </fieldset>
     <fieldset class="submit">   
       <input type="submit" value="Signera" class="submit" />
     </fieldset>
-    <input type="hidden" id="tbs" name="tbs" value="${tbs}" />
-    <input type="hidden" id="submitUri" name="submitUri" value="${submitUri}" />
-  </form>
+    <form:hidden id="tbs" path="tbs" />
+    <form:hidden id="submitUri" path="submitUri" />
+  </form:form>
 </body>
 </html>

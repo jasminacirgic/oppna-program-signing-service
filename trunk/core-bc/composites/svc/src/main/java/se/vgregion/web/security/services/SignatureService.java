@@ -29,17 +29,17 @@ public class SignatureService implements ApplicationContextAware {
 
     public SignatureService(Osif osif, String policy) {
         this.osif = osif;
-        this.policy = policy;
-    }
-
-    public String encodeTbs(String tbs) {
-        return Base64.encodeBase64String(tbs.getBytes()).trim();
+        this.policy = policy; // TODO kolla namn-konvention
     }
 
     public void validate(SignatureData signData) throws SignatureException {
         VerifySignatureRequest request = createSignatureRequest(signData);
         VerifySignatureResponse response = osif.verifySignature(request);
         validateResponse(response);
+    }
+
+    public String encodeTbs(String tbs) {
+        return Base64.encodeBase64String(tbs.getBytes()).trim();
     }
 
     private void validateResponse(VerifySignatureResponse response) throws SignatureException {
@@ -55,17 +55,16 @@ public class SignatureService implements ApplicationContextAware {
 
     private VerifySignatureRequest createSignatureRequest(SignatureData signData) {
         VerifySignatureRequest request = new VerifySignatureRequest();
-        request.setTbsText(signData.getTbs());
-        request.setHiddenTbs(signData.getEncodedTbs());
-        request.setNonce(signData.getNonce());
-        request.setProvider(signData.getPkiClient().getId());
+        request.setTbsText(signData.getEncodedTbs());
+        request.setNonce(signData.getEncodedNonce());
+        request.setProvider(signData.getClientType().getPkiClient().getId());
         request.setSignature(signData.getSignature());
         request.setPolicy(policy);
         return request;
     }
 
     public String generateNonce() {
-        return Base64.encodeBase64String(UUID.randomUUID().toString().getBytes()).trim();
+        return UUID.randomUUID().toString();
     }
 
     public String save(SignatureData signData) throws SignatureException {
