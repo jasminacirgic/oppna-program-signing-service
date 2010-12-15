@@ -27,12 +27,12 @@ public class SignatureService implements ApplicationContextAware {
     private Osif osif;
     private String policy;
 
-    public SignatureService(Osif osif, String policy) {
+    public SignatureService(Osif osif, String serviceId) {
         this.osif = osif;
-        this.policy = policy; // TODO kolla namn-konvention
+        this.policy = serviceId;
     }
 
-    public void validate(SignatureData signData) throws SignatureException {
+    public void verifySignature(SignatureData signData) throws SignatureException {
         VerifySignatureRequest request = createSignatureRequest(signData);
         VerifySignatureResponse response = osif.verifySignature(request);
         validateResponse(response);
@@ -86,7 +86,7 @@ public class SignatureService implements ApplicationContextAware {
 
         try {
             System.out.println(submitUri);
-            forwardString = storage.save(submitUri, pkcs7, signatureName);
+            forwardString = storage.submitSignature(submitUri, pkcs7, signatureName);
         } catch (SignatureStoreageException e) {
             throw new SignatureException(e.getMessage(), e);
         } catch (IOException e) {

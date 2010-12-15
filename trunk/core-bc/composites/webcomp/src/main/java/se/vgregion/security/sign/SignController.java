@@ -71,7 +71,7 @@ public class SignController {
             "signature" })
     public String postback(@ModelAttribute("signData") SignatureData signData, HttpServletRequest req)
             throws SignatureException {
-        signatureService.validate(signData);
+        signatureService.verifySignature(signData);
         String redirectLocation = signatureService.save(signData);
         if (redirectLocation != null) {
             return "redirect:" + redirectLocation;

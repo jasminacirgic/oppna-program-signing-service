@@ -9,12 +9,12 @@
     <property name="wsdlDocumentUrl" value="classpath:osif.wsdl" />
     <property name="namespaceUri" value="urn:www.sll.se/wsdl/soap/osif" />
     <property name="serviceName" value="OsifService" />
-    <property name="endpointAddress" value="${osif.endpoint}" />
+    <property name="endpointAddress" value="${eid.endpoint}" />
     <property name="portName" value="osif" />
   </bean>
 
   <bean id="signatureService" class="se.vgregion.web.security.services.SignatureService">
     <constructor-arg ref="osifWebService" />
-    <constructor-arg value="${osif.serviceid}" />
+    <constructor-arg value="${eid.serviceid}" />
   </bean>
 </beans>

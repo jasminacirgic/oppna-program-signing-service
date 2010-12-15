@@ -16,7 +16,7 @@ public class FtpSignatureStorage implements SignatureStorage {
     }
 
     @Override
-    public String save(URI submitUri, byte[] pkcs7, String signatureName) throws SignatureStoreageException {
+    public String submitSignature(URI submitUri, byte[] pkcs7, String signatureName) throws SignatureStoreageException {
         try {
             if (!uploadClient.connect(submitUri) || !uploadClient.login()) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
