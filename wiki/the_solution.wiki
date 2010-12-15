@@ -4,7 +4,7 @@
 =Lösningsbeskrivning=
 <img src="http://oppna-program-signing-service.googlecode.com/svn/wiki/images/solution.png" width="800"/>
 
- # Klienten begär att få något signerat([the_solution#Ordlista] – To Be Signed) av SS. Rekommenderat är att skicka en kontrollsumma av TBS. Kontrollsumman är förslagsvis beräknad utifrån SHA-2(t.ex. SHA-256) för att få en ökad säkerhet. SS behöver även ha en submitUri dit signaturen skall skickas när den är klar. Valbart(optional) är att skicka in en clientType.
+ # Klienten begär att få något signerat([TBS – To Be Signed) av SS. Rekommenderat är att skicka en kontrollsumma av TBS. Kontrollsumman är förslagsvis beräknad utifrån SHA-2(t.ex. SHA-256) för att få en ökad säkerhet. SS behöver även ha en submitUri dit signaturen skall skickas när den är klar. Valbart(optional) är att skicka in en clientType.
  # Har ingen clientType skickats med visas ett val av tillgängliga clientTypes för användaren. SS tar fram ett block av html/xhtml([http://en.wikipedia.org/wiki/Public_key_infrastructure PKI] Client Code) baserat på clientType och TBS som den visar för klienten.
  # [http://en.wikipedia.org/wiki/Public_key_infrastructure PKI]-klienten startar upp för signering hos användaren.
  # Användaren matar in lösenord för sin privata nyckel och TBS signeras. [http://en.wikipedia.org/wiki/Public_key_infrastructure PKI]-klienten postar signaturen [http://en.wikipedia.org/wiki/Cryptographic_Message_Syntax PKSC#7] eller [http://www.w3.org/TR/xmldsig-core/ XML-Signature]) till SS. Vilket format som skickas till SS beror på clientType.
