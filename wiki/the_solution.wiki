@@ -6,7 +6,7 @@
  # Har ingen clientType skickats med visas ett val av tillgängliga clientTypes för användaren. SS tar fram ett block av html/xhtml([http://en.wikipedia.org/wiki/Public_key_infrastructure PKI] Client Code) baserat på clientType och TBS som den visar för klienten.
  # [http://en.wikipedia.org/wiki/Public_key_infrastructure PKI]-klienten startar upp för signering hos användaren.
  # Användaren matar in lösenord för sin privata nyckel och TBS signeras. [http://en.wikipedia.org/wiki/Public_key_infrastructure PKI]-klienten postar signaturen [http://en.wikipedia.org/wiki/Cryptographic_Message_Syntax PKSC#7] eller [http://www.w3.org/TR/xmldsig-core/ XML-Signature]) till SS. Vilket format som skickas till SS beror på clientType.
- # Signaturen verifieras via en [http://sveid.episerverhotell.net/SVEIDtemplates/SVEIDpage.aspx?id=124  OSIF] tjänst.
+ # Signaturen verifieras via en [http://sveid.episerverhotell.net/SVEIDtemplates/SVEIDpage.aspx?id=124 OSIF] tjänst.
  # Status för hur valideringen gick skickas tillbaka till SS.
  # SS skickar signaturen till submitUri för lagring, detta sker över ftps eller https. Om https väljs finns även en möjlighet för applikationen att själv presentera status för signeringen (se steg 7). I annat fall kommer SS att hantera presentationen av status.
  # Om X själv kan och vill presentera status för signeringen gör den en [http://en.wikipedia.org/wiki/HTTP_302 302 redirect] till en url som hanterar presentationen. Om X vill överlåta detta till SS räcker det med att svara med en vanlig [http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 200 OK] response.
