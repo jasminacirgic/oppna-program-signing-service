@@ -19,7 +19,7 @@
  * Steg 10 och 11 kommer endast att inträffa om X gör en [http://en.wikipedia.org/wiki/HTTP_302 302 redirect] i steg 8.
 
 =Säkerhet=
-För att garantera säkerheten bör all kommunikation ske över en krypterad anslutning – https. Det finns dock fortfarande en risk att SS blir utsatt för en attack och ersätts av en ”elak” SS som byter ut signatur och certifikat. För att förhindra detta är det starkt rekommenderat att X sätter upp [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] mot SS. [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] syftar till att genom utbyte av certifikat mellan SS och X kan X grantera att identiteten på SS. Alltså, med tillgång till SS publika nyckel kan X verifiera att det är SS som skickar signaturen till submitUri.
+För att garantera säkerheten bör all kommunikation ske över en krypterad anslutning – https. Det finns dock fortfarande en risk att SS blir utsatt för en attack och [http://en.wikipedia.org/wiki/Man-in-the-middle_attack ersätts av en ”elak”] SS som byter ut signatur och certifikat. För att förhindra detta är det starkt rekommenderat att X sätter upp [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] mot SS. [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] syftar till att genom utbyte av certifikat mellan SS och X kan X grantera att identiteten på SS. Alltså, med tillgång till SS publika nyckel kan X verifiera att det är SS som skickar signaturen till submitUri.
 
 =Ordlista=
 || *Begrepp* || *Förklaring* ||
