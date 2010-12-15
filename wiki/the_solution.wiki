@@ -21,3 +21,13 @@
 =Säkerhet=
 För att garantera säkerheten bör all kommunikation ske över en krypterad anslutning – https. Det finns dock fortfarande en risk att SS blir utsatt för en attack och ersätts av en ”elak” SS som byter ut signatur och certifikat. För att förhindra detta är det starkt rekommenderat att X sätter upp TLS mot SS. TLS syftar till att genom utbyte av certifikat mellan SS och X kan X grantera att identiteten på SS. Alltså, med tillgång till SS publika nyckel kan X verifiera att det är SS som skickar signaturen till submitUri.
 
+=Ordlista/Referenser=
+|| *Begrepp* || *Förklaring* ||
+|| TLS || http://en.wikipedia.org/wiki/Transport_Layer_Security ||
+|| OSIF || http://en.wikipedia.org/wiki/OSI_model ||
+|| TBS || To Be Signed. Data som skall signeras. ||
+|| submitUri  || Uri dit signaturen skall skickas efter signering. ||
+|| clientType || Typ av signering, i dagsläget har Signeringstjänsten stöd för !BankId, Nordea, Posten och SITHS. ||
+|| PKCS#7 || http://en.wikipedia.org/wiki/Cryptographic_Message_Syntax ||
+|| PKI || http://en.wikipedia.org/wiki/Public_key_infrastructure ||
+|| XML-Signature || http://www.w3.org/TR/xmldsig-core/ ||
