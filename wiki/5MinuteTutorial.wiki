@@ -1,14 +1,38 @@
 #summary Singeringstjänsten på 5 minuter
 #labels Phase-Implementation
 
-= Introduction =
+= Krav =
 
-Add your content here.
+För att kunna följa denna tutorial så krävs följande
+ # En fungerande instans av signeringstjänsten.
+ # [https://install.bankid.com BISP] är installerat på klienten.
+ # Tillgång till antingen ett hårt eller mjukt !BankId-certifikat.
+
+= Introduktion =
+
+Signeringstjänsten är framtagen för att andra system skall få hjälp med att signera viktig information och dokument. Detta görs i dagsläget genom att posta in signeringsdata till tjänsten. Nedan följer en kortfattad tutorial över hur man som konsument använder sig av signeringstjänsten.
 
 
-= Details =
+= Klara, Färdiga, Gå! =
+ * Anta att vi vill signera följande text: _Sätt in 1000 kronor på konto 123456-7_.
+ * Anta även att vi vill göra det med ett !BankId-certifikat.
+ * Dessutom antar vi att signeringstjänsten finns på följande adress: https://signer-service.com.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Skapa då en html-sida med följande formulär:
+{{{
+  <form method="post" action="https://signer-service.com/sign/prepare">
+      <input name="tbs"  value="Sätt in 1000 kronor på konto 123456-7" type="text" />
+      <input name="submitUri"  value="http://myapplication.com/saveSignature" type="text" />
+      <input name="clientType" value="BankId" type="text" />
+      <input type="submit" value="Signera" />
+  </form>
+}}} 
+
+|| *Parameter* || *Förklaring* ||
+||tbs||Innehåller den data som man vill signera||
+||submitUri||Url dit man vill skicka signaturen||
+||clientType||Det certifikat som man vill signera med (!BankId, Telia, Nordea eller SITHS)||
+
+Följande fönster visas där du matar in lösenordet på ditt !BankId-certifikat:
+
+<img src="http://oppna-program-signing-service.googlecode.com/svn/wiki/images/BankId-Sign.png" width="400"/>
