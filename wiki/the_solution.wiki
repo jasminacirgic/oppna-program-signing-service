@@ -1,0 +1,10 @@
+#summary Lösningen
+#labels Featured,Phase-Design
+
+= Introduction =
+
+Add your content here.
+
+
+= Details =
+<img src="http://oppna-program-signing-service.googlecode.com/svn/wiki/images/solution.png" width="800"/>
