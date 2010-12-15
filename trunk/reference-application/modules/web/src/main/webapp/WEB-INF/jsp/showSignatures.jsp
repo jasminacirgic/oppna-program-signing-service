@@ -9,7 +9,7 @@
 </head>
 <body>
   <form action="clean" method="post">
-    <a href="/appx/">Tillbaka</a>&nbsp;
+    <a href="./">Tillbaka</a>&nbsp;
     <button type="submit">Rensa Signaturer</button>
   </form>
   <ul>

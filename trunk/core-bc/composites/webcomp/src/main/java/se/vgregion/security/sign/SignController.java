@@ -40,8 +40,7 @@ public class SignController {
         return Collections.unmodifiableCollection(eLegTypes.findAll());
     }
 
-    @ModelAttribute("postbackUrl")
-    public String getPkiPostBackUrl(HttpServletRequest req) {
+    private String getPkiPostBackUrl(HttpServletRequest req) {
         StringBuilder pkiPostUrl = new StringBuilder();
         String verifyUrl = "http" + (req.isSecure() ? "s" : "") + "://" + req.getServerName() + ":"
                 + req.getServerPort() + req.getContextPath() + "/sign/verify";
@@ -63,7 +62,7 @@ public class SignController {
 
         signData.setNonce(signatureService.generateNonce());
         signData.setEncodedTbs(signatureService.encodeTbs(signData.getTbs()));
-
+        model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
         model.addAttribute("signData", signData);
         return signData.getClientType().getPkiClient().toString();
     }
@@ -79,5 +78,4 @@ public class SignController {
         }
         return "verified";
     }
-
 }

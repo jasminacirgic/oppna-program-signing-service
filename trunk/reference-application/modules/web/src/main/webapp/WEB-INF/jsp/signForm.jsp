@@ -12,7 +12,7 @@
 
 <body>
   <h2>Demo signering</h2>
-  <form method="post" action="https://localhost:9443/ss/sign/prepare">
+  <form method="post" action="https://antonio.vgregion.se:7443/ss/sign/prepare">
     <fieldset>   
       <ul>
         <li>
@@ -20,14 +20,13 @@
           <input type="text" id="tbs" name="tbs" value="Hej">
         </li>
         <li>
-          <input type="radio" name="submitUri" id="submitUri_http" value="http://localhost:7080/appx/saveSignature" class="radio"/>
+          <input type="radio" name="submitUri" id="submitUri_http" value="http://ant.vgregion.se:7080/appx/appx/saveSignature" class="radio"/>
           <label for="submitUri_http">http</label>
-          <input type="radio" name="submitUri" id="submitUri_https" value="https://localhost:7443/appx/saveSignature" checked="checked" class="radio"/>
+          <input type="radio" name="submitUri" id="submitUri_https" value="https://ant.vgregion.se:7443/appx/appx/saveSignature" checked="checked" class="radio"/>
           <label for="submitUri_http">https</label>
         </li>
       </ul>
     </fieldset>
-
     <fieldset class="submit">   
       <input type="submit" value="Signera" />
     </fieldset>
