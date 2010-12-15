@@ -12,11 +12,11 @@
  # Status för hur valideringen gick skickas tillbaka till SS.
  # SS skickar signaturen till submitUri för lagring, detta sker över ftps eller https. Om https väljs finns även en möjlighet för applikationen att själv presentera status för signeringen (se steg 7). I annat fall kommer SS att hantera presentationen av status.
  # Om X själv kan och vill presentera status för signeringen gör den en 302 redirect till en url som hanterar presentationen. Om X vill överlåta detta till SS räcker det med att svara med en vanlig 200 response.
- # Om SS får en 302 redirect från X skickar även SS en 302 redirect tillbaka till klienten med samma location som X satte i sin redirect. Om SS får en 200 OK visar den en status sida för klienten.
+ # Om SS får en [http://en.wikipedia.org/wiki/HTTP_302 302 redirect] från X skickar även SS en [http://en.wikipedia.org/wiki/HTTP_302 302 redirect] tillbaka till klienten med samma location som X satte i sin redirect. Om SS får en [http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 200 OK] visar den en status sida för klienten.
  # 302 redirect till location satt av X.
  # X visar ett svar för klienten.
 *Kommentarer*
- * Steg 10 och 11 kommer endast att inträffa om X gör en 302 redirect i steg 8.
+ * Steg 10 och 11 kommer endast att inträffa om X gör en [http://en.wikipedia.org/wiki/HTTP_302 302 redirect] i steg 8.
 
 =Säkerhet=
 För att garantera säkerheten bör all kommunikation ske över en krypterad anslutning – https. Det finns dock fortfarande en risk att SS blir utsatt för en attack och ersätts av en ”elak” SS som byter ut signatur och certifikat. För att förhindra detta är det starkt rekommenderat att X sätter upp [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] mot SS. [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] syftar till att genom utbyte av certifikat mellan SS och X kan X grantera att identiteten på SS. Alltså, med tillgång till SS publika nyckel kan X verifiera att det är SS som skickar signaturen till submitUri.
