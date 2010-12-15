@@ -1,5 +1,5 @@
-#summary Lösningen
 #labels Featured,Phase-Design
+Lösningsbeskrivning av signeringstjänsten
 
 =Lösningsbeskrivning=
 <img src="http://oppna-program-signing-service.googlecode.com/svn/wiki/images/solution.png" width="800"/>
