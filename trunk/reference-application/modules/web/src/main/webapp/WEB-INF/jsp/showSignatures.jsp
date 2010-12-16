@@ -14,7 +14,7 @@
   </form>
   <ul>
     <c:forEach items="${signatures}" var="signature">
-      <li>${signature}</li><br/>    
+      <li><pre><c:out value="${signature.decoded}" escapeXml="true" /></pre></li><br/>    
     </c:forEach>
   </ul>
 </body>

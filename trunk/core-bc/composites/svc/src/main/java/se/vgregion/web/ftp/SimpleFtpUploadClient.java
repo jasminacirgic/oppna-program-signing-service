@@ -1,7 +1,7 @@
 package se.vgregion.web.ftp;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -131,11 +131,11 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
         ftpClient = null;
     }
 
-    public boolean upload(byte[] file, String fileName) {
+    public boolean upload(InputStream data, String fileName) {
         if (ftpClient == null) {
             throw new IllegalStateException("No ftp-client is found");
         }
-        if (!createAndChangeWorkingDirectory() || !uploadFile(file, fileName)) {
+        if (!createAndChangeWorkingDirectory() || !uploadFile(data, fileName)) {
             writeErrorMessage("Unable to upload file to: %1$s", uri.toString());
             return false;
         }
@@ -156,9 +156,9 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
         return success;
     }
 
-    private boolean uploadFile(byte[] file, String fileName) {
+    private boolean uploadFile(InputStream data, String fileName) {
         try {
-            return ftpClient.storeFile(fileName + ".p7", new ByteArrayInputStream(file));
+            return ftpClient.storeFile(fileName + ".p7", data);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e.getCause());
             return false;

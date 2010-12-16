@@ -13,8 +13,6 @@ import se.vgregion.web.HttpUtil;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-
 public class HttpSignatureStorage implements SignatureStorage {
 
     private DefaultHttpClient httpClient;
@@ -24,10 +22,10 @@ public class HttpSignatureStorage implements SignatureStorage {
     }
 
     @Override
-    public String submitSignature(URI submitUri, byte[] pkcs7, String signatureName) throws SignatureStoreageException,
-            IOException {
+    public String submitSignature(URI submitUri, String signature, String signatureName)
+            throws SignatureStoreageException, IOException {
         HttpPost httpPost = new HttpPost(submitUri);
-        HttpEntity entity = HttpUtil.createEntity(Base64.encode(pkcs7));
+        HttpEntity entity = HttpUtil.createEntity(signature);
         httpPost.setEntity(entity);
         HttpResponse response = httpClient.execute(httpPost);
         String returnLocation = null;

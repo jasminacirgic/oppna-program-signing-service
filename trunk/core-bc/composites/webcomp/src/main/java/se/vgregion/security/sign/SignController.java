@@ -49,16 +49,16 @@ public class SignController {
         return pkiPostUrl.toString();
     }
 
-    @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = "tbs")
-    public String prepareSignNoClientType(HttpServletRequest request, Model model,
-            @ModelAttribute("signData") SignatureData signData) throws IOException {
+    @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = { "tbs", "submitUri" })
+    public String prepareSignNoClientType(Model model, @ModelAttribute SignatureData signData,
+            HttpServletRequest req) throws IOException {
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
     }
 
-    @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = { "tbs", "clientType" })
-    public String prepareSign(HttpServletRequest request, @ModelAttribute("signData") SignatureData signData,
-            Model model, HttpServletRequest req) throws IOException, URISyntaxException {
+    @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = { "tbs", "submitUri", "clientType" })
+    public String prepareSign(HttpServletRequest request, @ModelAttribute SignatureData signData, Model model,
+            HttpServletRequest req) throws IOException, URISyntaxException {
 
         signData.setNonce(signatureService.generateNonce());
         signData.setEncodedTbs(signatureService.encodeTbs(signData.getTbs()));
@@ -67,9 +67,9 @@ public class SignController {
         return signData.getClientType().getPkiClient().toString();
     }
 
-    @RequestMapping(value = "/verify", method = RequestMethod.POST, params = { "encodedTbs", "clientType",
-            "signature" })
-    public String postback(@ModelAttribute("signData") SignatureData signData, HttpServletRequest req)
+    @RequestMapping(value = "/verify", method = RequestMethod.POST, params = { "encodedTbs", "submitUri",
+            "clientType", "signature" })
+    public String postback(@ModelAttribute SignatureData signData, HttpServletRequest req)
             throws SignatureException {
         signatureService.verifySignature(signData);
         String redirectLocation = signatureService.save(signData);

@@ -2,6 +2,7 @@ package se.vgregion.web.ftp;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -166,7 +167,7 @@ public class SimpleFtpUploadTest {
         try {
             assertTrue(ftpClient.connect(ftpUri));
             assertTrue(ftpClient.login());
-            assertTrue(ftpClient.upload(byteArrayToSave, fileName));
+            assertTrue(ftpClient.upload(new ByteArrayInputStream(byteArrayToSave), fileName));
 
             // FileEntry file = (FileEntry) ftpServer.getFileSystem().getEntry(
             // "/" + path + "/" + fileName + ".p7");

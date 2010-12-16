@@ -1,5 +1,7 @@
 package se.vgregion.web.signaturestorage.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,14 +18,17 @@ public class FtpSignatureStorage implements SignatureStorage {
     }
 
     @Override
-    public String submitSignature(URI submitUri, byte[] pkcs7, String signatureName) throws SignatureStoreageException {
+    public String submitSignature(URI submitUri, String signature, String signatureName)
+            throws SignatureStoreageException {
         try {
             if (!uploadClient.connect(submitUri) || !uploadClient.login()) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
             }
-            if (!uploadClient.upload(pkcs7, signatureName)) {
+            if (!uploadClient.upload(new ByteArrayInputStream(signature.getBytes("UTF-8")), signatureName)) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
             }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         } finally {
             if (!uploadClient.logoutAndDisconnect()) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());

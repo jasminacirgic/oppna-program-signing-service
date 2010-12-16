@@ -76,7 +76,6 @@ public class SignatureService implements ApplicationContextAware {
 
         URI submitUri = signData.getSubmitUri();
         setupIOBackend(submitUri.getScheme());
-        byte[] pkcs7 = Base64.decodeBase64(signData.getSignature());
 
         if (storage == null) {
             throw new SignatureException(new IllegalStateException(
@@ -85,8 +84,7 @@ public class SignatureService implements ApplicationContextAware {
         String forwardString = null;
 
         try {
-            System.out.println(submitUri);
-            forwardString = storage.submitSignature(submitUri, pkcs7, signatureName);
+            forwardString = storage.submitSignature(submitUri, signData.getSignature(), signatureName);
         } catch (SignatureStoreageException e) {
             throw new SignatureException(e.getMessage(), e);
         } catch (IOException e) {
