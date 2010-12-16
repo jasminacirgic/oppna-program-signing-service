@@ -42,12 +42,7 @@ Ett exempel på hur en sådan mottagande servlet kan se ut visas nedan (här imp
 
 {{{
     @RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.MOVED_TEMPORARILY)
-    public void postback(HttpServletRequest req, HttpServletResponse response, @RequestBody String pkcs7) {
-        byte[] decodedPkcs7 = Base64.decodeBase64(pkcs7);
-        signatures.add(new Signature(decodedPkcs7));
-        String relocate = "http://" + req.getLocalName() + ":7080" + req.getContextPath() + req.getServletPath()
-                + "/showSignStatus";
-        response.setHeader("Location", relocate);
+    public void postback(@RequestBody byte[] signature) {
+        signatures.store(new Signature(signature));
     }
 }}}
