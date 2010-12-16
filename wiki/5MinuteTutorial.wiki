@@ -19,12 +19,12 @@ För att kunna följa denna tutorial så krävs följande
 
 Skapa då en html-sida med följande formulär:
 {{{
-  <form method="post" action="https://signer-service.com/sign/prepare">
-      <input name="tbs"  value="Sätt in 1000 kronor på konto 123456-7" type="text" />
-      <input name="submitUri"  value="http://myapplication.com/saveSignature" type="text" />
-      <input name="clientType" value="BankId" type="text" />
-      <input type="submit" value="Signera" />
-  </form>
+<form method="post" action="https://signer-service.com/sign/prepare">
+  <input name="tbs"  value="Sätt in 1000 kronor på konto 123456-7" type="text" />
+  <input name="submitUri"  value="http://myapplication.com/saveSignature" type="text" />
+  <input name="clientType" value="BankId" type="text" />
+  <input type="submit" value="Signera" />
+</form>
 }}} 
 
 || *Parameter* || *Förklaring* ||
@@ -41,8 +41,8 @@ Signaturen skickas till den specificerade adressen i submitUri med parameternamn
 Ett exempel på hur en sådan mottagande servlet kan se ut visas nedan (här implementerad i springs mvc-ramverk):
 
 {{{
-    @RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
-    public void postback(@RequestBody byte[] signature) {
-        signatures.store(new Signature(signature));
-    }
+@RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
+  public void postback(@RequestBody byte[] signature) {
+  signatures.store(new Signature(signature));
+}
 }}}
