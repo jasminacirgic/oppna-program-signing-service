@@ -43,6 +43,6 @@ Ett exempel på hur en sådan mottagande servlet kan se ut visas nedan (här imp
 {{{
 @RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
   public void postback(@RequestBody byte[] signature) {
-  signatures.store(new Signature(signature));
+  signatures.store(signature);
 }
 }}}
