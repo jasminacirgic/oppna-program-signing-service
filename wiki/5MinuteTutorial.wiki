@@ -45,3 +45,6 @@ Signaturen skickas till den angivna adressen i _submitUri_. Mottagaren av signat
   signatures.store(signature);
 }
 }}}
+
+= Klart! = 
+För att få en mer djupgående genomgång kika på InDepth.
