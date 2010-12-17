@@ -5,16 +5,20 @@ import java.net.URI;
 import java.security.SignatureException;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import se.sll.wsdl.soap.osif.EncodeTBSRequest;
+import se.sll.wsdl.soap.osif.EncodeTBSResponse;
+import se.sll.wsdl.soap.osif.GenerateChallengeRequest;
+import se.sll.wsdl.soap.osif.GenerateChallengeResponse;
 import se.sll.wsdl.soap.osif.Osif;
 import se.sll.wsdl.soap.osif.VerifySignatureRequest;
 import se.sll.wsdl.soap.osif.VerifySignatureResponse;
+import se.vgregion.domain.security.pkiclient.PkiClient;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
@@ -38,8 +42,21 @@ public class SignatureService implements ApplicationContextAware {
         validateResponse(response);
     }
 
-    public String encodeTbs(String tbs) {
-        return Base64.encodeBase64String(tbs.getBytes()).trim();
+    public String encodeTbs(String tbs, PkiClient provider) throws SignatureException {
+        EncodeTBSRequest request = new EncodeTBSRequest();
+        request.setPolicy(policy);
+        request.setProvider(provider.getId());
+        request.setTbsText(tbs);
+        EncodeTBSResponse response = osif.encodeTBS(request);
+        if (response.getStatus().getErrorCode() != 0) {
+            String errorMsg = response.getStatus().getErrorGroupDescription() + ": "
+                    + response.getStatus().getErrorCodeDescription();
+            LOGGER.error(errorMsg);
+
+            throw new SignatureException(response.getStatus().getErrorGroupDescription() + ": "
+                    + response.getStatus().getErrorCodeDescription());
+        }
+        return response.getText();
     }
 
     private void validateResponse(VerifySignatureResponse response) throws SignatureException {
@@ -63,8 +80,20 @@ public class SignatureService implements ApplicationContextAware {
         return request;
     }
 
-    public String generateNonce() {
-        return UUID.randomUUID().toString();
+    public String generateNonce(PkiClient provider) throws SignatureException {
+        GenerateChallengeRequest request = new GenerateChallengeRequest();
+        request.setPolicy(policy);
+        request.setProvider(provider.getId());
+        GenerateChallengeResponse response = osif.generateChallenge(request);
+        if (response.getStatus().getErrorCode() != 0) {
+            String errorMsg = response.getStatus().getErrorGroupDescription() + ": "
+                    + response.getStatus().getErrorCodeDescription();
+            LOGGER.error(errorMsg);
+
+            throw new SignatureException(response.getStatus().getErrorGroupDescription() + ": "
+                    + response.getStatus().getErrorCodeDescription());
+        }
+        return response.getChallenge();
     }
 
     public String save(SignatureData signData) throws SignatureException {

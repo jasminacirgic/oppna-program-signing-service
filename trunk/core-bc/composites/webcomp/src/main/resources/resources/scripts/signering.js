@@ -80,8 +80,7 @@ function startSign(tbs, nonce) {
             document.signData.submit();
             return true;
           }
-        }
-        else {
+        } else {
           Checkerror("performAction", Plugin.GetLastError());
         }
   }

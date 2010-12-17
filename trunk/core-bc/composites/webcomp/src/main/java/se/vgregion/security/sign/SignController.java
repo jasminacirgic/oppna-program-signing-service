@@ -58,10 +58,11 @@ public class SignController {
 
     @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = { "tbs", "submitUri", "clientType" })
     public String prepareSign(HttpServletRequest request, @ModelAttribute SignatureData signData, Model model,
-            HttpServletRequest req) throws IOException, URISyntaxException {
+            HttpServletRequest req) throws IOException, URISyntaxException, SignatureException {
 
-        signData.setNonce(signatureService.generateNonce());
-        signData.setEncodedTbs(signatureService.encodeTbs(signData.getTbs()));
+        String encodedTbs = signatureService.encodeTbs(signData.getTbs(), signData.getClientType().getPkiClient());
+        signData.setEncodedTbs(encodedTbs);
+        signData.setNonce(signatureService.generateNonce(signData.getClientType().getPkiClient()));
         model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
         model.addAttribute("signData", signData);
         return signData.getClientType().getPkiClient().toString();
