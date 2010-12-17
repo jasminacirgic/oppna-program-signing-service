@@ -32,7 +32,8 @@ Skapa då en html-sida med följande formulär:
 ||submitUri||Uri dit man vill skicka signaturen. Kan vara antingen en servlet eller en ftp-server. I praktiken bör denna överföring göras över ssl.||
 ||clientType||Det certifikat som man vill signera med (!BankId, Telia, Nordea eller SITHS)||
 
-När man postat in formuläret så visas följande fönster där man matar in lösenordet på sitt !BankId-certifikat:
+
+När formuläret postats in kommer signeringstjänsten att visa följande fönster för användaren där lösenordet för !BankId-certifikatet matas in:
 
 <img src="http://oppna-program-signing-service.googlecode.com/svn/wiki/images/BankId-Sign.png" width="400"/>
 
