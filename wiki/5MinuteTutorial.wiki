@@ -28,17 +28,15 @@ Skapa då en html-sida med följande formulär:
 }}} 
 
 || *Parameter* || *Förklaring* ||
-||tbs||Innehåller den data som man vill signera||
-||submitUri||Url dit man vill skicka signaturen||
+||tbs||Innehåller den data som man vill signera. I ett mer realistiskt exempel så bör ett kondensat(hash) räknas fram för signering istället.||
+||submitUri||Uri dit man vill skicka signaturen. Kan vara antingen en servlet eller en ftp-server. I praktiken bör denna överföring göras över ssl.||
 ||clientType||Det certifikat som man vill signera med (!BankId, Telia, Nordea eller SITHS)||
 
 När man postat in formuläret så visas följande fönster där man matar in lösenordet på sitt !BankId-certifikat:
 
 <img src="http://oppna-program-signing-service.googlecode.com/svn/wiki/images/BankId-Sign.png" width="400"/>
 
-Signaturen skickas till den specificerade adressen i submitUri med parameternamnet _signature_.
-
-Ett exempel på hur en sådan mottagande servlet kan se ut visas nedan (här implementerad i springs mvc-ramverk):
+Signaturen skickas till den angivna adressen i _submitUri_. Mottagaren av signaturen är antingen en servlet eller en ftp-server. I fallet där man har en servlet som mottagare så visas här ett exempel på hur en sådan skulle kunna implementeras i springs mvc-ramverk:
 
 {{{
 @RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
