@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class ClientXController {
-    // private Set<Signature> signatures = new HashSet<Signature>();
-
     @Autowired
     private SignatureRepository signatures;
 
@@ -47,7 +45,7 @@ public class ClientXController {
 
     @RequestMapping(value = "/clean", method = RequestMethod.POST)
     public String cleanSignatures() {
-        signatures.clear();
+        signatures.removeAll();
         return "showSignatures";
     }
 }

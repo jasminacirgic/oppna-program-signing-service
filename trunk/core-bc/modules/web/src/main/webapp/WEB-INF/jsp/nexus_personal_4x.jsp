@@ -12,7 +12,7 @@
 <body onload='startSign("${signData.encodedTbs}", "${signData.encodedNonce}")'>
   <form:form commandName="signData" method="post" name="signData" action="verify">
     <form:hidden path="signature" value="" />
-    <form:hidden path="encodedTbs" value="${encodedTbs}" />
+    <form:hidden path="tbs" value="${encodedTbs}" />
     <form:hidden path="nonce" value="${encodedNonce}" />
     <form:hidden path="submitUri" value="${submitUri}" />
     <input type="hidden" id="clientType" name="clientType" value="${signData.clientType.id}" />
