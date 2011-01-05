@@ -12,9 +12,12 @@ import org.apache.ftpserver.ssl.SslConfigurationFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 
-public class MyFtpServerFactory {
+public final class FtpServerFactoryHelper {
     private static final File FTPSERVER_KEYSTORE = new File(getBaseDir(), "src/test/resources/ftpserver.jks");
     private static final File USERS_FILE = new File(getBaseDir(), "src/test/resources/user.properties");
+
+    private FtpServerFactoryHelper() {
+    }
 
     private static File getBaseDir() {
         // check Maven system prop first and use if set

@@ -45,7 +45,7 @@ public class SimpleFtpUploadTest {
             System.setProperty("javax.net.debug", "ssl");
         }
         initDirs();
-        ftpServer = MyFtpServerFactory.createServer().createServer();
+        ftpServer = FtpServerFactoryHelper.createServer().createServer();
         ftpServer.start();
     }
 

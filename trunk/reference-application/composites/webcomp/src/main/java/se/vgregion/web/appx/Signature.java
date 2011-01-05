@@ -7,7 +7,7 @@ import org.apache.commons.codec.binary.Base64;
 import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
 
 public class Signature extends AbstractEntity<Integer> {
-    byte[] signature;
+    private byte[] signature;
 
     public Signature(byte[] signature) {
         this.signature = signature;

@@ -78,10 +78,11 @@ public final class URIUtils {
      * 
      * @param uri
      *            the URI to extract the path from
-     * @return the path of the URI, or <code>null</code> if the path is undefined
+     * @return the path of the URI, or <code>an empty string</code> if the path is undefined
      */
     public static String extractPath(URI uri) {
-        return uri.getPath();
+        String path = uri.getPath();
+        return StringUtils.isBlank(path) ? "" : path;
     }
 
     private static String extractUserInfo(String userInfo, UserInfoType userInfoType) {

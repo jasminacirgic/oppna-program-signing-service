@@ -38,6 +38,12 @@ public class FtpSignatureStorage implements SignatureStorage {
     @Override
     public String submitSignature(URI submitUri, String signature, String signatureName)
             throws SignatureStoreageException {
+        if (StringUtils.isBlank(signature)) {
+            throw new IllegalArgumentException("Signature is not allowed to be empty");
+        }
+        if (StringUtils.isBlank(signatureName)) {
+            throw new IllegalArgumentException("Signature name is not allowed to be empty");
+        }
         try {
             if (!uploadClient.connect(submitUri) || !uploadClient.login()) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
