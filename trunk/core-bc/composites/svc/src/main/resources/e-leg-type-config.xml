@@ -4,17 +4,17 @@
 
   <!-- TODO Dokumentera konfiguration -->
 
-  <bean id="e-leg-repo" class="se.vgregion.security.infrastructure.inmemory.InMemELegTypeRepository" />
+  <bean id="e-leg-repo" class="se.vgregion.security.infrastructure.inmemory.InMemoryBatchRepository" />
 
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject" ref="e-leg-repo" />
     <property name="targetMethod" value="store" />
     <property name="arguments">
-      <list>
+      <list value-type="se.vgregion.domain.security.pkiclient.ELegType">
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">
           <constructor-arg name="name" value="BankId" />
           <constructor-arg name="description"
-            value="Danske Bank/Östgöta Enskilda Bank, Handelsbanken, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank" />
+            value="Danske Bank/Östgöta Enskilda Bank, HandelsbankenXXXXX, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank" />
           <constructor-arg name="pkiClient" value="NEXUS_PERSONAL_4X" />
         </bean>
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">

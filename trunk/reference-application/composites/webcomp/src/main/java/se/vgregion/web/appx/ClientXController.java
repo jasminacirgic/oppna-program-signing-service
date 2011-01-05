@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import se.vgregion.dao.domain.patterns.repository.Repository;
+
 @Controller
 public class ClientXController {
+
     @Autowired
-    private SignatureRepository signatures;
+    private Repository<Signature, Integer> signatures;
 
     @ModelAttribute("signatures")
     public Collection<Signature> getSignatures() {
@@ -45,7 +48,10 @@ public class ClientXController {
 
     @RequestMapping(value = "/clean", method = RequestMethod.POST)
     public String cleanSignatures() {
-        signatures.removeAll();
+        Collection<Signature> signatures = getSignatures();
+        for (Signature signature : signatures) {
+            signatures.remove(signature);
+        }
         return "showSignatures";
     }
 }

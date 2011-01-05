@@ -21,6 +21,9 @@ public class KeyManagerFactoryBean extends AbstractFactoryBean<KeyManager> {
 
     /**
      * Set keyStore, populated via Spring XML property element.
+     * 
+     * @param keyStore
+     *            the keyStore
      */
     public void setKeyStore(KeyStore keyStore) {
         this.keyStore = keyStore;
@@ -28,16 +31,36 @@ public class KeyManagerFactoryBean extends AbstractFactoryBean<KeyManager> {
 
     /**
      * Set keyStore password, populated via Spring XML property element.
+     * 
+     * @param password
+     *            the password
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Return the type of object that this FactoryBean creates.
+     * 
+     * @return the type of object that this FactoryBean creates
+     * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+     */
     @Override
     public Class<?> getObjectType() {
         return KeyManager.class;
     }
 
+    /**
+     * The method that construct the {@link KeyManager} returned by this factory.
+     * <p>
+     * Invoked on initialization of this FactoryBean in case of a singleton; else, on each {@link #getObject()}
+     * call.
+     * 
+     * @return the keyManager returned by this factory
+     * @throws Exception
+     *             if an exception occured during object creation
+     * @see #getObject()
+     */
     @Override
     protected KeyManager createInstance() throws Exception {
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory

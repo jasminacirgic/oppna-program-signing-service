@@ -10,13 +10,31 @@ import se.vgregion.web.ftp.SimpleFtpUploadClient;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
+/**
+ * An Ftp-implementation of {@link SignatureStorage}. Has functionality to submit a signature to an ftp server
+ * using ftp or ftps.
+ * 
+ * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
+ */
 public class FtpSignatureStorage implements SignatureStorage {
     private SimpleFtpUploadClient uploadClient;
 
+    /**
+     * Constructs an instance of {@link FtpSignatureStorage}.
+     * 
+     * @param simpleFtpUploadClient
+     *            an ftp client to use when submiting the signature
+     */
     public FtpSignatureStorage(SimpleFtpUploadClient simpleFtpUploadClient) {
         this.uploadClient = simpleFtpUploadClient;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see se.vgregion.web.signaturestorage.SignatureStorage#submitSignature(java.net.URI, java.lang.String,
+     * java.lang.String)
+     */
     @Override
     public String submitSignature(URI submitUri, String signature, String signatureName)
             throws SignatureStoreageException {

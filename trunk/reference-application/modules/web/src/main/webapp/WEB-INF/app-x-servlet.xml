@@ -9,10 +9,13 @@
   <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ 
     directory -->
   <mvc:resources mapping="/resources/**" location="classpath:/resources/" />
-  
-  <context:component-scan base-package="se.vgregion.web.appx" />
 
+  <context:component-scan base-package="se.vgregion.web.appx" />
+  
+  <bean id="signatures" class="se.vgregion.dao.domain.patterns.repository.inmemory.InMemoryRepository" />
+  
   <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+  
   <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
     <property name="messageConverters">
       <list>

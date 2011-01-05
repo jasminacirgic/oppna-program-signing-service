@@ -1,7 +1,26 @@
 package se.vgregion.domain.security.pkiclient;
 
+/**
+ * Java 5 enumeration of Pki Clients.
+ * 
+ * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
+ * 
+ */
 public enum PkiClient {
-    IBM_CBT_25(1), SMARTTRUST_PERSONAL_30(2), NEXUS_PERSONAL_4(4), NETMAKER_NETID_4(5), NEXUS_PERSONAL_4X(6);
+
+    /**
+     * PKI Client used when signing with certificates supplied by Nordea.
+     */
+    NEXUS_PERSONAL_4(4),
+    /**
+     * PKI Client used when signing with certificates supplied by Telia and SITHS.
+     */
+    NETMAKER_NETID_4(5),
+    /**
+     * PKI Client used when signing with certificates supplied by BankId.
+     */
+    NEXUS_PERSONAL_4X(6);
+
     private int id;
 
     private PkiClient(int id) {

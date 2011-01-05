@@ -18,21 +18,26 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * An ftp-client whos only purpose is to provide a simple way for uploading files to an ftp server.
+ * 
+ * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
+ * 
+ */
 public class SimpleFtpUploadClient implements ApplicationContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleFtpUploadClient.class);
 
     private FTPClient ftpClient;
-    private URI uri;
+    private URI ftpServerUri;
     private String userName;
     private String password;
     private String path;
     private String errorMessage;
-    private Formatter formatter = new Formatter();
 
     private ApplicationContext applicationContext;
 
     private void setupClient() {
-        String protocol = uri.getScheme().toLowerCase();
+        String protocol = ftpServerUri.getScheme().toLowerCase();
         if (protocol.equals("ftps")) {
             ftpClient = applicationContext.getBean(protocol + "-client", FTPSClient.class);
         } else if (protocol.equals("ftp")) {
@@ -45,13 +50,24 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
     }
 
     protected void extractUriInfo() {
-        userName = URIUtils.extractUserName(uri);
-        password = URIUtils.extractPassword(uri);
-        path = URIUtils.extractPath(uri);
+        userName = URIUtils.extractUserName(ftpServerUri);
+        password = URIUtils.extractPassword(ftpServerUri);
+        path = URIUtils.extractPath(ftpServerUri);
     }
 
+    /**
+     * Connect to an ftp server. Allowed protocols are <code>ftp</code> and <code>ftps</code>. If an error arise an
+     * error message can be read from {@link SimpleFtpUploadClient#readErrorMessage()}.
+     * 
+     * @param uri
+     *            a connection-uri to the ftp-server. For example: <code>ftp://user:password@host:port/path</code>
+     * 
+     * @return true if logout and disconnect is successful, false if there is a problem.
+     * 
+     * @see SimpleFtpUploadClient#errorMessage
+     */
     public boolean connect(URI uri) {
-        this.uri = uri;
+        this.ftpServerUri = uri;
         setupClient();
         try {
             connectClient(URIUtils.extractHost(uri), URIUtils.extractPort(uri, ftpClient.getDefaultPort()));
@@ -80,9 +96,17 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
         }
     }
 
+    /**
+     * Log in to an ftp server. If an error arise an error message can be read from
+     * {@link SimpleFtpUploadClient#readErrorMessage()}.
+     * 
+     * @return true if logout and disconnect is successful, false if there is a problem.
+     * 
+     * @see SimpleFtpUploadClient#errorMessage
+     */
     public boolean login() {
         if (ftpClient == null) {
-            throw new IllegalStateException("No ftp-client is found");
+            throw new IllegalStateException("No ftp-connection is found, create one before trying to login.");
         }
         boolean success = true;
         if (ftpClient.isConnected()) {
@@ -107,6 +131,14 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
         return false;
     }
 
+    /**
+     * Logout and disconnect from existing ftp connection. If an error arise an error message can be read from
+     * {@link SimpleFtpUploadClient#readErrorMessage()}.
+     * 
+     * @return true if logout and disconnect is successful, false if there is a problem.
+     * 
+     * @see SimpleFtpUploadClient#errorMessage
+     */
     public boolean logoutAndDisconnect() {
         boolean success = true;
         if (ftpClient == null) {
@@ -131,12 +163,24 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
         ftpClient = null;
     }
 
+    /**
+     * Upload some data to the ftp server. If an error arise an error message can be read from
+     * {@link SimpleFtpUploadClient#readErrorMessage()}.
+     * 
+     * @param data
+     *            the data to upload
+     * @param fileName
+     *            the name of the file the data will be stored under
+     * @return true if logout and disconnect is successful, false if there is a problem.
+     * 
+     * @see SimpleFtpUploadClient#errorMessage
+     */
     public boolean upload(InputStream data, String fileName) {
         if (ftpClient == null) {
             throw new IllegalStateException("No ftp-client is found");
         }
         if (!createAndChangeWorkingDirectory() || !uploadFile(data, fileName)) {
-            writeErrorMessage("Unable to upload file to: %1$s", uri.toString());
+            writeErrorMessage("Unable to upload file to: %1$s", ftpServerUri.toString());
             return false;
         }
         return true;
@@ -165,6 +209,12 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
         }
     }
 
+    /**
+     * If an error arise within the ftp-transaction an error messages is exposed through this method. Once the
+     * error messages is read it is removed.
+     * 
+     * @return an error message
+     */
     public String readErrorMessage() {
         String message = errorMessage;
         errorMessage = "";
@@ -177,10 +227,16 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
     }
 
     private void writeErrorMessage(String message, Object... args) {
-        errorMessage = formatter.format(message, args).toString();
+        errorMessage = new Formatter().format(message, args).toString();
         LOGGER.warn(errorMessage, args);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.
+     * ApplicationContext)
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

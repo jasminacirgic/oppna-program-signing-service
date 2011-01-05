@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -22,8 +21,13 @@ import se.vgregion.domain.security.pkiclient.PkiClient;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
+/**
+ * Signature Service class. Contains methods to process a signature in different ways, such as verify and save it.
+ * 
+ * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
+ */
 public class SignatureService implements ApplicationContextAware {
-    private static Logger LOGGER = LoggerFactory.getLogger(SignatureService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SignatureService.class);
 
     private SignatureStorage storage = null;
 
@@ -31,17 +35,47 @@ public class SignatureService implements ApplicationContextAware {
     private Osif osif;
     private String policy;
 
+    /**
+     * Constructs a signature service instance. The serviceId is used by the OSIF service provider to identify the
+     * consumer of the service.
+     * 
+     * @param osif
+     *            an instance of {@link Osif}
+     * @param serviceId
+     *            the serviceId - used by the OSIF service provider to identify the consumer of the service
+     * @see <a href="http://sveid.episerverhotell.net/upload/OSIF%20API%20Specifikation%202%200.pdf">OSIF
+     *      API-Specifikation 2.0</a>
+     */
     public SignatureService(Osif osif, String serviceId) {
         this.osif = osif;
         this.policy = serviceId;
     }
 
+    /**
+     * Verifies message from the client when signing data.
+     * 
+     * @param signData
+     *            the data to sign.
+     * @throws SignatureException
+     *             if verification of the signature is invalid in some way.
+     */
     public void verifySignature(SignatureData signData) throws SignatureException {
         VerifySignatureRequest request = createSignatureRequest(signData);
         VerifySignatureResponse response = osif.verifySignature(request);
         validateResponse(response);
     }
 
+    /**
+     * Encodes the tbs - To Be Signed according to the pki clients requirement.
+     * 
+     * @param tbs
+     *            data To Be Signed.
+     * @param provider
+     *            the pki client used when signing the tbs
+     * @return returns a base64-encoded string of tbs
+     * @throws SignatureException
+     *             if something went wrong when encoding the tbs
+     */
     public String encodeTbs(String tbs, PkiClient provider) throws SignatureException {
         EncodeTBSRequest request = new EncodeTBSRequest();
         request.setPolicy(policy);
@@ -80,6 +114,16 @@ public class SignatureService implements ApplicationContextAware {
         return request;
     }
 
+    /**
+     * Generates a random string used to prevent replay attacks. The number is generated according to the pki
+     * clients requirement.
+     * 
+     * @param provider
+     *            the pki client used for signing
+     * @return returns a random string
+     * @throws SignatureException
+     *             if the generation of the nonce faild
+     */
     public String generateNonce(PkiClient provider) throws SignatureException {
         GenerateChallengeRequest request = new GenerateChallengeRequest();
         request.setPolicy(policy);
@@ -96,11 +140,35 @@ public class SignatureService implements ApplicationContextAware {
         return response.getChallenge();
     }
 
+    /**
+     * Saves the signature using the information supplied in signData. Where and how the signature is saved is
+     * supplied in signData and if the signature is saved as a file a random name is created. To set you own name
+     * use {@link SignatureService#save(SignatureData, String)} instead. The method can return a string containing
+     * a callback url, the method client should redirect to the callback url.
+     * 
+     * @param signData
+     *            information about the signature
+     * @return a callback url
+     * @throws SignatureException
+     *             if the save was unsuccessful
+     */
     public String save(SignatureData signData) throws SignatureException {
         String signature = signData.getSignature();
         return save(signData, UUID.nameUUIDFromBytes(signature.getBytes()).toString());
     }
 
+    /**
+     * Saves the signature using the information supplied in signData ie. where and how the signature is saved. The
+     * method can return a string containing a callback url, the method client should redirect to the callback url.
+     * 
+     * @param signData
+     *            information about the signature
+     * @param signatureName
+     *            the name under which the signature is saved
+     * @return a callback url
+     * @throws SignatureException
+     *             if the save was unsuccessful
+     */
     public String save(SignatureData signData, String signatureName) throws SignatureException {
 
         URI submitUri = signData.getSubmitUri();
@@ -129,8 +197,14 @@ public class SignatureService implements ApplicationContextAware {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.
+     * ApplicationContext)
+     */
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 }

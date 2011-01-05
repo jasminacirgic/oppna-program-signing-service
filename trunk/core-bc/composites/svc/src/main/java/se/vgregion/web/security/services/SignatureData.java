@@ -11,6 +11,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import se.vgregion.domain.security.pkiclient.ELegType;
 
 /**
+ * Bean containing various signature data.
+ * 
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  * 
  */
@@ -54,6 +56,11 @@ public class SignatureData {
         return nonce;
     }
 
+    /**
+     * The nonce is Base64 encoded.
+     * 
+     * @return the Base64 encoded nonce
+     */
     public String getEncodedNonce() {
         return encode(nonce);
     }
