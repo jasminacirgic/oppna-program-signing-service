@@ -5,8 +5,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.vgregion.web.ftp.SimpleFtpUploadClient;
+import se.vgregion.web.security.services.SignatureService;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
@@ -17,6 +20,7 @@ import se.vgregion.web.signaturestorage.SignatureStoreageException;
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  */
 public class FtpSignatureStorage implements SignatureStorage {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SignatureService.class);
     private SimpleFtpUploadClient uploadClient;
 
     /**
@@ -52,7 +56,7 @@ public class FtpSignatureStorage implements SignatureStorage {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
             }
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LOGGER.debug("Invalid charset", e);
         } finally {
             if (!uploadClient.logoutAndDisconnect()) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());

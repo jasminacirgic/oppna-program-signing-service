@@ -63,6 +63,7 @@
 
   <bean id="http-signature-storage" name="https-signature-storage" class="se.vgregion.web.signaturestorage.impl.HttpSignatureStorage">
     <constructor-arg ref="httpClient" />
+    <constructor-arg><bean class="se.vgregion.web.HttpMessageHelper"/></constructor-arg>
   </bean>
 
 </beans>

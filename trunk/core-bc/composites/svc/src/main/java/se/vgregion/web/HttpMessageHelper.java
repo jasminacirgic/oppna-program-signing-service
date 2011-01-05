@@ -4,25 +4,24 @@ import static org.springframework.http.HttpStatus.Series.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 /**
- * Utility class for handling http messages.
+ * Helper class for handling http messages.
  * 
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  * 
  */
-public final class HttpUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtil.class);
-
-    private HttpUtil() {
-    }
+public class HttpMessageHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessageHelper.class);
 
     /**
      * Finds out if the response is a Success: 200 &le; <code>httpStatusCode</code> &lt; 300.
@@ -31,10 +30,10 @@ public final class HttpUtil {
      *            a httpResponse
      * @return true if response status is success, false otherwise.
      */
-    public static boolean successStatus(HttpResponse response) {
+    public boolean successStatus(HttpResponse response) {
         HttpStatus.Series status;
         try {
-            status = HttpStatus.valueOf(response.getStatusLine().getStatusCode()).series();
+            status = getResponseStatusCode(response).series();
         } catch (Exception e) {
             LOGGER.warn(e.getMessage());
             return false;
@@ -49,7 +48,7 @@ public final class HttpUtil {
      *            the string to create the entity from
      * @return an httpEntity
      */
-    public static HttpEntity createEntity(String s) {
+    public HttpEntity createEntity(String s) {
         try {
             return new StringEntity(s, "UTF-8");
         } catch (UnsupportedEncodingException shouldNeverHappen) {
@@ -58,12 +57,23 @@ public final class HttpUtil {
     }
 
     /**
+     * Creates a {@link HttpPost} method for a specific uri.
+     * 
+     * @param uri
+     *            the uri to post to
+     * @return a new {@link HttpPost}
+     */
+    public HttpPost createHttpPostMethod(URI uri) {
+        return new HttpPost(uri);
+    }
+
+    /**
      * Close the response content for reading.
      * 
      * @param response
      *            the response to close for reading
      */
-    public static void closeQuitely(HttpResponse response) {
+    public void closeQuitely(HttpResponse response) {
         if (response != null && response.getEntity() != null) {
             try {
                 response.getEntity().getContent().close();
@@ -73,5 +83,27 @@ public final class HttpUtil {
                 LOGGER.debug("Unable to close response content stream.", ignore);
             }
         }
+    }
+
+    /**
+     * Returns the {@link HttpStatus} of a {@link HttpResponse}.
+     * 
+     * @param response
+     *            the {@link HttpResponse} to check for status
+     * @return the {@link HttpStatus} of an {@link HttpResponse}
+     */
+    public HttpStatus getResponseStatusCode(HttpResponse response) {
+        return HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+    }
+
+    /**
+     * Returns the Location Header from an {@link HttpResponse}.
+     * 
+     * @param response
+     *            the HttpResponse
+     * @return the Location Header from an {@link HttpResponse}
+     */
+    public String getLocationHeader(HttpResponse response) {
+        return response.getFirstHeader("Location").getValue();
     }
 }

@@ -1,15 +1,18 @@
 package se.vgregion.web.signaturestorage.impl;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.http.HttpStatus;
 
-import se.vgregion.web.HttpUtil;
+import se.vgregion.web.HttpMessageHelper;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
@@ -21,7 +24,8 @@ import se.vgregion.web.signaturestorage.SignatureStoreageException;
  */
 public class HttpSignatureStorage implements SignatureStorage {
 
-    private DefaultHttpClient httpClient;
+    private HttpClient httpClient;
+    private HttpMessageHelper httpHelper;
 
     /**
      * Constructs an instance of {@link HttpSignatureStorage}.
@@ -29,8 +33,9 @@ public class HttpSignatureStorage implements SignatureStorage {
      * @param httpClient
      *            an http client to use when submiting the signature
      */
-    public HttpSignatureStorage(DefaultHttpClient httpClient) {
+    public HttpSignatureStorage(HttpClient httpClient, HttpMessageHelper httpHelper) {
         this.httpClient = httpClient;
+        this.httpHelper = httpHelper;
     }
 
     /*
@@ -42,20 +47,32 @@ public class HttpSignatureStorage implements SignatureStorage {
     @Override
     public String submitSignature(URI submitUri, String signature, String signatureName)
             throws SignatureStoreageException, IOException {
-        HttpPost httpPost = new HttpPost(submitUri);
-        HttpEntity entity = HttpUtil.createEntity(signature);
+        if (StringUtils.isBlank(signature)) {
+            throw new IllegalArgumentException("Signature is not allowed to be empty");
+        }
+        if (StringUtils.isBlank(signatureName)) {
+            throw new IllegalArgumentException("Signature name is not allowed to be empty");
+        }
+        if (submitUri == null) {
+            throw new IllegalArgumentException("Submit Uri name is not allowed to be null");
+        }
+
+        HttpPost httpPost = httpHelper.createHttpPostMethod(submitUri);
+        HttpEntity entity = httpHelper.createEntity(signature);
         httpPost.setEntity(entity);
+
         HttpResponse response = httpClient.execute(httpPost);
-        String returnLocation = null;
+        String returnLocation = StringUtils.EMPTY;
 
         try {
-            if (response.getStatusLine().getStatusCode() == HttpStatus.MOVED_TEMPORARILY.value()) {
-                returnLocation = response.getFirstHeader("Location").getValue();
-            } else if (response.getStatusLine().getStatusCode() != HttpStatus.OK.value()) {
-                throw new SignatureStoreageException(response.getStatusLine().toString());
+            HttpStatus responseStatus = httpHelper.getResponseStatusCode(response);
+            if (MOVED_TEMPORARILY.equals(responseStatus)) {
+                returnLocation = httpHelper.getLocationHeader(response);
+            } else if (!OK.equals(responseStatus)) {
+                throw new SignatureStoreageException("Invalid status code");
             }
         } finally {
-            HttpUtil.closeQuitely(response);
+            httpHelper.closeQuitely(response);
         }
         return returnLocation;
     }

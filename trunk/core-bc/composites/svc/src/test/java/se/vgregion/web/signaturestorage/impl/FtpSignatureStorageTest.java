@@ -55,6 +55,16 @@ public class FtpSignatureStorageTest {
         signatureStorage.submitSignature(null, "", SIGNATURE_NAME);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public final void shouldThrowIllegalArgumentExceptionIfSignatureNameIsNull() throws Exception {
+        signatureStorage.submitSignature(null, SIGNATURE, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public final void shouldThrowIllegalArgumentExceptionIfSignatureNameIsEmpty() throws Exception {
+        signatureStorage.submitSignature(null, SIGNATURE, "");
+    }
+
     @Test(expected = SignatureStoreageException.class)
     public final void shouldThrowSignatureStoreageExceptionIfConnectionFails() throws Exception {
         // Given
@@ -78,16 +88,28 @@ public class FtpSignatureStorageTest {
         signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
     }
 
-    // @Test(expected = SignatureStoreageException.class)
-    // public final void shouldThrowSignatureStoreageExceptionIfUploadFails() throws Exception {
-    // // Given
-    // given(uploadClient.connect(any(URI.class))).willReturn(true);
-    // given(uploadClient.login()).willReturn(true);
-    // given(uploadClient.upload(any(InputStream.class), anyString())).willReturn(false);
-    // given(uploadClient.readErrorMessage()).willReturn("");
-    // given(uploadClient.logoutAndDisconnect()).willReturn(true);
-    //
-    // // When
-    // signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
-    // }
+    @Test(expected = SignatureStoreageException.class)
+    public final void shouldThrowSignatureStoreageExceptionIfUploadFails() throws Exception {
+        // Given
+        given(uploadClient.connect(any(URI.class))).willReturn(true);
+        given(uploadClient.login()).willReturn(true);
+        given(uploadClient.upload(any(InputStream.class), anyString())).willReturn(false);
+        given(uploadClient.readErrorMessage()).willReturn("");
+        given(uploadClient.logoutAndDisconnect()).willReturn(true);
+
+        // When
+        signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
+    }
+
+    @Test(expected = SignatureStoreageException.class)
+    public final void shouldThrowSignatureStoreageExceptionIfLogoutAndDisconnectFails() throws Exception {
+        // Given
+        given(uploadClient.connect(any(URI.class))).willReturn(true);
+        given(uploadClient.login()).willReturn(true);
+        given(uploadClient.upload(any(InputStream.class), anyString())).willReturn(true);
+        given(uploadClient.logoutAndDisconnect()).willReturn(false);
+
+        // When
+        signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
+    }
 }
