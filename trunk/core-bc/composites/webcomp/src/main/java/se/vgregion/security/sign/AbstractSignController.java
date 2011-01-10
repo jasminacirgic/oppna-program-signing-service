@@ -8,7 +8,6 @@ import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
-import se.vgregion.web.security.services.SignatureServiceOsif;
 
 /**
  * Abstract class providing common signing functionality for concrete controller implementations.
@@ -21,7 +20,7 @@ public abstract class AbstractSignController {
     private Repository<ELegType, String> eLegTypes;
 
     /**
-     * Constructor forces implementors to provide a {@link SignatureServiceOsif} and a {@link Repository} with
+     * Constructor forces implementors to provide a {@link SignatureService} and a {@link Repository} with
      * {@link ELegType}s.
      * 
      * @param signatureService

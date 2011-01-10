@@ -112,9 +112,7 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * se.vgregion.web.security.services.SignatureService#generateNonce(se.vgregion.domain.security.pkiclient.PkiClient
-     * )
+     * @see SignatureService#generateNonce(PkiClient)
      */
     @Override
     public String generateNonce(PkiClient provider) throws SignatureException {

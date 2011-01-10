@@ -14,7 +14,7 @@ public interface SignatureService {
      * @throws SignatureException
      *             if verification of the signature is invalid in some way.
      */
-    public abstract void verifySignature(SignatureData signData) throws SignatureException;
+    void verifySignature(SignatureData signData) throws SignatureException;
 
     /**
      * Encodes the tbs - To Be Signed according to the pki clients requirement.
@@ -27,7 +27,7 @@ public interface SignatureService {
      * @throws SignatureException
      *             if something went wrong when encoding the tbs
      */
-    public abstract String encodeTbs(String tbs, PkiClient provider) throws SignatureException;
+    String encodeTbs(String tbs, PkiClient provider) throws SignatureException;
 
     /**
      * Generates a random string used to prevent replay attacks. The number is generated according to the pki
@@ -39,7 +39,7 @@ public interface SignatureService {
      * @throws SignatureException
      *             if the generation of the nonce faild
      */
-    public abstract String generateNonce(PkiClient provider) throws SignatureException;
+    String generateNonce(PkiClient provider) throws SignatureException;
 
     /**
      * Saves the signature using the information supplied in signData. Where and how the signature is saved is
@@ -53,7 +53,7 @@ public interface SignatureService {
      * @throws SignatureException
      *             if the save was unsuccessful
      */
-    public abstract String save(SignatureData signData) throws SignatureException;
+    String save(SignatureData signData) throws SignatureException;
 
     /**
      * Saves the signature using the information supplied in signData ie. where and how the signature is saved. The
@@ -67,6 +67,6 @@ public interface SignatureService {
      * @throws SignatureException
      *             if the save was unsuccessful
      */
-    public abstract String save(SignatureData signData, String signatureName) throws SignatureException;
+    String save(SignatureData signData, String signatureName) throws SignatureException;
 
 }
