@@ -9,6 +9,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import se.vgregion.domain.security.pkiclient.ELegType;
+import se.vgregion.domain.security.pkiclient.PkiClient;
 
 /**
  * Bean containing various signature data.
@@ -84,6 +85,10 @@ public class SignatureData {
 
     public void setClientType(ELegType clientType) {
         this.clientType = clientType;
+    }
+
+    public PkiClient getPkiClient() {
+        return clientType.getPkiClient();
     }
 
     public ELegType getClientType() {

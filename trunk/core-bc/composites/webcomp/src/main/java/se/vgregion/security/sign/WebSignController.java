@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,7 +77,7 @@ public class WebSignController extends AbstractSignController {
      * @return name of the view which displays a list of pki clients
      */
     @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = { "tbs", "submitUri" })
-    public String prepareSignNoClientType(Model model, @ModelAttribute SignatureData signData) {
+    public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model) {
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
     }
@@ -118,7 +119,7 @@ public class WebSignController extends AbstractSignController {
     public String verifyAndSaveSignature(@ModelAttribute SignatureData signData) throws SignatureException {
         super.verifySignature(signData);
         String redirectLocation = getSignatureService().save(signData);
-        if (redirectLocation != null) {
+        if (!StringUtils.isBlank(redirectLocation)) {
             return "redirect:" + redirectLocation;
         }
         return "verified";

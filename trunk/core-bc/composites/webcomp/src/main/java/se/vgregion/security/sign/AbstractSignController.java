@@ -8,6 +8,7 @@ import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
+import se.vgregion.web.security.services.SignatureServiceOsif;
 
 /**
  * Abstract class providing common signing functionality for concrete controller implementations.
@@ -20,7 +21,7 @@ public abstract class AbstractSignController {
     private Repository<ELegType, String> eLegTypes;
 
     /**
-     * Constructor forces implementors to provide a {@link SignatureService} and a {@link Repository} with
+     * Constructor forces implementors to provide a {@link SignatureServiceOsif} and a {@link Repository} with
      * {@link ELegType}s.
      * 
      * @param signatureService
@@ -62,8 +63,9 @@ public abstract class AbstractSignController {
      */
     public String prepareSign(SignatureData signData) throws SignatureException {
         encodeTbs(signData);
-        signData.setNonce(signatureService.generateNonce(signData.getClientType().getPkiClient()));
-        return signData.getClientType().getPkiClient().toString();
+        String nonce = signatureService.generateNonce(signData.getPkiClient());
+        signData.setNonce(nonce);
+        return signData.getPkiClient().toString();
     }
 
     /**
@@ -71,7 +73,7 @@ public abstract class AbstractSignController {
      * 
      * @param signData
      *            data used during the verification
-     * @return true if signature is valid, false otherwise
+     * @return true if signature is valid, throws an {@link SignatureException} otherwise
      * @throws SignatureException
      *             if validation fails
      */
@@ -82,7 +84,7 @@ public abstract class AbstractSignController {
     }
 
     private void encodeTbs(SignatureData signData) throws SignatureException {
-        String encodedTbs = signatureService.encodeTbs(signData.getTbs(), signData.getClientType().getPkiClient());
+        String encodedTbs = signatureService.encodeTbs(signData.getTbs(), signData.getPkiClient());
         signData.setEncodedTbs(encodedTbs);
     }
 }

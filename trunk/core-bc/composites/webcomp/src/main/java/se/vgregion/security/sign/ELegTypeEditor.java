@@ -7,7 +7,7 @@ import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.web.exceptions.IllegalWebArgumentException;
 
 /**
- * A {@link java.beans.PropertyEditor.PropertyEditor} which converts a {@link String} into a {@link ELegType}.
+ * A {@link java.beans.PropertyEditor} which converts a {@link String} into a {@link ELegType}.
  * 
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  */

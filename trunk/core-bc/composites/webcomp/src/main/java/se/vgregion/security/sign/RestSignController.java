@@ -13,6 +13,8 @@ import se.vgregion.web.security.services.SignatureService;
 /**
  * RESTfull web service implementation of {@link AbstractSignController}.
  * 
+ * OBS!! Not fully implemented yet!
+ * 
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  * 
  */

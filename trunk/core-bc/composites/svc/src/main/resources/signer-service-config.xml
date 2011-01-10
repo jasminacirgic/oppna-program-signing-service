@@ -13,7 +13,7 @@
     <property name="portName" value="osif" />
   </bean>
 
-  <bean id="signatureService" class="se.vgregion.web.security.services.SignatureService">
+  <bean id="signatureService" class="se.vgregion.web.security.services.SignatureServiceOsif">
     <constructor-arg ref="osifWebService" />
     <constructor-arg value="${eid.serviceid}" />
   </bean>
