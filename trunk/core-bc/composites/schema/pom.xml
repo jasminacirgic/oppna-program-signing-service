@@ -1,14 +1,7 @@
 <?xml version="1.0"?>
-<!--
-This is the Schema-composite that produces a jar of JAX-WS interfaces (SEI) -
-and JAXB2 binding classes for the contained schemas.
-
-
-Template version: 1.5-SNAPSHOT
-Generation time : 2010-12-06 10:30:41 CET
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!-- This is the Schema-composite that produces a jar of JAX-WS interfaces (SEI) - and JAXB2 binding classes for the 
+  contained schemas. Template version: 1.5-SNAPSHOT Generation time : 2010-12-06 10:30:41 CET -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -20,10 +13,10 @@ Generation time : 2010-12-06 10:30:41 CET
   <artifactId>signer-service-core-bc-composite-schema</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
-  
+
   <properties>
     <apache.cxf.version>2.3.0</apache.cxf.version>
-   </properties>
+  </properties>
 
   <build>
     <plugins>
@@ -49,6 +42,24 @@ Generation time : 2010-12-06 10:30:41 CET
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <instrumentation>
+            <ignores>
+              <ignore>se.sll.*</ignore>
+            </ignores>
+          </instrumentation>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -59,5 +70,5 @@ Generation time : 2010-12-06 10:30:41 CET
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  
+
 </project>
