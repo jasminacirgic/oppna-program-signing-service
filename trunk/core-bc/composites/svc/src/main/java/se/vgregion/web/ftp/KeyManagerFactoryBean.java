@@ -16,8 +16,8 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
  */
 public class KeyManagerFactoryBean extends AbstractFactoryBean<KeyManager> {
 
-    private KeyStore keyStore;
-    private String password;
+    private KeyStore keyStore = null;
+    private String password = "";
 
     /**
      * Set keyStore, populated via Spring XML property element.
@@ -58,7 +58,7 @@ public class KeyManagerFactoryBean extends AbstractFactoryBean<KeyManager> {
      * 
      * @return the keyManager returned by this factory
      * @throws Exception
-     *             if an exception occured during object creation
+     *             if an exception occurred during object creation
      * @see #getObject()
      */
     @Override

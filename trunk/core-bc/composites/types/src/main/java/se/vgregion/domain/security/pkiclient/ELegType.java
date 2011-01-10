@@ -58,6 +58,6 @@ public class ELegType extends AbstractEntity<String> {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this).toString();
+        return ToStringBuilder.reflectionToString(this);
     }
 }

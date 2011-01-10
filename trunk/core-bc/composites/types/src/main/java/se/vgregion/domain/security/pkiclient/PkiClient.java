@@ -1,5 +1,7 @@
 package se.vgregion.domain.security.pkiclient;
 
+import java.util.Locale;
+
 /**
  * Java 5 enumeration of Pki Clients.
  * 
@@ -33,6 +35,6 @@ public enum PkiClient {
 
     @Override
     public String toString() {
-        return name().toLowerCase();
+        return name().toLowerCase(new Locale("sv"));
     }
 }

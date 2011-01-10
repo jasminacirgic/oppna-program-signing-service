@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Formatter;
+import java.util.Locale;
 
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTPClient;
@@ -36,7 +37,7 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     private void setupClient() {
-        String protocol = ftpServerUri.getScheme().toLowerCase();
+        String protocol = ftpServerUri.getScheme().toLowerCase(new Locale("sv"));
         if (protocol.equals("ftps")) {
             ftpClient = applicationContext.getBean(protocol + "-client", FTPSClient.class);
         } else if (protocol.equals("ftp")) {
@@ -189,7 +190,7 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
         boolean success = true;
         try {
             if (!ftpClient.changeWorkingDirectory(path)) {
-                success = ftpClient.makeDirectory(path);
+                ftpClient.makeDirectory(path);
                 success = ftpClient.changeWorkingDirectory(path);
             }
         } catch (IOException e) {

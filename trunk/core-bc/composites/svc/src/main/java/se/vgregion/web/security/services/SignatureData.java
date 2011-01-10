@@ -22,8 +22,8 @@ public class SignatureData {
     private String nonce = "";
     private String tbs = "";
     private String encodedTbs = "";
-    private ELegType clientType;
-    private String signature;
+    private ELegType clientType = null;
+    private String signature = null;
 
     public String getTbs() {
         return tbs;
@@ -80,7 +80,7 @@ public class SignatureData {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this).toString();
+        return ToStringBuilder.reflectionToString(this);
     }
 
     public void setClientType(ELegType clientType) {
