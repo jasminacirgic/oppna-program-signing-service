@@ -12,7 +12,27 @@
   <artifactId>signer-service-core-bc-composite-svc</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
-
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <instrumentation>
+            <excludes>
+            <!-- Exclude generated files -->
+              <exclude>se/vgregion/web/signaturestorage/SignatureStoreageException.class</exclude>
+            </excludes>
+          </instrumentation>
+        </configuration>
+        <goals>
+          <goal>instrument</goal>
+        </goals>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

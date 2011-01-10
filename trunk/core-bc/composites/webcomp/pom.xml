@@ -20,7 +20,27 @@ Generation time : 2010-10-03 17:10:18 CEST
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <instrumentation>
+            <excludes>
+            <!-- Exclude generated files -->
+              <exclude>se/vgregion/web/exceptions/IllegalWebArgumentException.class</exclude>
+              <exclude>se/vgregion/domain/security/pkiclient/PkiClient.class</exclude>
+            </excludes>
+          </instrumentation>
+        </configuration>
+        <goals>
+          <goal>instrument</goal>
+        </goals>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

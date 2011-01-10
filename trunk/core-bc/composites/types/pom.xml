@@ -12,7 +12,28 @@
   <artifactId>signer-service-core-bc-composite-types</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
-
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <instrumentation>
+            <excludes>
+            <!-- Exclude generated files -->
+              <exclude>se/vgregion/domain/security/pkiclient/ELegType.class</exclude>
+              <exclude>se/vgregion/domain/security/pkiclient/PkiClient.class</exclude>
+            </excludes>
+          </instrumentation>
+        </configuration>
+        <goals>
+          <goal>instrument</goal>
+        </goals>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>se.vgregion.daoframework</groupId>
