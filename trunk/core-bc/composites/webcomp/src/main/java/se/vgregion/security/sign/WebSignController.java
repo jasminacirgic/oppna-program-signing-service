@@ -1,19 +1,28 @@
 package se.vgregion.security.sign;
 
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.security.SignatureException;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
@@ -30,6 +39,7 @@ import se.vgregion.web.security.services.SignatureService;
  */
 @Controller
 public class WebSignController extends AbstractSignController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebSignController.class);
 
     /**
      * Constructs an instance of WebSignController.
@@ -96,6 +106,7 @@ public class WebSignController extends AbstractSignController {
      * 
      * @throws SignatureException
      *             if preparation fails
+     * @throws UnsupportedEncodingException
      */
     @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = { "tbs", "submitUri", "clientType" })
     public String prepareSign(@ModelAttribute SignatureData signData, Model model, HttpServletRequest req)
@@ -114,9 +125,15 @@ public class WebSignController extends AbstractSignController {
      * @throws SignatureException
      *             if validation or submission fails
      */
-    @RequestMapping(value = "/verify", method = RequestMethod.POST, params = { "tbs", "submitUri", "clientType",
-            "signature" })
+    @RequestMapping(value = "/verify", method = RequestMethod.POST, params = { "encodedTbs", "submitUri",
+            "clientType", "signature" })
     public String verifyAndSaveSignature(@ModelAttribute SignatureData signData) throws SignatureException {
+        try {
+            PrintStream ps = new PrintStream(System.out, true, "iso-8859-1");
+            ps.println(ToStringBuilder.reflectionToString(signData));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         super.verifySignature(signData);
         String redirectLocation = getSignatureService().save(signData);
         if (!StringUtils.isBlank(redirectLocation)) {
@@ -132,5 +149,23 @@ public class WebSignController extends AbstractSignController {
         pkiPostUrl.append(verifyUrl);
 
         return pkiPostUrl.toString();
+    }
+
+    /**
+     * Handles all exceptions so that no stacktraces is displayed on a web page. Logs the complete stacktrace in
+     * the configured log.
+     * 
+     * @param ex
+     *            the exception
+     * @param request
+     *            the httpServletRequest
+     * @return a {@link ModelAndView} with an error message and the view to display
+     */
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(Exception ex, HttpServletRequest request) {
+        LOGGER.error("Generic Error Handling", ex);
+        ModelMap model = new ModelMap();
+        model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));
+        return new ModelAndView("errorHandling", model);
     }
 }

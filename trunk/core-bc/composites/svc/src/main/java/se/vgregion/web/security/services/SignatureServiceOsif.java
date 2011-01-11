@@ -5,6 +5,7 @@ import java.net.URI;
 import java.security.SignatureException;
 import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -72,20 +73,24 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
      */
     @Override
     public String encodeTbs(String tbs, PkiClient provider) throws SignatureException {
-        EncodeTBSRequest request = new EncodeTBSRequest();
-        request.setPolicy(policy);
-        request.setProvider(provider.getId());
-        request.setTbsText(tbs);
-        EncodeTBSResponse response = osif.encodeTBS(request);
-        if (response.getStatus().getErrorCode() != 0) {
-            String errorMsg = response.getStatus().getErrorGroupDescription() + ": "
-                    + response.getStatus().getErrorCodeDescription();
-            LOGGER.error(errorMsg);
+        if (provider.getId() == PkiClient.NEXUS_PERSONAL_4X.getId()) {
+            EncodeTBSRequest request = new EncodeTBSRequest();
+            request.setPolicy(policy);
+            request.setProvider(provider.getId());
+            request.setTbsText(tbs);
+            EncodeTBSResponse response = osif.encodeTBS(request);
+            if (response.getStatus().getErrorCode() != 0) {
+                String errorMsg = response.getStatus().getErrorGroupDescription() + ": "
+                        + response.getStatus().getErrorCodeDescription();
+                LOGGER.error(errorMsg);
 
-            throw new SignatureException(response.getStatus().getErrorGroupDescription() + ": "
-                    + response.getStatus().getErrorCodeDescription());
+                throw new SignatureException(response.getStatus().getErrorGroupDescription() + ": "
+                        + response.getStatus().getErrorCodeDescription());
+            }
+
+            return response.getText();
         }
-        return response.getText();
+        return Base64.encodeBase64String(tbs.getBytes()).trim();
     }
 
     private void validateResponse(VerifySignatureResponse response) throws SignatureException {
@@ -101,6 +106,8 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
 
     private VerifySignatureRequest createSignatureRequest(SignatureData signData) {
         VerifySignatureRequest request = new VerifySignatureRequest();
+        System.out.println("Tbs: " + signData.getEncodedTbs());
+        System.out.println("Nonce: " + signData.getEncodedNonce());
         request.setTbsText(signData.getEncodedTbs());
         request.setNonce(signData.getEncodedNonce());
         request.setProvider(signData.getPkiClient().getId());

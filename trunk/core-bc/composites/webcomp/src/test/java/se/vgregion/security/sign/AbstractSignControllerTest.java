@@ -84,18 +84,16 @@ public class AbstractSignControllerTest {
     public final void shouldVerifySignature() throws Exception {
         final SignatureData signData = new SignatureData();
         final PkiClient clientType = PkiClient.NETMAKER_NETID_4;
-        final String encodedTbs = "encodedTbs";
         signData.setClientType(new ELegType("", "", clientType));
 
         // Given
-        given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
+        // given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
 
         // When
         boolean result = signController.verifySignature(signData);
 
         // Then
         assertTrue(result);
-        assertEquals(encodedTbs, signData.getEncodedTbs());
     }
 
     @Test(expected = SignatureException.class)

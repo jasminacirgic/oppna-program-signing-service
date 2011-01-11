@@ -16,7 +16,7 @@
     <param name='PostURL' value='${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}' />
     <param name="Base64" value="true" />
     <param name="SignReturnName" value="signature">
-    <param name="DataReturnName" value="tbs">
+    <param name="DataReturnName" value="encodedTbs">
   </object>
   <object name="iid" width=0 height=0 type="application/x-iid">
     <param name="DataToBeSigned" value="${signData.encodedTbs}" />
@@ -26,7 +26,7 @@
     <param name='PostURL' value='${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}' />
     <param name="Base64" value="true" />
     <param name="SignReturnName" value="signature">
-    <param name="DataReturnName" value="tbs">
+    <param name="DataReturnName" value="encodedTbs">
   </object>
   <jsp:include page="jsp/supportedBrowsers.jsp" />
 </body>

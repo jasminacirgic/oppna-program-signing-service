@@ -14,7 +14,7 @@
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">
           <constructor-arg name="name" value="BankId" />
           <constructor-arg name="description"
-            value="Danske Bank/Östgöta Enskilda Bank, HandelsbankenXXXXX, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank" />
+            value="Danske Bank/Östgöta Enskilda Bank, Handelsbanken, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank" />
           <constructor-arg name="pkiClient" value="NEXUS_PERSONAL_4X" />
         </bean>
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">

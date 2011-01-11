@@ -77,7 +77,6 @@ public abstract class AbstractSignController {
      *             if validation fails
      */
     public boolean verifySignature(SignatureData signData) throws SignatureException {
-        encodeTbs(signData);
         signatureService.verifySignature(signData);
         return true;
     }

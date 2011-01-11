@@ -15,7 +15,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.ModelAndView;
 
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
@@ -30,6 +32,9 @@ public class WebSignControllerTest {
     private Repository<ELegType, String> eLegTypes;
     @Mock
     private HttpServletRequest request;
+    @Mock
+    private Exception exception;
+
     private WebSignController signController;
 
     @Before
@@ -167,5 +172,15 @@ public class WebSignControllerTest {
 
         // Then
         assertEquals("verified", redirectUrl);
+    }
+
+    @Test
+    public final void shouldHandleAllKindOfErrors() {
+        // When
+        ModelAndView modelAndView = signController.handleException(exception, request);
+        // Then
+        assertEquals("errorHandling", modelAndView.getViewName());
+        assertTrue(modelAndView.getModelMap().containsKey("class"));
+        assertTrue(modelAndView.getModelMap().containsValue(ClassUtils.getShortName(exception.getClass())));
     }
 }
