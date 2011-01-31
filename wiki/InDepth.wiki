@@ -1,13 +1,12 @@
 #summary Djupgående genomgång av hur man använder signeringstjänsten.
 
-= Introduction =
+= Inledning =
+== Vad är en signatur? ==
 
-Add your content here.
+== Vad är signeringstjänsten? ==
 
+== Vad är inte signeringstjänsten? ==
 
-= Details =
+= Anslut till signeringstjänsten =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= Konfigurera signeringstjänsten =
