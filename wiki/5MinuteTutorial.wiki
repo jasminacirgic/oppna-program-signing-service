@@ -1,5 +1,5 @@
 #summary Singeringstjänsten på 5 minuter
-#labels Phase-Implementation
+#labels Phase-Implementation,Featured
 
 = Introduktion =
 
