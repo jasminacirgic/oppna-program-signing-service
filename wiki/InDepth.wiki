@@ -3,10 +3,14 @@
 = Inledning =
 == Vad är en signatur? ==
 
+
 == Vad är signeringstjänsten? ==
 
 == Vad är inte signeringstjänsten? ==
 
 = Anslut till signeringstjänsten =
+
+= Använda signeringstjänsten =
+== Klientertyper ==
 
 = Konfigurera signeringstjänsten =
