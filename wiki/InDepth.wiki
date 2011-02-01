@@ -2,11 +2,12 @@
 
 = Inledning =
 == Vad är en signatur? ==
+En elektroniskt underskriven handling består av två delar. Dels _texten_ som skall signeras och dels själva signaturen. För att säkerställa att en _text_ är identisk vid två olika tillfällen beräknas en kontrollsumma av _texten_. Denna kontrollsumma är _alltid_ densamma så länge _texten_ inte har förändrats och därmed kan man garantera en text inte har förändrats över tid. Detta är dock inte tillräckligt utan man behöver även kunna säkerställa _vem_ som har utfärdat _texten_. Detta görs genom att kontrollsumman krypteras med undertecknarens privat nyckel. Dekryptering kan sedan _endast_ göras med hjälp av undertecknarens publika nyckel. Nu kan man med säkerhet knyta en _text_ till en bestämd utställare.
 
+I den digitala signatur som genereras finns tillräckligt med information för att kontrollera äktheten hos en elektroniskt underskriven handling. Formatet på dessa signaturer kommer i två varianter, [http://tools.ietf.org/html/rfc5652 PKCS#7] eller [http://www.w3.org/TR/xmldsig-core/ XMLDSig] beroende på vilken typ av e-legitimation som används vid signeringstillfället.
 
 == Vad är signeringstjänsten? ==
 
-== Vad är inte signeringstjänsten? ==
 
 = Anslut till signeringstjänsten =
 
