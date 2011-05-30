@@ -12,7 +12,7 @@
   @import 'resources/styles/form.css';
 </style>
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.1.min.js"></script>
 <script type="text/javascript" src="resources/scripts/form-effects.js"></script>
 </head>
 <body>

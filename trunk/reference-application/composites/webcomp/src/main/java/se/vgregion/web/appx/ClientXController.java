@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import se.vgregion.dao.domain.patterns.repository.Repository;
@@ -32,7 +33,7 @@ public class ClientXController {
     public void postback(HttpServletRequest req, HttpServletResponse response, @RequestBody byte[] signature) {
         signatures.store(new Signature(signature));
         String relocate = "http://" + req.getLocalName() + ":7080" + req.getContextPath() + req.getServletPath()
-                + "/showSignStatus";
+        + "/showSignStatus";
         response.setHeader("Location", relocate);
     }
 
@@ -54,4 +55,11 @@ public class ClientXController {
         }
         return "showSignatures";
     }
+
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    public String myService2() {
+        return "serviceResponse";
+    }
+
 }

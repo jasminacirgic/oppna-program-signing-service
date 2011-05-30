@@ -3,7 +3,10 @@ package se.vgregion.security.sign;
 import java.security.SignatureException;
 import java.util.Collection;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
@@ -18,6 +21,7 @@ import se.vgregion.web.security.services.SignatureService;
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  * 
  */
+@Controller
 public class RestSignController extends AbstractSignController {
 
     /**
@@ -28,6 +32,7 @@ public class RestSignController extends AbstractSignController {
      * @param eLegTypes
      *            a repository of e-legitimations
      */
+    @Autowired
     public RestSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes) {
         super(signatureService, eLegTypes);
     }
@@ -38,7 +43,9 @@ public class RestSignController extends AbstractSignController {
      * @see AbstractSignController#getClientTypes()
      */
     @Override
-    public Collection<ELegType> getClientTypes() {
+    // @RequestMapping(value = "/prepare", headers = "Accept=application/json", params = { "tbs" })
+    public @ResponseBody
+    Collection<ELegType> getClientTypes() {
         return super.getClientTypes();
     }
 

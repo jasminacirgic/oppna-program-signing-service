@@ -14,6 +14,7 @@
 
   <!-- Imports user-defined @Controller beans that process client requests -->
   <import resource="controllers.xml" />
+
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
     <property name="prefix" value="/WEB-INF/jsp/" />
@@ -21,7 +22,7 @@
     <property name="contentType" value="text/html;charset=UTF-8" />
   </bean>
 
- <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+  <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
   <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
     <property name="messageConverters">
       <list>
@@ -29,4 +30,5 @@
       </list>
     </property>
   </bean>
+
 </beans>

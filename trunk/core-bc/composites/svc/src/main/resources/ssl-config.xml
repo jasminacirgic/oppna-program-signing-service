@@ -13,11 +13,15 @@
 
   <!-- SSLContext to be used -->
   <bean id="sslContextFactory" class="org.apache.mina.filter.ssl.SslContextFactory">
-    <property name="keyManagerFactoryKeyStore"><ref local="keyStore" /></property>
+    <property name="keyManagerFactoryKeyStore">
+      <ref local="keyStore" />
+    </property>
     <property name="keyManagerFactoryKeyStorePassword" value="${keystore.password}" />
-    <property name="trustManagerFactory" ref="trustManagerFactory"/>
+    <property name="trustManagerFactory" ref="trustManagerFactory" />
   </bean>
-
+  
   <bean id="sslContext" factory-bean="sslContextFactory" factory-method="newInstance" />
-  <bean id="trustManagerFactory" class="${ssl.trustManagerFactoryImpl}" />
+
+  <bean id="trustManagerFactory" abstract="true" />
+
 </beans>
