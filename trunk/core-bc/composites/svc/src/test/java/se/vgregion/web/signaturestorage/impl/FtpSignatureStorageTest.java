@@ -13,21 +13,28 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import se.vgregion.domain.security.pkiclient.PkiClient.SignatureFormat;
 import se.vgregion.web.ftp.SimpleFtpUploadClient;
+import se.vgregion.web.security.services.SignatureXmlEnvelope;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
 public class FtpSignatureStorageTest {
 
     private static final String SIGNATURE_NAME = "signaturename";
     private static final String SIGNATURE = "signature";
+    private static final SignatureFormat SIGNATURE_FORMAT = SignatureFormat.CMS;
+
     @Mock
     private SimpleFtpUploadClient uploadClient;
     private FtpSignatureStorage signatureStorage;
+    private SignatureXmlEnvelope envelope;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         signatureStorage = new FtpSignatureStorage(uploadClient);
+        envelope = new SignatureXmlEnvelope(SIGNATURE_NAME, SIGNATURE_FORMAT, SIGNATURE);
+
     }
 
     @Test
@@ -39,30 +46,21 @@ public class FtpSignatureStorageTest {
         given(uploadClient.logoutAndDisconnect()).willReturn(true);
 
         // When
-        String actual = signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
+        String actual = signatureStorage.submitSignature(null, envelope);
 
         // Then
         assertEquals(StringUtils.EMPTY, actual);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public final void shouldThrowIllegalArgumentExceptionIfSignatureIsNull() throws Exception {
-        signatureStorage.submitSignature(null, null, SIGNATURE_NAME);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public final void shouldThrowIllegalArgumentExceptionIfSignatureIsEmpty() throws Exception {
-        signatureStorage.submitSignature(null, "", SIGNATURE_NAME);
-    }
 
     @Test(expected = IllegalArgumentException.class)
     public final void shouldThrowIllegalArgumentExceptionIfSignatureNameIsNull() throws Exception {
-        signatureStorage.submitSignature(null, SIGNATURE, null);
+        signatureStorage.submitSignature(null, new SignatureXmlEnvelope(null, SIGNATURE_FORMAT, SIGNATURE));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public final void shouldThrowIllegalArgumentExceptionIfSignatureNameIsEmpty() throws Exception {
-        signatureStorage.submitSignature(null, SIGNATURE, "");
+        signatureStorage.submitSignature(null, new SignatureXmlEnvelope("", SIGNATURE_FORMAT, SIGNATURE));
     }
 
     @Test(expected = SignatureStoreageException.class)
@@ -73,7 +71,7 @@ public class FtpSignatureStorageTest {
         given(uploadClient.logoutAndDisconnect()).willReturn(true);
 
         // When
-        signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
+        signatureStorage.submitSignature(null, envelope);
     }
 
     @Test(expected = SignatureStoreageException.class)
@@ -85,7 +83,7 @@ public class FtpSignatureStorageTest {
         given(uploadClient.logoutAndDisconnect()).willReturn(true);
 
         // When
-        signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
+        signatureStorage.submitSignature(null, envelope);
     }
 
     @Test(expected = SignatureStoreageException.class)
@@ -98,7 +96,7 @@ public class FtpSignatureStorageTest {
         given(uploadClient.logoutAndDisconnect()).willReturn(true);
 
         // When
-        signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
+        signatureStorage.submitSignature(null, envelope);
     }
 
     @Test(expected = SignatureStoreageException.class)
@@ -110,6 +108,6 @@ public class FtpSignatureStorageTest {
         given(uploadClient.logoutAndDisconnect()).willReturn(false);
 
         // When
-        signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
+        signatureStorage.submitSignature(null, envelope);
     }
 }

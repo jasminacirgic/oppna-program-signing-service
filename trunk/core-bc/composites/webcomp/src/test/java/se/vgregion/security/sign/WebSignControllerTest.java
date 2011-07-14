@@ -106,7 +106,7 @@ public class WebSignControllerTest {
         assertTrue(model.asMap().containsKey("signData"));
         assertTrue(model.asMap().containsValue(signData));
         assertTrue(model.asMap().containsKey("postbackUrl"));
-        assertEquals("http://example.com:7080/ss/sign/verify", model.asMap().get("postbackUrl"));
+        assertEquals("http://example.com:7080/ss/sign", model.asMap().get("postbackUrl"));
     }
 
     @Test
@@ -134,7 +134,7 @@ public class WebSignControllerTest {
         assertTrue(model.asMap().containsKey("signData"));
         assertTrue(model.asMap().containsValue(signData));
         assertTrue(model.asMap().containsKey("postbackUrl"));
-        assertEquals("https://example.com:7080/ss/sign/verify", model.asMap().get("postbackUrl"));
+        assertEquals("https://example.com:7080/ss/sign", model.asMap().get("postbackUrl"));
     }
 
     @Test

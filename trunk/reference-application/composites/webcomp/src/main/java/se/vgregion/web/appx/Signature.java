@@ -8,18 +8,27 @@ import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
 
 public class Signature extends AbstractEntity<Integer> {
     private byte[] signature;
+    private SignatureFormat format;
 
-    public Signature(byte[] signature) {
-        this.signature = signature;
+    public enum SignatureFormat {
+        XMLDIGSIG, CMS;
     }
 
-    @Override
+    public Signature(byte[] signature, SignatureFormat format) {
+        this.signature = signature;
+        this.format = format;
+    }
+
     public Integer getId() {
         return Arrays.hashCode(signature);
     }
 
     public String getDecoded() {
         return new String(Base64.decodeBase64(signature));
+    }
+
+    public SignatureFormat getFormat() {
+        return format;
     }
 
     @Override

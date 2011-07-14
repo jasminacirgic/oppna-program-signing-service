@@ -21,7 +21,7 @@
         <artifactId>maven-jetty-plugin</artifactId>
         <version>6.1.8</version>
         <configuration>
-          <contextPath>ss</contextPath>
+          <contextPath>signera</contextPath>
           <scanIntervalSeconds>1</scanIntervalSeconds>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">

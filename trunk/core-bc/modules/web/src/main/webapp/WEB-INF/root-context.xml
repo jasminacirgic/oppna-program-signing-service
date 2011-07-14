@@ -8,7 +8,7 @@
   <import resource="classpath:http-config.xml" />
 
   <context:property-placeholder
-    location="classpath:connection.properties, classpath:security.properties, file:${user.home}/.ss/config.properties, ${ss.properties}"
+    location="classpath:connection.properties, file:${user.home}/.ss/config.properties, ${ss.properties}"
     ignore-resource-not-found="true" ignore-unresolvable="true" />
     
   <bean class="org.apache.http.params.HttpConnectionParamBean">

@@ -11,11 +11,11 @@
   <mvc:resources mapping="/resources/**" location="classpath:/resources/" />
 
   <context:component-scan base-package="se.vgregion.web.appx" />
-  
+
   <bean id="signatures" class="se.vgregion.dao.domain.patterns.repository.inmemory.InMemoryRepository" />
-  
+
   <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
-  
+
   <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
     <property name="messageConverters">
       <list>
@@ -30,5 +30,14 @@
     <property name="suffix" value=".jsp" />
     <property name="contentType" value="text/html;charset=UTF-8" />
   </bean>
+
+
+
+  <bean id="docFactory" class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+    <property name="namespaceAware" value="true" />
+  </bean>
+  <bean id="docBuilder" factory-bean="docFactory" factory-method="newDocumentBuilder" />
+  <bean id="xPathFactory" class="javax.xml.xpath.XPathFactory" factory-method="newInstance" />
+  <bean id="xPath" factory-bean="xPathFactory" factory-method="newXPath" />
 
 </beans>

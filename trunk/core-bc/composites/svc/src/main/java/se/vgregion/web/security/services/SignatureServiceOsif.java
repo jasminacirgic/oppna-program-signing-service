@@ -106,8 +106,6 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
 
     private VerifySignatureRequest createSignatureRequest(SignatureData signData) {
         VerifySignatureRequest request = new VerifySignatureRequest();
-        System.out.println("Tbs: " + signData.getEncodedTbs());
-        System.out.println("Nonce: " + signData.getEncodedNonce());
         request.setTbsText(signData.getEncodedTbs());
         request.setNonce(signData.getEncodedNonce());
         request.setProvider(signData.getPkiClient().getId());
@@ -146,8 +144,7 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
      */
     @Override
     public String save(SignatureData signData) throws SignatureException {
-        String signature = signData.getSignature();
-        return save(signData, UUID.nameUUIDFromBytes(signature.getBytes()).toString());
+        return save(signData, UUID.nameUUIDFromBytes(signData.toString().getBytes()).toString());
     }
 
     /*
@@ -159,10 +156,21 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
      */
     @Override
     public String save(SignatureData signData, String signatureName) throws SignatureException {
+        SignatureXmlEnvelope envelope = new SignatureXmlEnvelope(signatureName, signData.getPkiClient()
+                .getSignatureFormat(), signData.getSignature());
+        return submitEnvelope(signData, envelope);
+    }
 
+    public String abort(SignatureData signData) throws SignatureException {
+        SignatureXmlEnvelope envelope = new SignatureXmlEnvelope(signData.getErrorCode(),
+                SignErrorCode.getErrorMessage(signData.getErrorCode()));
+
+        return submitEnvelope(signData, envelope);
+    }
+
+    private String submitEnvelope(SignatureData signData, SignatureXmlEnvelope envelope) throws SignatureException {
         URI submitUri = signData.getSubmitUri();
         setupIOBackend(submitUri.getScheme());
-
         if (storage == null) {
             throw new SignatureException(new IllegalStateException(
                     "No storage is configured for the specified protocol"));
@@ -170,7 +178,7 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
         String forwardString = null;
 
         try {
-            forwardString = storage.submitSignature(submitUri, signData.getSignature(), signatureName);
+            forwardString = storage.submitSignature(submitUri, envelope);
         } catch (SignatureStoreageException e) {
             throw new SignatureException(e.getMessage(), e);
         } catch (IOException e) {
@@ -202,4 +210,5 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
+
 }

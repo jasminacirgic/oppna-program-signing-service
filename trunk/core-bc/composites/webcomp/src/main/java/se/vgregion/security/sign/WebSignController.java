@@ -1,14 +1,13 @@
 package se.vgregion.security.sign;
 
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.security.SignatureException;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,24 +127,40 @@ public class WebSignController extends AbstractSignController {
     @RequestMapping(value = "/verify", method = RequestMethod.POST, params = { "encodedTbs", "submitUri",
             "clientType", "signature" })
     public String verifyAndSaveSignature(@ModelAttribute SignatureData signData) throws SignatureException {
-        try {
-            PrintStream ps = new PrintStream(System.out, true, "iso-8859-1");
-            ps.println(ToStringBuilder.reflectionToString(signData));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
         super.verifySignature(signData);
         String redirectLocation = getSignatureService().save(signData);
         if (!StringUtils.isBlank(redirectLocation)) {
+            System.out.printf("WebSignController.verifyAndSaveSignature(%s)\n", "redirect:" + redirectLocation);
             return "redirect:" + redirectLocation;
         }
         return "verified";
     }
 
+    /**
+     * Cancel the signing and informs the consumer.
+     * 
+     * @param signData
+     *            data used during verification
+     * @return name of view to show to the client
+     * @throws SignatureException
+     *             if validation or submission fails
+     */
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    public String cancelSignature(@ModelAttribute SignatureData signData, HttpServletResponse response)
+            throws SignatureException {
+        System.out.println(signData);
+        String redirectLocation = getSignatureService().abort(signData);
+        if (!StringUtils.isBlank(redirectLocation)) {
+            System.out.printf("WebSignController.cancelSignature(%s)\n", redirectLocation);
+            return "redirect:" + redirectLocation;
+        }
+        return "errorForm";
+    }
+
     private String getPkiPostBackUrl(HttpServletRequest req) {
         StringBuilder pkiPostUrl = new StringBuilder();
         String verifyUrl = "http" + (req.isSecure() ? "s" : "") + "://" + req.getServerName() + ":"
-                + req.getServerPort() + req.getContextPath() + "/sign/verify";
+                + req.getServerPort() + req.getContextPath() + "/sign";
         pkiPostUrl.append(verifyUrl);
 
         return pkiPostUrl.toString();
@@ -163,6 +178,7 @@ public class WebSignController extends AbstractSignController {
      */
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception ex, HttpServletRequest request) {
+        ex.printStackTrace();
         LOGGER.error("Generic Error Handling", ex);
         ModelMap model = new ModelMap();
         model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));

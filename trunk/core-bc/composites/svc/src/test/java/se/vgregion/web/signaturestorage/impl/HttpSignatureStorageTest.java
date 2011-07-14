@@ -16,11 +16,14 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import se.vgregion.domain.security.pkiclient.PkiClient.SignatureFormat;
 import se.vgregion.web.HttpMessageHelper;
+import se.vgregion.web.security.services.SignatureXmlEnvelope;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
 public class HttpSignatureStorageTest {
     private static final String SIGNATURE_NAME = "signaturename";
+    private static final SignatureFormat SIGNATURE_FORMAT = SignatureFormat.CMS;
     private static final String SIGNATURE = "signature";
     private static final String REDIRECT_URI = "http://example.com";
     private static URI anyUri;
@@ -34,6 +37,8 @@ public class HttpSignatureStorageTest {
     @Mock
     private HttpResponse httpResponse;
 
+    private SignatureXmlEnvelope envelope;
+
     private HttpSignatureStorage signatureStorage;
 
     @Before
@@ -41,6 +46,7 @@ public class HttpSignatureStorageTest {
         MockitoAnnotations.initMocks(this);
         signatureStorage = new HttpSignatureStorage(httpClient, httpHelper);
         anyUri = new URI(REDIRECT_URI);
+        envelope = new SignatureXmlEnvelope(SIGNATURE_NAME, SIGNATURE_FORMAT, SIGNATURE);
     }
 
     @Test
@@ -53,7 +59,7 @@ public class HttpSignatureStorageTest {
         given(httpHelper.getResponseStatusCode(any(HttpResponse.class))).willReturn(MOVED_TEMPORARILY);
 
         // When
-        String actualRedirectUri = signatureStorage.submitSignature(anyUri, SIGNATURE, SIGNATURE_NAME);
+        String actualRedirectUri = signatureStorage.submitSignature(anyUri, envelope);
 
         // Then
         assertEquals(REDIRECT_URI, actualRedirectUri);
@@ -68,7 +74,7 @@ public class HttpSignatureStorageTest {
         given(httpHelper.getLocationHeader(any(HttpResponse.class))).willReturn(REDIRECT_URI);
         given(httpHelper.getResponseStatusCode(any(HttpResponse.class))).willReturn(OK);
         // When
-        String actualRedirectUri = signatureStorage.submitSignature(anyUri, SIGNATURE, SIGNATURE_NAME);
+        String actualRedirectUri = signatureStorage.submitSignature(anyUri, envelope);
 
         // Then
         assertEquals(StringUtils.EMPTY, actualRedirectUri);
@@ -84,32 +90,12 @@ public class HttpSignatureStorageTest {
         given(httpHelper.getResponseStatusCode(any(HttpResponse.class))).willReturn(BAD_REQUEST);
 
         // When
-        signatureStorage.submitSignature(anyUri, SIGNATURE, SIGNATURE_NAME);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public final void shouldThrowIllegalArgumentExceptionIfSignatureIsNull() throws Exception {
-        signatureStorage.submitSignature(anyUri, null, SIGNATURE_NAME);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public final void shouldThrowIllegalArgumentExceptionIfSignatureIsEmpty() throws Exception {
-        signatureStorage.submitSignature(anyUri, "", SIGNATURE_NAME);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public final void shouldThrowIllegalArgumentExceptionIfSignatureNameIsNull() throws Exception {
-        signatureStorage.submitSignature(anyUri, SIGNATURE, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public final void shouldThrowIllegalArgumentExceptionIfSignatureNameIsEmpty() throws Exception {
-        signatureStorage.submitSignature(anyUri, SIGNATURE, "");
+        signatureStorage.submitSignature(anyUri, envelope);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public final void shouldThrowIllegalArgumentExceptionIfSubmitUriIsNull() throws Exception {
-        signatureStorage.submitSignature(null, SIGNATURE, SIGNATURE_NAME);
+        signatureStorage.submitSignature(null, envelope);
     }
 
 }

@@ -16,7 +16,6 @@ import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  */
 public class ELegType extends AbstractEntity<String> {
-
     // Instances of this bean is created through spring configuration.
 
     private String name;

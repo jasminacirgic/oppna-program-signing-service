@@ -3,6 +3,8 @@ package se.vgregion.web.signaturestorage;
 import java.io.IOException;
 import java.net.URI;
 
+import se.vgregion.web.security.services.SignatureXmlEnvelope;
+
 /**
  * Defines an interface for storing signatures.
  * 
@@ -27,6 +29,6 @@ public interface SignatureStorage {
      * @throws IOException
      *             if an i/o error arises
      */
-    String submitSignature(URI submitUri, String signature, String signatureName)
+    String submitSignature(URI submitUri, SignatureXmlEnvelope envelope)
             throws SignatureStoreageException, IOException;
 }

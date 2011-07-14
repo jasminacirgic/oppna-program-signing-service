@@ -12,7 +12,7 @@
 
 <body>
   <h2>Demo signering</h2>
-  <form method="post" action="https://signera.proxy.vgregion.se/signera/sign/prepare">
+  <form method="post" action="https://192.168.0.13:9443/signer-service-core-bc-module-web/sign/prepare">
     <fieldset>   
       <ul>
         <li>
@@ -20,9 +20,9 @@
           <input type="text" id="tbs" name="tbs" value="Hej" />
         </li>
         <li>
-          <input type="radio" name="submitUri" id="submitUri_http" value="http://ant:7080/appx/appx/saveSignature" class="radio"/>
+          <input type="radio" name="submitUri" id="submitUri_http" value="http://192.168.0.13:7080/appx/saveSignature" class="radio" checked="checked"/>
           <label for="submitUri_http">http</label>
-          <input type="radio" name="submitUri" id="submitUri_https" value="https://ant:7443/appx/appx/saveSignature" checked="checked" class="radio"/>
+          <input type="radio" name="submitUri" id="submitUri_https" value="https://192.168.0.13:7443/appx/saveSignature" class="radio"/>
           <label for="submitUri_http">https</label>
         </li>
       </ul>

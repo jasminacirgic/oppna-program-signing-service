@@ -23,7 +23,8 @@ public class SignatureData {
     private String tbs = "";
     private String encodedTbs = "";
     private ELegType clientType = null;
-    private String signature = null;
+    private String signature = "";
+    private int errorCode = 0;
 
     public String getTbs() {
         return tbs;
@@ -93,6 +94,14 @@ public class SignatureData {
 
     public ELegType getClientType() {
         return clientType;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
     }
 
 }

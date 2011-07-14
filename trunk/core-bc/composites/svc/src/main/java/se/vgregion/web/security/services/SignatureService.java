@@ -69,4 +69,6 @@ public interface SignatureService {
      */
     String save(SignatureData signData, String signatureName) throws SignatureException;
 
+    String abort(SignatureData signData) throws SignatureException;
+
 }

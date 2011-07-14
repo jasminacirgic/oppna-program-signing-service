@@ -22,6 +22,7 @@ Signeringstjänsten hjälper till med följande:
  * Verifiering av utfärdad signatur
 
 = Anslut till signeringstjänsten =
+Nedan följer en lista över 
 
 = Använda signeringstjänsten =
 == Klientertyper ==

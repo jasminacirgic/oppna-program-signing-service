@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.springframework.http.HttpStatus;
 
 import se.vgregion.web.HttpMessageHelper;
+import se.vgregion.web.security.services.SignatureXmlEnvelope;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
@@ -48,20 +49,14 @@ public class HttpSignatureStorage implements SignatureStorage {
      * java.lang.String)
      */
     @Override
-    public String submitSignature(URI submitUri, String signature, String signatureName)
+    public String submitSignature(URI submitUri, SignatureXmlEnvelope envelope)
             throws SignatureStoreageException, IOException {
-        if (StringUtils.isBlank(signature)) {
-            throw new IllegalArgumentException("Signature is not allowed to be empty");
-        }
-        if (StringUtils.isBlank(signatureName)) {
-            throw new IllegalArgumentException("Signature name is not allowed to be empty");
-        }
         if (submitUri == null) {
             throw new IllegalArgumentException("Submit Uri name is not allowed to be null");
         }
 
         HttpPost httpPost = httpHelper.createHttpPostMethod(submitUri);
-        HttpEntity entity = httpHelper.createEntity(signature);
+        HttpEntity entity = httpHelper.createEntity(envelope.toString());
         httpPost.setEntity(entity);
 
         HttpResponse response = httpClient.execute(httpPost);

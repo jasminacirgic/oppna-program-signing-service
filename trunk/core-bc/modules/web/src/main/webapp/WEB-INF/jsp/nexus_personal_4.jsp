@@ -5,30 +5,42 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Signering - Nordea</title>
+  <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="resources/scripts/nordea-plugin.js"></script>
 </head>
 
 <body>
-  <object name="signer" width=0 height=0 classid="CLSID:6969E7D5-223A-4982-9B79-CC4FAC2D5E5E">
-    <param name="DataToBeSigned" value="${signData.encodedTbs}" />
-    <param name="CharacterEncoding" value="UTF-8" />
-    <param name="IncludeCaCert" value="true" />
-    <param name="IncludeRootCaCert" value="true" />
-    <param name="PostURL" value="${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}" />
-    <param name="Base64" value="true" />
-    <param name="SignReturnName" value="signature" />
-    <param name="DataReturnName" value="encodedTbs">
-  </object>
-  <object name="signer" width=0 height=0 type="application/x-personal-signer">
-    <param name="DataToBeSigned" value="${signData.encodedTbs}" />
-    <param name="SignReturnName" value="signature" />
-    <param name="IncludeCaCert" value="true" />
-    <param name="IncludeRootCaCert" value="true" />
-    <param name="PostURL" value="${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}" />
-    <param name="Base64" value="true" />
-    <param name="CharacterEncoding" value="UTF-8" />
-    <param name="DataReturnName" value="encodedTbs">
-  </object>
-  <jsp:include page="jsp/supportedBrowsers.jsp" />
+  <input type="hidden" name="DataToBeSigned" value="${signData.encodedTbs}" />
+  <input type="hidden" name="PostURL" value="${postbackUrl}/verify?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}" />
+  
+  <form id="cancel-form" method="post" action="cancel">
+    <input type="hidden" name="submitUri" value="${signData.submitUri}" />
+    <input type="hidden" name="clientType" value="${signData.clientType.id}" />
+    <input type="hidden" id="errorCode" name="errorCode" />
+  </form>
+  
+  <noscript>
+    <object name="signer" width=0 height=0 classid="CLSID:6969E7D5-223A-4982-9B79-CC4FAC2D5E5E">
+      <param name="DataToBeSigned" value="${signData.encodedTbs}" />
+      <param name="CharacterEncoding" value="UTF-8" />
+      <param name="IncludeCaCert" value="true" />
+      <param name="IncludeRootCaCert" value="true" />
+      <param name="PostURL" value="${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}" />
+      <param name="Base64" value="true" />
+      <param name="SignReturnName" value="signature" />
+      <param name="DataReturnName" value="encodedTbs">
+    </object>
+    <object name="signer" width=0 height=0 type="application/x-personal-signer">
+      <param name="DataToBeSigned" value="${signData.encodedTbs}" />
+      <param name="SignReturnName" value="signature" />
+      <param name="IncludeCaCert" value="true" />
+      <param name="IncludeRootCaCert" value="true" />
+      <param name="PostURL" value="${postbackUrl}?submitUri=${signData.submitUri}&clientType=${signData.clientType.id}" />
+      <param name="Base64" value="true" />
+      <param name="CharacterEncoding" value="UTF-8" />
+      <param name="DataReturnName" value="encodedTbs">
+    </object>
+  </noscript>
 </body>
 
 </html>
