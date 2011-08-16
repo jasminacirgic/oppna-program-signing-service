@@ -1,5 +1,7 @@
 package se.vgregion.web.appx;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -23,7 +25,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -51,7 +52,8 @@ public class ClientXController {
         return signatures.findAll();
     }
 
-    @RequestMapping(value = "/saveSignature", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/saveSignature", method = POST)
     public void postback(HttpServletRequest req, HttpServletResponse response, @RequestBody String envelope)
             throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
         String relocate = "http://" + req.getLocalName() + ":7080" + req.getContextPath() + req.getServletPath();
@@ -82,7 +84,7 @@ public class ClientXController {
         response.sendRedirect(encodedRedirectURL);
     }
 
-    @RequestMapping(value = "/showSignStatus", method = RequestMethod.GET)
+    @RequestMapping(value = "/showSignStatus", method = GET)
     public String status() throws CMSException, NoSuchAlgorithmException, NoSuchProviderException,
     CertStoreException, IOException {
         //        for (Signature signature : getSignatures()) {
@@ -97,18 +99,18 @@ public class ClientXController {
         return "showSignatures";
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = GET)
     public String signForm() {
         return "signForm";
     }
 
-    @RequestMapping(value = "/abort", method = RequestMethod.GET)
+    @RequestMapping(value = "/abort", method = GET)
     public String errorForm(Model model, @RequestParam("errormessage") String errorMessage) {
         model.addAttribute("errormessage", errorMessage);
         return "errorForm";
     }
 
-    @RequestMapping(value = "/clean", method = RequestMethod.POST)
+    @RequestMapping(value = "/clean", method = POST)
     public String cleanSignatures() {
         Collection<Signature> signatures = getSignatures();
         for (Signature signature : signatures) {

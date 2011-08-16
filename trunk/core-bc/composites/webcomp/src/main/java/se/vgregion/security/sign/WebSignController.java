@@ -1,5 +1,7 @@
 package se.vgregion.security.sign;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 import java.io.UnsupportedEncodingException;
 import java.security.SignatureException;
 import java.util.Collection;
@@ -20,7 +22,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import se.vgregion.dao.domain.patterns.repository.Repository;
@@ -85,7 +86,7 @@ public class WebSignController extends AbstractSignController {
      *            signature data
      * @return name of the view which displays a list of pki clients
      */
-    @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = { "tbs", "submitUri" })
+    @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri" })
     public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model) {
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
@@ -107,7 +108,7 @@ public class WebSignController extends AbstractSignController {
      *             if preparation fails
      * @throws UnsupportedEncodingException
      */
-    @RequestMapping(value = "/prepare", method = RequestMethod.POST, params = { "tbs", "submitUri", "clientType" })
+    @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri", "clientType" })
     public String prepareSign(@ModelAttribute SignatureData signData, Model model, HttpServletRequest req)
             throws SignatureException {
         model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
@@ -124,7 +125,7 @@ public class WebSignController extends AbstractSignController {
      * @throws SignatureException
      *             if validation or submission fails
      */
-    @RequestMapping(value = "/verify", method = RequestMethod.POST, params = { "encodedTbs", "submitUri",
+    @RequestMapping(value = "/verify", method = POST, params = { "encodedTbs", "submitUri",
             "clientType", "signature" })
     public String verifyAndSaveSignature(@ModelAttribute SignatureData signData) throws SignatureException {
         super.verifySignature(signData);
@@ -145,7 +146,7 @@ public class WebSignController extends AbstractSignController {
      * @throws SignatureException
      *             if validation or submission fails
      */
-    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    @RequestMapping(value = "/cancel", method = POST)
     public String cancelSignature(@ModelAttribute SignatureData signData, HttpServletResponse response)
             throws SignatureException {
         System.out.println(signData);
@@ -184,4 +185,5 @@ public class WebSignController extends AbstractSignController {
         model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));
         return new ModelAndView("errorHandling", model);
     }
+
 }
