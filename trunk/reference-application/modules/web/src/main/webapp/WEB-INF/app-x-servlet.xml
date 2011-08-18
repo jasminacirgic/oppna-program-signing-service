@@ -19,9 +19,17 @@
   <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
     <property name="messageConverters">
       <list>
-        <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+        <ref bean="marshallingHttpMessageConverter" />
       </list>
     </property>
+  </bean>
+
+  <bean id="marshallingHttpMessageConverter" class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+    <property name="unmarshaller" ref="jaxb2Marshaller" />
+  </bean>
+
+  <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+    <property name="contextPath" value="se.vgregion.proxy.signera.signature" />
   </bean>
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -30,14 +38,5 @@
     <property name="suffix" value=".jsp" />
     <property name="contentType" value="text/html;charset=UTF-8" />
   </bean>
-
-
-
-  <bean id="docFactory" class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
-    <property name="namespaceAware" value="true" />
-  </bean>
-  <bean id="docBuilder" factory-bean="docFactory" factory-method="newDocumentBuilder" />
-  <bean id="xPathFactory" class="javax.xml.xpath.XPathFactory" factory-method="newInstance" />
-  <bean id="xPath" factory-bean="xPathFactory" factory-method="newXPath" />
 
 </beans>

@@ -2,8 +2,11 @@ package se.vgregion.web.signaturestorage.impl;
 
 import static org.springframework.http.HttpStatus.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -11,12 +14,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.http.HttpStatus;
+import org.springframework.oxm.Marshaller;
 
+import se.vgregion.proxy.signera.signature.SignatureEnvelope;
 import se.vgregion.web.HttpMessageHelper;
-import se.vgregion.web.security.services.SignatureXmlEnvelope;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
-
 /**
  * An Http-implementation of {@link SignatureStorage}. Has functionality to submit a signature to an http server
  * using http or https.
@@ -25,8 +28,10 @@ import se.vgregion.web.signaturestorage.SignatureStoreageException;
  */
 public class HttpSignatureStorage implements SignatureStorage {
 
+    private Marshaller marshaller;
     private HttpClient httpClient;
     private HttpMessageHelper httpHelper;
+
 
     /**
      * Constructs an instance of {@link HttpSignatureStorage}.
@@ -37,9 +42,10 @@ public class HttpSignatureStorage implements SignatureStorage {
      *            an Helper Class to get various information out from http messages
      * 
      */
-    public HttpSignatureStorage(HttpClient httpClient, HttpMessageHelper httpHelper) {
+    public HttpSignatureStorage(HttpClient httpClient, HttpMessageHelper httpHelper, Marshaller marshaller) {
         this.httpClient = httpClient;
         this.httpHelper = httpHelper;
+        this.marshaller = marshaller;
     }
 
     /*
@@ -49,14 +55,18 @@ public class HttpSignatureStorage implements SignatureStorage {
      * java.lang.String)
      */
     @Override
-    public String submitSignature(URI submitUri, SignatureXmlEnvelope envelope)
+    public String submitSignature(URI submitUri, SignatureEnvelope envelope)
             throws SignatureStoreageException, IOException {
         if (submitUri == null) {
             throw new IllegalArgumentException("Submit Uri name is not allowed to be null");
         }
 
         HttpPost httpPost = httpHelper.createHttpPostMethod(submitUri);
-        HttpEntity entity = httpHelper.createEntity(envelope.toString());
+
+        ByteArrayOutputStream boas = new ByteArrayOutputStream();
+        marshaller.marshal(envelope, new StreamResult(boas));
+        HttpEntity entity = httpHelper.createEntity(boas.toString("UTF-8"));
+        httpPost.setHeader("Content-type", "text/xml");
         httpPost.setEntity(entity);
 
         HttpResponse response = httpClient.execute(httpPost);

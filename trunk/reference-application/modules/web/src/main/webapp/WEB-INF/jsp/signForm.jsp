@@ -12,7 +12,7 @@
 
 <body>
   <h2>Demo signering</h2>
-  <form method="post" action="https://signera.proxy.vgregion.se/signera/sign/prepare">
+  <form method="post" action="https://localhost:9443/signer-service-core-bc-module-web/sign/prepare">
     <fieldset>   
       <ul>
         <li>

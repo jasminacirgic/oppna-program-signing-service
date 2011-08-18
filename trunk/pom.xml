@@ -20,6 +20,7 @@
   <modules>
     <module>core-bc</module>
     <module>reference-application</module>
+    <module>schemas</module>
   </modules>
 
   <pluginRepositories>

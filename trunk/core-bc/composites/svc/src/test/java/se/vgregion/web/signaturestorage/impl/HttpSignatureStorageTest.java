@@ -15,10 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.oxm.Marshaller;
 
-import se.vgregion.domain.security.pkiclient.PkiClient.SignatureFormat;
+import se.vgregion.proxy.signera.signature.SignatureEnvelope;
+import se.vgregion.proxy.signera.signature.SignatureFormat;
 import se.vgregion.web.HttpMessageHelper;
-import se.vgregion.web.security.services.SignatureXmlEnvelope;
+import se.vgregion.web.security.services.SignatureEnvelopeFactory;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
 public class HttpSignatureStorageTest {
@@ -37,16 +39,18 @@ public class HttpSignatureStorageTest {
     @Mock
     private HttpResponse httpResponse;
 
-    private SignatureXmlEnvelope envelope;
+    private SignatureEnvelope envelope;
 
     private HttpSignatureStorage signatureStorage;
+    @Mock
+    private Marshaller marshaller;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        signatureStorage = new HttpSignatureStorage(httpClient, httpHelper);
+        signatureStorage = new HttpSignatureStorage(httpClient, httpHelper, marshaller);
         anyUri = new URI(REDIRECT_URI);
-        envelope = new SignatureXmlEnvelope(SIGNATURE_NAME, SIGNATURE_FORMAT, SIGNATURE);
+        envelope = SignatureEnvelopeFactory.createSignatureEnvelope(SIGNATURE_NAME, SIGNATURE_FORMAT, SIGNATURE);
     }
 
     @Test

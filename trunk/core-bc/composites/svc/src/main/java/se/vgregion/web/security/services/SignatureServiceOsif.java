@@ -19,6 +19,7 @@ import se.sll.wsdl.soap.osif.Osif;
 import se.sll.wsdl.soap.osif.VerifySignatureRequest;
 import se.sll.wsdl.soap.osif.VerifySignatureResponse;
 import se.vgregion.domain.security.pkiclient.PkiClient;
+import se.vgregion.proxy.signera.signature.SignatureEnvelope;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
@@ -156,19 +157,19 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
      */
     @Override
     public String save(SignatureData signData, String signatureName) throws SignatureException {
-        SignatureXmlEnvelope envelope = new SignatureXmlEnvelope(signatureName, signData.getPkiClient()
-                .getSignatureFormat(), signData.getSignature());
+        SignatureEnvelope envelope = SignatureEnvelopeFactory.createSignatureEnvelope(signatureName, signData
+                .getPkiClient().getSignatureFormat(), signData.getSignature());
         return submitEnvelope(signData, envelope);
     }
 
     public String abort(SignatureData signData) throws SignatureException {
-        SignatureXmlEnvelope envelope = new SignatureXmlEnvelope(signData.getErrorCode(),
+        SignatureEnvelope envelope = SignatureEnvelopeFactory.createSignatureEnvelope(signData.getErrorCode(),
                 SignErrorCode.getErrorMessage(signData.getErrorCode()));
 
         return submitEnvelope(signData, envelope);
     }
 
-    private String submitEnvelope(SignatureData signData, SignatureXmlEnvelope envelope) throws SignatureException {
+    private String submitEnvelope(SignatureData signData, SignatureEnvelope envelope) throws SignatureException {
         URI submitUri = signData.getSubmitUri();
         setupIOBackend(submitUri.getScheme());
         if (storage == null) {

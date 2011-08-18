@@ -1,8 +1,10 @@
 package se.vgregion.domain.security.pkiclient;
 
-import static se.vgregion.domain.security.pkiclient.PkiClient.SignatureFormat.*;
+import static se.vgregion.proxy.signera.signature.SignatureFormat.*;
 
 import java.util.Locale;
+
+import se.vgregion.proxy.signera.signature.SignatureFormat;
 
 /**
  * Java 5 enumeration of Pki Clients.
@@ -27,10 +29,6 @@ public enum PkiClient {
 
     private int id;
     private SignatureFormat signatureFormat;
-
-    public enum SignatureFormat {
-        XMLDIGSIG, CMS;
-    }
 
     private PkiClient(int id, SignatureFormat format) {
         this.id = id;

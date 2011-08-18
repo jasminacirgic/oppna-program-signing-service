@@ -63,7 +63,13 @@
 
   <bean id="http-signature-storage" name="https-signature-storage" class="se.vgregion.web.signaturestorage.impl.HttpSignatureStorage">
     <constructor-arg ref="httpClient" />
-    <constructor-arg><bean class="se.vgregion.web.HttpMessageHelper"/></constructor-arg>
-  </bean>
+    <constructor-arg>
+      <bean class="se.vgregion.web.HttpMessageHelper" />
+    </constructor-arg>
+    <constructor-arg ref="jaxb2Marshaller" />
 
+  </bean>
+  <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+    <property name="contextPath" value="se.vgregion.proxy.signera.signature" />
+  </bean>
 </beans>

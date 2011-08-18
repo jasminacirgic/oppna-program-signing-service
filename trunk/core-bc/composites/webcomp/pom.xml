@@ -1,13 +1,6 @@
 <?xml version="1.0"?>
-<!--
-This is the Web-composite Maven POM.
-
-
-Template version: 1.4
-Generation time : 2010-10-03 17:10:18 CEST
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!-- This is the Web-composite Maven POM. Template version: 1.4 Generation time : 2010-10-03 17:10:18 CEST -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -28,7 +21,7 @@ Generation time : 2010-10-03 17:10:18 CEST
         <configuration>
           <instrumentation>
             <excludes>
-            <!-- Exclude generated files -->
+              <!-- Exclude generated files -->
               <exclude>se/vgregion/web/exceptions/IllegalWebArgumentException.class</exclude>
               <exclude>se/vgregion/domain/security/pkiclient/PkiClient.class</exclude>
             </excludes>
@@ -38,9 +31,23 @@ Generation time : 2010-10-03 17:10:18 CEST
           <goal>instrument</goal>
         </goals>
       </plugin>
+      <plugin>
+        <groupId>org.zeroturnaround</groupId>
+        <artifactId>jrebel-maven-plugin</artifactId>
+        <version>1.0.7</version>
+        <executions>
+          <execution>
+            <id>generate-rebel-xml</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

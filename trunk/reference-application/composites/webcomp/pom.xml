@@ -26,6 +26,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>se.vgregion.signer-service</groupId>
+      <artifactId>signer-service-schemas-module-intsvc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
     </dependency>

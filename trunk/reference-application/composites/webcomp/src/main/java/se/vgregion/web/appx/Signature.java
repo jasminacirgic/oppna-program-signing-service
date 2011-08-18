@@ -5,14 +5,11 @@ import java.util.Arrays;
 import org.apache.commons.codec.binary.Base64;
 
 import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
+import se.vgregion.proxy.signera.signature.SignatureFormat;
 
 public class Signature extends AbstractEntity<Integer> {
     private byte[] signature;
     private SignatureFormat format;
-
-    public enum SignatureFormat {
-        XMLDIGSIG, CMS;
-    }
 
     public Signature(byte[] signature, SignatureFormat format) {
         this.signature = signature;

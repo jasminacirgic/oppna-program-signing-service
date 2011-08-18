@@ -12,7 +12,7 @@
   <artifactId>signer-service-core-bc-composite-svc</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -21,7 +21,7 @@
         <configuration>
           <instrumentation>
             <excludes>
-            <!-- Exclude generated files -->
+              <!-- Exclude generated files -->
               <exclude>se/vgregion/web/signaturestorage/SignatureStoreageException.class</exclude>
             </excludes>
           </instrumentation>
@@ -30,9 +30,23 @@
           <goal>instrument</goal>
         </goals>
       </plugin>
+      <plugin>
+        <groupId>org.zeroturnaround</groupId>
+        <artifactId>jrebel-maven-plugin</artifactId>
+        <version>1.0.7</version>
+        <executions>
+          <execution>
+            <id>generate-rebel-xml</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -56,6 +70,11 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-oxm</artifactId>
+      <version>${spring.fw.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

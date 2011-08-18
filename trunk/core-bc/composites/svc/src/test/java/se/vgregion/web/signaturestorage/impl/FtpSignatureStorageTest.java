@@ -13,9 +13,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import se.vgregion.domain.security.pkiclient.PkiClient.SignatureFormat;
+import se.vgregion.proxy.signera.signature.SignatureEnvelope;
+import se.vgregion.proxy.signera.signature.SignatureFormat;
 import se.vgregion.web.ftp.SimpleFtpUploadClient;
-import se.vgregion.web.security.services.SignatureXmlEnvelope;
+import se.vgregion.web.security.services.SignatureEnvelopeFactory;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
 public class FtpSignatureStorageTest {
@@ -27,13 +28,13 @@ public class FtpSignatureStorageTest {
     @Mock
     private SimpleFtpUploadClient uploadClient;
     private FtpSignatureStorage signatureStorage;
-    private SignatureXmlEnvelope envelope;
+    private SignatureEnvelope envelope;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         signatureStorage = new FtpSignatureStorage(uploadClient);
-        envelope = new SignatureXmlEnvelope(SIGNATURE_NAME, SIGNATURE_FORMAT, SIGNATURE);
+        envelope = SignatureEnvelopeFactory.createSignatureEnvelope(SIGNATURE_NAME, SIGNATURE_FORMAT, SIGNATURE);
 
     }
 
@@ -55,12 +56,12 @@ public class FtpSignatureStorageTest {
 
     @Test(expected = IllegalArgumentException.class)
     public final void shouldThrowIllegalArgumentExceptionIfSignatureNameIsNull() throws Exception {
-        signatureStorage.submitSignature(null, new SignatureXmlEnvelope(null, SIGNATURE_FORMAT, SIGNATURE));
+        signatureStorage.submitSignature(null, SignatureEnvelopeFactory.createSignatureEnvelope(null, SIGNATURE_FORMAT, SIGNATURE));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public final void shouldThrowIllegalArgumentExceptionIfSignatureNameIsEmpty() throws Exception {
-        signatureStorage.submitSignature(null, new SignatureXmlEnvelope("", SIGNATURE_FORMAT, SIGNATURE));
+        signatureStorage.submitSignature(null, SignatureEnvelopeFactory.createSignatureEnvelope("", SIGNATURE_FORMAT, SIGNATURE));
     }
 
     @Test(expected = SignatureStoreageException.class)

@@ -8,9 +8,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.vgregion.proxy.signera.signature.SignatureEnvelope;
 import se.vgregion.web.ftp.SimpleFtpUploadClient;
 import se.vgregion.web.security.services.SignatureServiceOsif;
-import se.vgregion.web.security.services.SignatureXmlEnvelope;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
@@ -41,7 +41,7 @@ public class FtpSignatureStorage implements SignatureStorage {
      * java.lang.String)
      */
     @Override
-    public String submitSignature(URI submitUri, SignatureXmlEnvelope envelope)
+    public String submitSignature(URI submitUri, SignatureEnvelope envelope)
             throws SignatureStoreageException {
         if (StringUtils.isBlank(envelope.getSignatureName())) {
             throw new IllegalArgumentException("Signature name is not allowed to be empty");
@@ -50,7 +50,7 @@ public class FtpSignatureStorage implements SignatureStorage {
             if (!uploadClient.connect(submitUri) || !uploadClient.login()) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
             }
-            if (!uploadClient.upload(new ByteArrayInputStream(envelope.toString().getBytes("UTF-8")), envelope.getSignatureName())) {
+            if (!uploadClient.upload(new ByteArrayInputStream(envelope.getSignature().getBytes("UTF-8")), envelope.getSignatureName())) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
             }
         } catch (UnsupportedEncodingException e) {
