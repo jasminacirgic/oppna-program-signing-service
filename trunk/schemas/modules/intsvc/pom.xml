@@ -20,6 +20,7 @@
     <schema.path>${basedir}/src/main/resources/schemas</schema.path>
     <schema.gen.src.dir>${project.build.directory}/generated-sources/cxf</schema.gen.src.dir>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.soitoolkit.commons.poms</groupId>
@@ -27,7 +28,26 @@
       <version>0.4.1</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
   <build>
     <finalName>${project.artifactId}</finalName>
     <plugins>

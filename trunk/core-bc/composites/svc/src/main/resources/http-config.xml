@@ -51,6 +51,7 @@
   </bean>
 
   <bean id="params" class="org.apache.http.params.BasicHttpParams" />
+  
   <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
     <constructor-arg>
       <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager">
@@ -66,10 +67,11 @@
     <constructor-arg>
       <bean class="se.vgregion.web.HttpMessageHelper" />
     </constructor-arg>
-    <constructor-arg ref="jaxb2Marshaller" />
+    <constructor-arg>
+      <bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="se.vgregion.proxy.signera.signature" />
+      </bean>
+    </constructor-arg>
+  </bean>
 
-  </bean>
-  <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-    <property name="contextPath" value="se.vgregion.proxy.signera.signature" />
-  </bean>
 </beans>
