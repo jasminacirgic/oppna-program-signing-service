@@ -59,8 +59,8 @@
       <artifactId>spring-beans</artifactId>
     </dependency>
     <dependency>
-      <groupId>se.vgregion.signer-service</groupId>
-      <artifactId>signer-service-schemas-module-intsvc</artifactId>
+      <groupId>se.vgregion.signer-service-schemas</groupId>
+      <artifactId>signer-service-schemas-sdc-module-intsvc</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
