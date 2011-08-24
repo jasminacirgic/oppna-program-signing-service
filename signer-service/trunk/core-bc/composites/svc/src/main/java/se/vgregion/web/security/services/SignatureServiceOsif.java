@@ -162,6 +162,10 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
         return submitEnvelope(signData, envelope);
     }
 
+    /* (non-Javadoc)
+     * @see SignatureService#abort(SignatureData)
+     */
+    @Override
     public String abort(SignatureData signData) throws SignatureException {
         SignatureEnvelope envelope = SignatureEnvelopeFactory.createSignatureEnvelope(signData.getErrorCode(),
                 SignErrorCode.getErrorMessage(signData.getErrorCode()));
@@ -195,17 +199,8 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.
-     * ApplicationContext)
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see se.vgregion.web.security.services.SignatureService#setApplicationContext(org.springframework.context.
-     * ApplicationContext)
+    /* (non-Javadoc)
+     * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
      */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {

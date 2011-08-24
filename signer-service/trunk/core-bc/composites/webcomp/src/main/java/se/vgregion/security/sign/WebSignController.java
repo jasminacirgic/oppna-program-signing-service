@@ -2,7 +2,6 @@ package se.vgregion.security.sign;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import java.io.UnsupportedEncodingException;
 import java.security.SignatureException;
 import java.util.Collection;
 
@@ -106,7 +105,7 @@ public class WebSignController extends AbstractSignController {
      * 
      * @throws SignatureException
      *             if preparation fails
-     * @throws UnsupportedEncodingException
+     * @throws java.io.UnsupportedEncodingException
      */
     @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri", "clientType" })
     public String prepareSign(@ModelAttribute SignatureData signData, Model model, HttpServletRequest req)
@@ -142,6 +141,7 @@ public class WebSignController extends AbstractSignController {
      * 
      * @param signData
      *            data used during verification
+     * @param response the {@link HttpServletResponse}
      * @return name of view to show to the client
      * @throws SignatureException
      *             if validation or submission fails

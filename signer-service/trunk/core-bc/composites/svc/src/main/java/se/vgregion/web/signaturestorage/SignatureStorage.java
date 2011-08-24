@@ -19,10 +19,8 @@ public interface SignatureStorage {
      * 
      * @param submitUri
      *            the uri to submit the signature to.
-     * @param signature
-     *            the signature to store
-     * @param signatureName
-     *            the name of the signature
+     * @param envelope
+     *            an envelope containing signature information
      * @return a callback url, null or empty if callback handling is not applicable
      * @throws SignatureStoreageException
      *             if signature submission is failed

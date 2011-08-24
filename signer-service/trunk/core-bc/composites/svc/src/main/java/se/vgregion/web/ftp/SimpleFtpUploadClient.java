@@ -88,7 +88,8 @@ public class SimpleFtpUploadClient implements ApplicationContextAware {
             ftpClient.connect(host, port);
         } catch (FTPConnectionClosedException e) {
             try {
-                Thread.sleep(200);
+                final int sleepTime = 200;
+                Thread.sleep(sleepTime);
             } catch (InterruptedException e1) {
                 LOGGER.warn("Thread was interrupted while waiting to retry ftp login: ({})", e1.getMessage());
             }

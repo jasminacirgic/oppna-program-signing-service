@@ -69,6 +69,15 @@ public interface SignatureService {
      */
     String save(SignatureData signData, String signatureName) throws SignatureException;
 
+    /**
+     * Aborts the signing with error message supplied in the {@link SignatureData}. The
+     * method can return a string containing a callback url, the method client should redirect to the callback url.
+     * @param signData
+     *            information about why the signing was aborted
+     * @return a callback url
+     * @throws SignatureException
+     *             if the abort was unsuccessful
+     */
     String abort(SignatureData signData) throws SignatureException;
 
 }
