@@ -29,10 +29,24 @@ public class ClientXController {
 
     @Autowired
     private Repository<Signature, Integer> signatures;
+    @Autowired
+    private String signerServiceLocation;
+    @Autowired
+    private String submitUrl;
 
     @ModelAttribute("signatures")
     public Collection<Signature> getSignatures() {
         return signatures.findAll();
+    }
+
+    @ModelAttribute("signerServiceLocation")
+    public String getSignerServiceLocation() {
+        return signerServiceLocation;
+    }
+
+    @ModelAttribute("submitUrl")
+    public String getSubmitUrl() {
+        return submitUrl;
     }
 
     @RequestMapping(value = "/saveSignature", method = POST)

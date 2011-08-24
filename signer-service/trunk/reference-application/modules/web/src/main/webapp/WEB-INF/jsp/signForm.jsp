@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>  
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -12,7 +13,7 @@
 
 <body>
   <h2>Demo signering</h2>
-  <form method="post" action="https://localhost:9443/signer-service-core-bc-module-web/sign/prepare">
+  <form method="post" action="${signerServiceLocation}/sign/prepare">
     <fieldset>   
       <ul>
         <li>
@@ -20,10 +21,7 @@
           <input type="text" id="tbs" name="tbs" value="Hej" />
         </li>
         <li>
-          <input type="radio" name="submitUri" id="submitUri_http" value="http://140.166.209.160:7080/appx/saveSignature" class="radio" checked="checked"/>
-          <label for="submitUri_http">http</label>
-          <input type="radio" name="submitUri" id="submitUri_https" value="https://140.166.209.160:7443/appx/saveSignature" class="radio"/>
-          <label for="submitUri_http">https</label>
+          <input type="hidden" name="submitUri" id="submitUri_http" value="${submitUrl}"/>
         </li>
       </ul>
     </fieldset>
