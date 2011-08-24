@@ -40,9 +40,11 @@ public class HttpSignatureStorage implements SignatureStorage {
      *            an http client to use when submiting the signature
      * @param httpHelper
      *            an Helper Class to get various information out from http messages
+     * @param marshaller marshaller to use when "serializing" to xml
      * 
      */
-    public HttpSignatureStorage(HttpClient httpClient, HttpMessageHelper httpHelper, Marshaller marshaller) {
+    public HttpSignatureStorage(HttpClient httpClient, HttpMessageHelper httpHelper,
+            Marshaller marshaller) {
         this.httpClient = httpClient;
         this.httpHelper = httpHelper;
         this.marshaller = marshaller;

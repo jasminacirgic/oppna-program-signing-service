@@ -200,7 +200,7 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
     }
 
     /* (non-Javadoc)
-     * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
+     * @see ApplicationContextAware#setApplicationContext(ApplicationContext)
      */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {

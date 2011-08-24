@@ -50,7 +50,8 @@ public class FtpSignatureStorage implements SignatureStorage {
             if (!uploadClient.connect(submitUri) || !uploadClient.login()) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
             }
-            if (!uploadClient.upload(new ByteArrayInputStream(envelope.getSignature().getBytes("UTF-8")), envelope.getSignatureName())) {
+            if (!uploadClient.upload(new ByteArrayInputStream(envelope.getSignature().getBytes("UTF-8")),
+                    envelope.getSignatureName())) {
                 throw new SignatureStoreageException(uploadClient.readErrorMessage());
             }
         } catch (UnsupportedEncodingException e) {
