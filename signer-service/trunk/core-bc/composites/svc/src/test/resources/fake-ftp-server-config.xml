@@ -19,6 +19,4 @@
     <property name="dataFile" value="${keystore.location}" />
   </bean>
 
-<!--   <bean id="trustManagerFactory" class="org.apache.mina.filter.ssl.BogusTrustManagerFactory" /> -->
-
 </beans>

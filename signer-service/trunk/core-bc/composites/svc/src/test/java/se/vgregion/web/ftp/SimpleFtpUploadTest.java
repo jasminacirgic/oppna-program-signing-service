@@ -58,7 +58,9 @@ public class SimpleFtpUploadTest {
     private static void initDirs() throws IOException {
         cleanTmpDirs();
 
-        TMP_TEST_DIR.mkdirs();
+        if (!TMP_TEST_DIR.mkdirs()) {
+            throw new IOException("Unable to create directory: " + TMP_TEST_DIR.getAbsolutePath());
+        }
     }
 
     private static void cleanTmpDirs() throws IOException {

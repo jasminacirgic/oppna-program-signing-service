@@ -65,6 +65,7 @@ public class KeyManagerFactoryBean extends AbstractFactoryBean<KeyManager> {
     protected KeyManager createInstance() throws Exception {
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory
                 .getDefaultAlgorithm());
+
         keyManagerFactory.init(keyStore, password.toCharArray());
 
         return keyManagerFactory.getKeyManagers()[0];

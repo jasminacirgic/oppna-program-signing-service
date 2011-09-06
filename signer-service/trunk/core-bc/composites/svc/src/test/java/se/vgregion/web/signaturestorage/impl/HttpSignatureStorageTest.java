@@ -6,6 +6,7 @@ import static org.mockito.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -45,11 +46,18 @@ public class HttpSignatureStorageTest {
     @Mock
     private Marshaller marshaller;
 
+    static {
+        try {
+            anyUri = new URI(REDIRECT_URI);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         signatureStorage = new HttpSignatureStorage(httpClient, httpHelper, marshaller);
-        anyUri = new URI(REDIRECT_URI);
         envelope = SignatureEnvelopeFactory.createSignatureEnvelope(SIGNATURE_NAME, SIGNATURE_FORMAT, SIGNATURE);
     }
 
