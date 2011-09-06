@@ -22,10 +22,4 @@
     <property name="maxTotalConnections" value="${maxTotalConnections}" />
   </bean>
 
-  <bean id="trustManagerFactory" class="javax.net.ssl.TrustManagerFactory" factory-method="getInstance">
-    <constructor-arg ref="defaultAlgorithm" />
-  </bean>
-  
-  <bean id="defaultAlgorithm" class="javax.net.ssl.TrustManagerFactory" factory-method="getDefaultAlgorithm" />
-
 </beans>
