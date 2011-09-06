@@ -3,7 +3,8 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
   <import resource="classpath:ssl-config.xml" />
-
+  <import resource="classpath:${ssl.hostname.verification:strict}-hostname.xml" />
+  
   <bean id="schemeReg" class="org.apache.http.conn.scheme.SchemeRegistry" />
 
   <!-- http client setup -->
@@ -14,13 +15,13 @@
     <constructor-arg type="int" value="80" />
   </bean>
 
+
   <!-- https client setup -->
   <bean id="sslSocketFactory" class="org.apache.http.conn.ssl.SSLSocketFactory">
     <constructor-arg ref="sslContext" />
-    <property name="hostnameVerifier">
-      <bean class="org.apache.http.conn.ssl.StrictHostnameVerifier" />
-    </property>
+    <property name="hostnameVerifier" ref="hostNameVerifier" />
   </bean>
+
   <bean id="scheme-https" class="org.apache.http.conn.scheme.Scheme">
     <constructor-arg value="https" />
     <constructor-arg ref="sslSocketFactory" />
@@ -51,7 +52,7 @@
   </bean>
 
   <bean id="params" class="org.apache.http.params.BasicHttpParams" />
-  
+
   <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
     <constructor-arg>
       <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager">
