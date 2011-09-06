@@ -28,14 +28,19 @@
               <port>7080</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
-<!--             <connector implementation="org.mortbay.jetty.security.SslSocketConnector"> -->
-<!--               <port>7443</port> -->
-<!--               <maxIdleTime>60000</maxIdleTime> -->
-<!--               <keystore>src/main/resources/appx.jks</keystore> -->
-<!--               <password>password</password> -->
-<!--               <keyPassword>password</keyPassword> -->
-<!--               <needClientAuth>true</needClientAuth> -->
-<!--             </connector> -->
+            <connector implementation="org.mortbay.jetty.security.SslSocketConnector">
+              <port>7443</port>
+              <protocol>TLS</protocol>
+              <maxIdleTime>60000</maxIdleTime>
+              <keystoreType>JKS</keystoreType>
+              <keystore>file:${user.home}/.appx/keystore.jks</keystore>
+              <truststore>file:${user.home}/.appx/truststore.jks</truststore>
+              <truststoreType>JKS</truststoreType>
+              <password>password</password>
+              <keyPassword>password</keyPassword>
+              <trustPassword>password</trustPassword>
+              <needClientAuth>true</needClientAuth>
+            </connector>
           </connectors>
         </configuration>
       </plugin>
