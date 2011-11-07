@@ -6,7 +6,7 @@ En elektroniskt underskriven handling består av två delar. Dels _texten_ som s
 
 I den digitala signatur som genereras finns tillräckligt med information för att kontrollera äktheten hos en elektroniskt underskriven handling. Formatet på dessa signaturer kommer i två varianter, [http://tools.ietf.org/html/rfc5652 PKCS#7] eller [http://www.w3.org/TR/xmldsig-core/ XMLDSig] beroende på vilken typ av e-legitimation som används vid signeringstillfället.
 
-== Hur signerar jag? ==
+== Hur signerar jag utan signeringtjänsten? ==
 Första steget för en applikation är att erbjuda signering för en användare. När användaren har bett om signering måste applikationen visa en signeringsklient för användaren som skall utföra själva signeringen. Här måste applikationen ta hänsyn till vad för typ av certifikat som användaren vill signera med samt vilken browser som används. I nästa steg måste applikationen ta emot signaturen och genomföra en kontroll av den för att verifiera att certifikatet som användes vid signeringen är giltligt. Det som verifieras är att certifikatet är utfärdat av en giltig CA-Root, att det inte är revokerat samt att det inte har gått ut. I sista steget måste applikationen spara signaturen för framtida behov. Nedan visas en schematisk bild över hur flödet ser ut, de heldragna pilarna är de interaktioner som måste hanteras/implementeras av applikationen.
 http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Signature-process.png
 
@@ -14,17 +14,24 @@ http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Signature-pr
 Första steget för en applikation är att erbjuda signering för en användare. Efter detta tar signeringstjänsten över och hanterar presentationen av signeringsklinet med allt vad det innebär, signeringstjänsten tar även hand om kontroll av certifikat. Det applikationen behöver ta hänsyn till är lagringen av signaturen. Nedan visas en schematisk bild över hur flödet ser ut, de heldragna pilarna är de interaktioner som måste hanteras/implementeras av applikationen.
 http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Signatureservice-process.png
 
-== Vad gör signeringstjänsten? ==
+== Vad gör signeringstjänsten för mig? ==
 Signeringstjänsten hjälper till med följande:
  * Möjlighet att visa ett gränssnitt för val av signerings-certifikat
  * Presenatation av olika signeringsklienter beroende på certifikat
  * Hantering av olika webbläsare
  * Verifiering av utfärdad signatur
 
-= Anslut till signeringstjänsten =
-Nedan följer en lista över 
+== Anslut till signeringstjänsten ==
+In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
 
+ # Det första vi behöver sätta upp är en tjänst dit signeringstjänsten kan leverera signaturen. Detta kan antingen vara i form av en http- eller ftp-server, här kommer vi att beskriva fallet http-server. Tjänsten måste acceptera POST med följande parametrar i dess body:
+
+  `envelope`
+      asdfjasdfsd
 = Använda signeringstjänsten =
 == Klientertyper ==
 
 = Konfigurera signeringstjänsten =
+
+
+Signaturen POST:as in till tjänsten som svarar antingen med 200 OK vilket får signeringtjänsten att visa upp en egen resultatsida. Vill man däremot själv presentera en resultatsida svarar man med 302 FOUND och url:en till sidan i header-attributet Location.
