@@ -25,9 +25,10 @@ Signeringstjänsten hjälper till med följande:
 In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
 
  # Det första vi behöver sätta upp är en tjänst dit signeringstjänsten kan leverera signaturen. Detta kan antingen vara i form av en http- eller ftp-server, här kommer vi att beskriva fallet http-server. Tjänsten måste acceptera POST med följande parametrar i dess body:
+  * `envelope - XML-envelope innehållande  signaturen`
+ # 
 
-  `envelope`
-      asdfjasdfsd
+
 = Använda signeringstjänsten =
 == Klientertyper ==
 
