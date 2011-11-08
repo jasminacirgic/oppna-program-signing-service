@@ -26,11 +26,18 @@ In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter 
 
  # Det första vi behöver sätta upp är en tjänst dit signeringstjänsten kan leverera signaturen. Detta kan vara antingen i form av en http- eller ftp-server, här kommer vi att beskriva fallet http-server. Tjänsten måste acceptera POST med följande parametrar i dess body:
   * `envelope - XML-envelope innehållande  signaturen`
- # Nästa steg blir att erbjuda signering till användarna i form av en html-sida. Från denna html sida görs en Http POST med följande parametrar i dess body: || Parameter || Beskrivning ||
-|| tbs || Data som skall signeras ||
-|| submitUri || Uri till den tjänst som vi satte upp i steg 1 ||
-|| clientType || Anger vilken typ av nyckel som skall användas vid signeringen. Välj mellan: BankId, Telia, Nordea eller SITHS. Utelämnas detta kommer signeringstjänsten att presentera sida där användaren får välja. ||
- # sdaf
+ # Nästa steg blir att erbjuda signering till användarna i form av en html-sida. Från denna html sida görs en Http POST till http://your-service-host.com/sign/prepare med följande parametrar i dess body:
+  * `tbs - Data som skall signeras`
+  * `submitUri - Uri till den tjänst som vi satte upp i steg 1`
+  * `clientType - Anger vilken typ av nyckel som skall användas vid signeringen. Välj mellan: BankId, Telia, Nordea eller SITHS. Utelämnas detta kommer signeringstjänsten att presentera sida där användaren får välja.`
+ # Nu är det dags för ett första försök, går allt bra så kan du fortsätta till nästa steg.
+ # Funkar allt nu så är det dags att säkra upp överföringen av signaturen. Detta görs i två steg
+  # Aktivera https på den tjänst som aktiverades i steg 1. Hur man gör detta beror på vilken webserver man använder. Vid anslutning mot utbildnings-miljön kan man använda ett egenutfärdat certifikat.
+  # Den publika delen av certifikatet måste skickas till en administratör av signeringstjänten för import i dess truststore.
+ # Slutligen så skall vi aktivera Mutual Authentication, detta för att den anslutande applikationen skall veta att det är signeringstjänsten som skickar signaturen och inte någon annan som utger sig för att vara det. Detta t.ex. kan ske i en [http://en.wikipedia.org/wiki/Man-in-the-middle_attack man-in-the-middle-attack]. Vi gör detta i tre steg:
+  # kj
+  # dsf
+  # asdf
 
 = Använda signeringstjänsten =
 == Klientertyper ==
