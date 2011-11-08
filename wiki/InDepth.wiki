@@ -35,9 +35,9 @@ In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter 
   # Aktivera https på den tjänst som aktiverades i steg 1. Hur man gör detta beror på vilken webserver man använder. Vid anslutning mot utbildnings-miljön kan man använda ett egenutfärdat certifikat.
   # Den publika delen av certifikatet måste skickas till en administratör av signeringstjänten för import i dess truststore.
  # Slutligen så skall vi aktivera Mutual Authentication, detta för att den anslutande applikationen skall veta att det är signeringstjänsten som skickar signaturen och inte någon annan som utger sig för att vara det. Detta t.ex. kan ske i en [http://en.wikipedia.org/wiki/Man-in-the-middle_attack man-in-the-middle-attack]. Vi gör detta i tre steg:
-  # kj
-  # dsf
-  # asdf
+  # Aktivera Mutual Authentication på webbservern. Detta är levereantörsspecifikt, på tomcat t.ex. sätts attributet clientAuth på connector-taggen i server.xml till true.
+  # 
+  # 
 
 = Använda signeringstjänsten =
 == Klientertyper ==
