@@ -26,7 +26,7 @@ In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter 
 
  # Det första vi behöver sätta upp är en tjänst dit signeringstjänsten kan leverera signaturen. Detta kan vara antingen i form av en http- eller ftp-server, här kommer vi att beskriva fallet http-server. Tjänsten måste acceptera POST med följande parametrar i dess body:
   * `envelope - XML-envelope innehållande  signaturen`
- # Nästa steg blir att erbjuda signering till användarna i form av en html-sida. Från denna html sida görs en Http POST till http://your-service-host.com/sign/prepare med följande parametrar i dess body:
+ # Nästa steg blir att erbjuda signering till användarna i form av en html-sida. Från denna html sida görs en Http POST till https://service-host.com/sign/prepare med följande parametrar i dess body:
   * `tbs - Data som skall signeras`
   * `submitUri - Uri till den tjänst som vi satte upp i steg 1`
   * `clientType - Anger vilken typ av nyckel som skall användas vid signeringen. Välj mellan: BankId, Telia, Nordea eller SITHS. Utelämnas detta kommer signeringstjänsten att presentera sida där användaren får välja.`
