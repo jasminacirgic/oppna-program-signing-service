@@ -1,4 +1,4 @@
-#summary Djupgående genomgång av hur man använder signeringstjänsten.
+#summary Djupgående genomgång av hur man använder signeringstjänsten.
 
 = Inledning =
 == Vad är en signatur? ==
