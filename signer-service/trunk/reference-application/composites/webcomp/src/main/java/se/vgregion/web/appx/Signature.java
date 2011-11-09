@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.codec.binary.Base64;
 
 import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
-import se.vgregion.proxy.signera.signature.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureFormat;
 
 public class Signature extends AbstractEntity<Integer> {
     private byte[] signature;

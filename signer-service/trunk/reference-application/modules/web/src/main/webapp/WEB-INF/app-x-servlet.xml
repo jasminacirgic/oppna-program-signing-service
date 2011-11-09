@@ -43,7 +43,7 @@
   </bean>
 
   <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-    <property name="contextPath" value="se.vgregion.proxy.signera.signature" />
+    <property name="contextPath" value="se.vgregion.signera.signature._1" />
   </bean>
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
