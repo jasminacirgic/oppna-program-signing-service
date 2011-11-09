@@ -73,8 +73,9 @@ public class WebSignControllerTest {
         // Given
         final Model model = new ExtendedModelMap();
         final SignatureData signData = new SignatureData();
+        given(request.getRemoteHost()).willReturn("example.com");
         // When
-        String viewName = signController.prepareSignNoClientType(signData, model);
+        String viewName = signController.prepareSignNoClientType(signData, model, request);
         // Then
         assertEquals("clientTypeSelection", viewName);
         assertTrue(model.asMap().containsKey("signData"));

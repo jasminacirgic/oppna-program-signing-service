@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.vgregion.proxy.signera.signature.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
 import se.vgregion.web.ftp.SimpleFtpUploadClient;
 import se.vgregion.web.security.services.SignatureServiceOsif;
 import se.vgregion.web.signaturestorage.SignatureStorage;

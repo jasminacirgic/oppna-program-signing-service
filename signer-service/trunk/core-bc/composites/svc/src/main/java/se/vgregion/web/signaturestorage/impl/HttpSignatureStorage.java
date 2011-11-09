@@ -16,7 +16,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.Marshaller;
 
-import se.vgregion.proxy.signera.signature.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
 import se.vgregion.web.HttpMessageHelper;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;

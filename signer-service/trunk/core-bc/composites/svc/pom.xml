@@ -98,7 +98,7 @@
     <dependency>
       <groupId>se.vgregion.daoframework</groupId>
       <artifactId>dao-framework</artifactId>
-      <version>3.5-SNAPSHOT</version>
+      <version>3.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.mina</groupId>

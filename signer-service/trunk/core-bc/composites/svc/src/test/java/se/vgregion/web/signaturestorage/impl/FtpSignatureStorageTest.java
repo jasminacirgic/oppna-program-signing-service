@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import se.vgregion.proxy.signera.signature.SignatureEnvelope;
-import se.vgregion.proxy.signera.signature.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureFormat;
 import se.vgregion.web.ftp.SimpleFtpUploadClient;
 import se.vgregion.web.security.services.SignatureEnvelopeFactory;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;

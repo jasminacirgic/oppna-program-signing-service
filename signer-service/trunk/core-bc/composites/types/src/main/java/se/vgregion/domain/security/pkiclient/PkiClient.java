@@ -1,10 +1,10 @@
 package se.vgregion.domain.security.pkiclient;
 
-import static se.vgregion.proxy.signera.signature.SignatureFormat.*;
+import static se.vgregion.signera.signature._1.SignatureFormat.*;
 
 import java.util.Locale;
 
-import se.vgregion.proxy.signera.signature.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureFormat;
 
 /**
  * Java 5 enumeration of Pki Clients.

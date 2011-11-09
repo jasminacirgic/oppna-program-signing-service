@@ -86,7 +86,9 @@ public class WebSignController extends AbstractSignController {
      * @return name of the view which displays a list of pki clients
      */
     @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri" })
-    public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model) {
+    public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model,
+            HttpServletRequest req) {
+        LOGGER.info("Incoming sign request from {}", req.getRemoteHost());
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
     }
@@ -124,8 +126,8 @@ public class WebSignController extends AbstractSignController {
      * @throws SignatureException
      *             if validation or submission fails
      */
-    @RequestMapping(value = "/verify", method = POST, params = { "encodedTbs", "submitUri",
-            "clientType", "signature" })
+    @RequestMapping(value = "/verify", method = POST, params = { "encodedTbs", "submitUri", "clientType",
+    "signature" })
     public String verifyAndSaveSignature(@ModelAttribute SignatureData signData) throws SignatureException {
         super.verifySignature(signData);
         String redirectLocation = getSignatureService().save(signData);
@@ -141,7 +143,8 @@ public class WebSignController extends AbstractSignController {
      * 
      * @param signData
      *            data used during verification
-     * @param response the {@link HttpServletResponse}
+     * @param response
+     *            the {@link HttpServletResponse}
      * @return name of view to show to the client
      * @throws SignatureException
      *             if validation or submission fails

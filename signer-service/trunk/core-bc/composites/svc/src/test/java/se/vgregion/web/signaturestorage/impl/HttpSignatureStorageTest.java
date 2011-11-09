@@ -18,8 +18,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.oxm.Marshaller;
 
-import se.vgregion.proxy.signera.signature.SignatureEnvelope;
-import se.vgregion.proxy.signera.signature.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureFormat;
 import se.vgregion.web.HttpMessageHelper;
 import se.vgregion.web.security.services.SignatureEnvelopeFactory;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;

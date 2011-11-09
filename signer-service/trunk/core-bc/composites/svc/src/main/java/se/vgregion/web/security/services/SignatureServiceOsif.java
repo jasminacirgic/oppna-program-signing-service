@@ -19,7 +19,7 @@ import se.sll.wsdl.soap.osif.Osif;
 import se.sll.wsdl.soap.osif.VerifySignatureRequest;
 import se.sll.wsdl.soap.osif.VerifySignatureResponse;
 import se.vgregion.domain.security.pkiclient.PkiClient;
-import se.vgregion.proxy.signera.signature.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
 import se.vgregion.web.signaturestorage.SignatureStorage;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
 

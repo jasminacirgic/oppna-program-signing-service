@@ -3,7 +3,7 @@ package se.vgregion.web.signaturestorage;
 import java.io.IOException;
 import java.net.URI;
 
-import se.vgregion.proxy.signera.signature.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
 
 /**
  * Defines an interface for storing signatures.

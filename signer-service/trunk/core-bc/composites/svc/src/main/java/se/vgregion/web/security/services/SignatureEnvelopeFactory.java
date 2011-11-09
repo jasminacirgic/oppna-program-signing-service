@@ -1,7 +1,7 @@
 package se.vgregion.web.security.services;
 
-import se.vgregion.proxy.signera.signature.SignatureEnvelope;
-import se.vgregion.proxy.signera.signature.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureFormat;
 
 /**
  * Factory class to create a {@link SignatureEnvelope}.
