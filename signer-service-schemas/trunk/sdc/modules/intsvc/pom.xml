@@ -75,7 +75,7 @@ Generation time : 2011-08-18 09:27:07 CEST
               <sourceRoot>${schema.gen.src.dir}</sourceRoot>
               <xsdOptions>
                 <xsdOption>
-                  <xsd>${schema.path}/se/vgregion/sd/signerservice/SignatureEnvelope.xsd</xsd>
+                  <xsd>${schema.path}/se/vgregion/sd/signerservice/SignatureEnvelope_1.0.xsd</xsd>
                 </xsdOption>
               </xsdOptions>
             </configuration>

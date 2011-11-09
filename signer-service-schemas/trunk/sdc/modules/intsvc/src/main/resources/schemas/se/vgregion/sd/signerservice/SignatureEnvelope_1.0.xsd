@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://signera.proxy.vgregion.se/signature" xmlns="http://signera.proxy.vgregion.se/signature"
-  elementFormDefault="qualified">
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://signera.vgregion.se/signature/1/"
+  xmlns="http://signera.vgregion.se/signature/1/"
+  elementFormDefault="qualified"
+  version="1.0">
+  
   <xs:element name="signatureEnvelope">
     <xs:complexType>
       <xs:sequence>
