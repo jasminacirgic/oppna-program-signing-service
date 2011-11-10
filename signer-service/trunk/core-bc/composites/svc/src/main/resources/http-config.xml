@@ -70,7 +70,7 @@
     </constructor-arg>
     <constructor-arg>
       <bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <property name="contextPath" value="se.vgregion.proxy.signera.signature" />
+        <property name="contextPath" value="se.vgregion.signera.signature._1" />
       </bean>
     </constructor-arg>
   </bean>
