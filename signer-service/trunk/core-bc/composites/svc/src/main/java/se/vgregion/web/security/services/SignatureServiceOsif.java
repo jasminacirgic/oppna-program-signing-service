@@ -31,8 +31,6 @@ import se.vgregion.web.signaturestorage.SignatureStoreageException;
 public class SignatureServiceOsif implements ApplicationContextAware, SignatureService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SignatureServiceOsif.class);
 
-    private SignatureStorage storage = null;
-
     private ApplicationContext applicationContext;
     private Osif osif;
     private String policy;
@@ -50,6 +48,10 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
      */
     public SignatureServiceOsif(Osif osif, String serviceId) {
         this.osif = osif;
+        /*
+         * In the osif spec the consumer identifier is called policy while Logica,
+         * as the osif serivce provider, uses the term serviceId for the same thing.
+         */
         this.policy = serviceId;
     }
 
@@ -162,7 +164,9 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
         return submitEnvelope(signData, envelope);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see SignatureService#abort(SignatureData)
      */
     @Override
@@ -175,7 +179,7 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
 
     private String submitEnvelope(SignatureData signData, SignatureEnvelope envelope) throws SignatureException {
         URI submitUri = signData.getSubmitUri();
-        setupIOBackend(submitUri.getScheme());
+        SignatureStorage storage = getIOBackend(submitUri.getScheme());
         if (storage == null) {
             throw new SignatureException(new IllegalStateException(
                     "No storage is configured for the specified protocol"));
@@ -192,14 +196,17 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
         return forwardString;
     }
 
-    private void setupIOBackend(String protocol) {
+    private SignatureStorage getIOBackend(String protocol) {
         String beanName = protocol + "-signature-storage";
         if (applicationContext.containsBean(beanName)) {
-            storage = (SignatureStorage) applicationContext.getBean(beanName);
+            return (SignatureStorage) applicationContext.getBean(beanName);
         }
+        throw new IllegalArgumentException("Unsupported protocol in submitUri: " + protocol);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see ApplicationContextAware#setApplicationContext(ApplicationContext)
      */
     @Override

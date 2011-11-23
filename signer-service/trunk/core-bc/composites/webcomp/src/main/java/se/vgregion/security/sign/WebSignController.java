@@ -188,5 +188,9 @@ public class WebSignController extends AbstractSignController {
         model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));
         return new ModelAndView("errorHandling", model);
     }
-
+    //
+    //    @RequestMapping(value="/solveTicket")
+    //    @ResponseBody public TicketDto solveTicket() {
+    //        return TicketDto.createDto(Ticket.solveTicket());
+    //    }
 }
