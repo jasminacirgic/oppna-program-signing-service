@@ -21,19 +21,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
+import se.vgregion.ticket.Ticket;
+import se.vgregion.ticket.TicketManager;
+import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
 
 /**
  * Web implementation of {@link AbstractSignController}. This implementation is used for standard web access to the
  * signer service. To access the signer service as RESTfull WebService use {@link RestSignController}.
- * 
+ *
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
- * 
  * @see RestSignController
  */
 @Controller
@@ -42,11 +45,9 @@ public class WebSignController extends AbstractSignController {
 
     /**
      * Constructs an instance of WebSignController.
-     * 
-     * @param signatureService
-     *            a signatureService
-     * @param eLegTypes
-     *            a repository of e-legitimations
+     *
+     * @param signatureService a signatureService
+     * @param eLegTypes        a repository of e-legitimations
      */
     @Autowired
     public WebSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes) {
@@ -56,9 +57,8 @@ public class WebSignController extends AbstractSignController {
     /**
      * Setup an {@link java.beans.PropertyEditor.PropertyEditor} to handle conversion of a {@link String}
      * representing an {@link ELegType} to ELegType.
-     * 
-     * @param binder
-     *            WebDataBinder
+     *
+     * @param binder WebDataBinder
      */
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -78,38 +78,37 @@ public class WebSignController extends AbstractSignController {
 
     /**
      * If a pki client type is missing in the request provide a list to select from to the client.
-     * 
-     * @param model
-     *            the model
-     * @param signData
-     *            signature data
+     *
+     * @param model    the model
+     * @param signData signature data
      * @return name of the view which displays a list of pki clients
      */
-    @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri" })
+    @RequestMapping(value = "/prepare", method = POST, params = {"tbs", "submitUri"})
     public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model,
-            HttpServletRequest req) {
+                                          HttpServletRequest req) {
         LOGGER.info("Incoming sign request from {}", req.getRemoteHost());
+        validateTicket(signData.getTicket());
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
+    }
+
+    private void validateTicket(Ticket ticket) {
+        //TODO
     }
 
     /**
      * Preparation for signing, ie. encode <code>tbs</code> - To Be Signed and generate <code>nonce</code>. The
      * returned string should be the name of a pki client and should mapped to a view with the same name.
-     * 
-     * @param signData
-     *            data used during signing
-     * @param model
-     *            the model
-     * @param req
-     *            the HttpServletRequest
+     *
+     * @param signData data used during signing
+     * @param model    the model
+     * @param req      the HttpServletRequest
      * @return the name of the pki client
-     * 
-     * @throws SignatureException
-     *             if preparation fails
+     * @throws SignatureException if preparation fails
      * @throws java.io.UnsupportedEncodingException
+     *
      */
-    @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri", "clientType" })
+    @RequestMapping(value = "/prepare", method = POST, params = {"tbs", "submitUri", "clientType"})
     public String prepareSign(@ModelAttribute SignatureData signData, Model model, HttpServletRequest req)
             throws SignatureException {
         model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
@@ -119,15 +118,13 @@ public class WebSignController extends AbstractSignController {
 
     /**
      * Verifies and submits the signature to submitUri.
-     * 
-     * @param signData
-     *            data used during verification
+     *
+     * @param signData data used during verification
      * @return name of view to show to the client
-     * @throws SignatureException
-     *             if validation or submission fails
+     * @throws SignatureException if validation or submission fails
      */
-    @RequestMapping(value = "/verify", method = POST, params = { "encodedTbs", "submitUri", "clientType",
-    "signature" })
+    @RequestMapping(value = "/verify", method = POST, params = {"encodedTbs", "submitUri", "clientType",
+            "signature"})
     public String verifyAndSaveSignature(@ModelAttribute SignatureData signData) throws SignatureException {
         super.verifySignature(signData);
         String redirectLocation = getSignatureService().save(signData);
@@ -140,14 +137,11 @@ public class WebSignController extends AbstractSignController {
 
     /**
      * Cancel the signing and informs the consumer.
-     * 
-     * @param signData
-     *            data used during verification
-     * @param response
-     *            the {@link HttpServletResponse}
+     *
+     * @param signData data used during verification
+     * @param response the {@link HttpServletResponse}
      * @return name of view to show to the client
-     * @throws SignatureException
-     *             if validation or submission fails
+     * @throws SignatureException if validation or submission fails
      */
     @RequestMapping(value = "/cancel", method = POST)
     public String cancelSignature(@ModelAttribute SignatureData signData, HttpServletResponse response)
@@ -173,14 +167,12 @@ public class WebSignController extends AbstractSignController {
     /**
      * Handles all exceptions so that no stacktraces is displayed on a web page. Logs the complete stacktrace in
      * the configured log.
-     * 
-     * @param ex
-     *            the exception
-     * @param request
-     *            the httpServletRequest
+     *
+     * @param ex      the exception
+     * @param request the httpServletRequest
      * @return a {@link ModelAndView} with an error message and the view to display
      */
-    @ExceptionHandler(Exception.class)
+//    @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception ex, HttpServletRequest request) {
         ex.printStackTrace();
         LOGGER.error("Generic Error Handling", ex);
@@ -188,9 +180,11 @@ public class WebSignController extends AbstractSignController {
         model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));
         return new ModelAndView("errorHandling", model);
     }
-    //
-    //    @RequestMapping(value="/solveTicket")
-    //    @ResponseBody public TicketDto solveTicket() {
-    //        return TicketDto.createDto(Ticket.solveTicket());
-    //    }
+
+    @RequestMapping(value = "/solveTicket")
+    @ResponseBody
+    public String solveTicket() {
+        Ticket ticket = TicketManager.INSTANCE.solveTicket("asdf");
+        return ticket.getDue() + "_" + ticket.getSignatureAsBase64();
+    }
 }

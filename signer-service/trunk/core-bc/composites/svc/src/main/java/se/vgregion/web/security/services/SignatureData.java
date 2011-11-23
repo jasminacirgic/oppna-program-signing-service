@@ -10,6 +10,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
+import se.vgregion.ticket.Ticket;
 
 /**
  * Bean containing various signature data.
@@ -25,6 +26,7 @@ public class SignatureData {
     private ELegType clientType = null;
     private String signature = "";
     private int errorCode = 0;
+    private Ticket ticket;
 
     public String getTbs() {
         return tbs;
@@ -104,4 +106,11 @@ public class SignatureData {
         this.errorCode = errorCode;
     }
 
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
+    }
 }

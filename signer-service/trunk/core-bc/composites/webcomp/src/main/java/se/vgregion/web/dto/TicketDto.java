@@ -3,8 +3,6 @@
  */
 package se.vgregion.web.dto;
 
-import java.util.Date;
-
 import se.vgregion.ticket.Ticket;
 
 /**
@@ -12,23 +10,14 @@ import se.vgregion.ticket.Ticket;
  *
  */
 public class TicketDto {
-    private Date due;
-    private String ticketNumber;
+    private String ticketAsString;
 
-    private TicketDto(String ticketNumber, Date due) {
-        this.due = new Date(due.getTime());
-        this.ticketNumber = ticketNumber;
-    }
-    public Date getDue() {
-        return due;
-    }
-
-    public String getTicketNumber() {
-        return ticketNumber;
+    private TicketDto(Ticket ticket) {
+        this.ticketAsString = ticket.getDue() + ticket.getSignatureAsBase64();
     }
 
     public static TicketDto createDto(Ticket ticket) {
-        return new TicketDto(ticket.getTicketNumber(), new Date(ticket.getDue()));
+        return new TicketDto(ticket);
     }
 
 }
