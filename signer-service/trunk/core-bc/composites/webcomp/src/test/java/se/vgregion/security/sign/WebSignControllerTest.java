@@ -2,7 +2,6 @@ package se.vgregion.security.sign;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Matchers.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
+import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
 
@@ -40,7 +40,7 @@ public class WebSignControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        signController = new WebSignController(signatureService, eLegTypes);
+        signController = new WebSignController(signatureService, eLegTypes, TicketManager.getInstance());
     }
 
     @Test(expected = UnsupportedOperationException.class)

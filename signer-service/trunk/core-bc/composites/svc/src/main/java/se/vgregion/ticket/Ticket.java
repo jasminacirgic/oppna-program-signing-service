@@ -15,22 +15,12 @@ public final class Ticket {
         this.signature = signature;
     }
 
-    public boolean isValid() {
-        TicketManager.INSTANCE.verifySignature(this);
-        final long now = System.currentTimeMillis();
-        return (!isNull(due) && due >= now);
-    }
-
-    public long getDue() {
+    public Long getDue() {
         return due;
     }
 
     public byte[] getSignature() {
         return signature;
-    }
-
-    private static boolean isNull(Object o) {
-        return o == null;
     }
 
     @Override

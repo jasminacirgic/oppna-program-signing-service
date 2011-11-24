@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
+import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
 
@@ -18,19 +19,22 @@ import se.vgregion.web.security.services.SignatureService;
 public abstract class AbstractSignController {
     private SignatureService signatureService;
     private Repository<ELegType, String> eLegTypes;
+    private TicketManager ticketManager;
 
     /**
      * Constructor forces implementors to provide a {@link SignatureService} and a {@link Repository} with
      * {@link ELegType}s.
-     * 
+     *
      * @param signatureService
      *            a signatureService
      * @param eLegTypes
-     *            a repository of e-legitimations
+     * @param ticketManager
      */
-    public AbstractSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes) {
+    public AbstractSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes,
+                                  TicketManager ticketManager) {
         this.signatureService = signatureService;
         this.eLegTypes = eLegTypes;
+        this.ticketManager = ticketManager;
     }
 
     protected SignatureService getSignatureService() {
@@ -39,6 +43,10 @@ public abstract class AbstractSignController {
 
     protected Repository<ELegType, String> geteLegTypes() {
         return eLegTypes;
+    }
+
+    protected TicketManager getTicketManager() {
+        return ticketManager;
     }
 
     /**

@@ -2,8 +2,6 @@ package se.vgregion.security.sign;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
 
 import java.security.SignatureException;
 import java.util.Arrays;
@@ -17,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
+import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
 
@@ -30,7 +29,7 @@ public class AbstractSignControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        signController = new AbstractSignController(signatureService, eLegTypes) {
+        signController = new AbstractSignController(signatureService, eLegTypes, TicketManager.getInstance()) {
         };
     }
 

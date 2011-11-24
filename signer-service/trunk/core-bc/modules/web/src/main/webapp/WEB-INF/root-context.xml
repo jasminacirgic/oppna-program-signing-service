@@ -22,14 +22,4 @@
     <property name="maxTotalConnections" value="${maxTotalConnections}" />
   </bean>
 
-  <bean id="scheduledTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-    <!-- wait 1 hour before starting repeated execution -->
-    <property name="delay" value="3600000" />
-    <!-- run every hour -->
-    <property name="period" value="3600000" />
-    <property name="timerTask" ref="cleanTickets" />
-  </bean>
-  
-  <bean id="cleanTickets" class="se.vgregion.ticket.TicketCleanup" />
-
 </beans>

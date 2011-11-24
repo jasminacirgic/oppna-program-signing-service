@@ -14,18 +14,18 @@ public class TicketManagerTest {
     @Test
     public void testSignAndVerifySuccess() {
         //The signature is created at Ticket creation time.
-        TicketManager tm = TicketManager.INSTANCE;
+        TicketManager tm = TicketManager.getInstance();
 
         Ticket ticket = tm.solveTicket("asdf");
 
-        boolean valid = tm.verifySignature(ticket);
+        boolean valid = tm.verifyTicket(ticket);
 
         assertTrue(valid);
     }
     
     @Test
     public void testSignAndVerifyFail() {
-        TicketManager tm = TicketManager.INSTANCE;
+        TicketManager tm = TicketManager.getInstance();
         Ticket ticket = tm.solveTicket("asdf");
 
         //Manipulating the due date
@@ -34,7 +34,7 @@ public class TicketManagerTest {
         ReflectionTestUtils.setField(ticket, "due", due);
 
         //The signature does not verify the changed due date
-        boolean valid = tm.verifySignature(ticket);
+        boolean valid = tm.verifyTicket(ticket);
 
         assertFalse(valid);
     }

@@ -1,13 +1,5 @@
 package se.vgregion.security.sign;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-import java.security.SignatureException;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.ticket.Ticket;
@@ -31,6 +22,13 @@ import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.security.SignatureException;
+import java.util.Collection;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Web implementation of {@link AbstractSignController}. This implementation is used for standard web access to the
@@ -50,8 +48,10 @@ public class WebSignController extends AbstractSignController {
      * @param eLegTypes        a repository of e-legitimations
      */
     @Autowired
-    public WebSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes) {
-        super(signatureService, eLegTypes);
+    public WebSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes,
+                             TicketManager ticketManager) {
+        super(signatureService, eLegTypes, ticketManager);
+
     }
 
     /**
@@ -181,10 +181,4 @@ public class WebSignController extends AbstractSignController {
         return new ModelAndView("errorHandling", model);
     }
 
-    @RequestMapping(value = "/solveTicket")
-    @ResponseBody
-    public String solveTicket() {
-        Ticket ticket = TicketManager.INSTANCE.solveTicket("asdf");
-        return ticket.getDue() + "_" + ticket.getSignatureAsBase64();
-    }
 }

@@ -25,7 +25,7 @@
           <scanIntervalSeconds>1</scanIntervalSeconds>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>7980</port>
+              <port>9080</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
             <connector implementation="org.mortbay.jetty.security.SslSocketConnector">

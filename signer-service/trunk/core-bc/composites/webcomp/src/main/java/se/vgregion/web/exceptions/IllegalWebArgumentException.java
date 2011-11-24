@@ -4,13 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Thrown to indicate that a method has been passed an illegal or inappropriate argument. If thown from a servlet
+ * Thrown to indicate that a method has been passed an illegal or inappropriate argument. If thrown from a servlet
  * or web service the response status code is set to BAD REQUEST(300).
  * 
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  * 
  */
-@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Ogiltligt argument")
+@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Ogiltigt argument")
 public class IllegalWebArgumentException extends IllegalArgumentException {
     private static final long serialVersionUID = 1L;
 

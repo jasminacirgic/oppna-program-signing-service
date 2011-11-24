@@ -17,4 +17,7 @@
     <constructor-arg ref="osifWebService" />
     <constructor-arg value="${eid.serviceid}" />
   </bean>
+
+  <bean class="se.vgregion.ticket.TicketManager" factory-method="getInstance"/>
+  
 </beans>
