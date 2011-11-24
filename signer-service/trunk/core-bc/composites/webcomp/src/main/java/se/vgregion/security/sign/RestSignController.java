@@ -1,15 +1,8 @@
 package se.vgregion.security.sign;
 
-import java.security.SignatureException;
-import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.ticket.Ticket;
@@ -17,6 +10,13 @@ import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import java.security.SignatureException;
+import java.util.Collection;
 
 /**
  * RESTfull web service implementation of {@link AbstractSignController}.
@@ -26,8 +26,9 @@ import se.vgregion.web.security.services.SignatureService;
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  * 
  */
-@Controller
-public class RestSignController extends AbstractSignController {
+@Path("/")
+@Produces("application/json")
+public class RestSignController extends AbstractSignController implements IRestSignController {
 
     /**
      * Constructs an instance of RestSignController.
@@ -74,9 +75,9 @@ public class RestSignController extends AbstractSignController {
         return super.verifySignature(signData);
     }
 
-    @RequestMapping(value = "/solveTicket/{serviceId}")
-    @ResponseBody
-    public String solveTicket(@PathVariable String serviceId) {
+    @GET
+    @Path("/solveTicket/{serviceId}")
+    public String solveTicket(@PathParam("serviceId") String serviceId) {
         Ticket ticket = getTicketManager().solveTicket(serviceId);
         return TicketDto.createDto(ticket).toString();
     }

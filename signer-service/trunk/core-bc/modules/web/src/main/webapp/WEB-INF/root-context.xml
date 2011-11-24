@@ -6,6 +6,8 @@
 
   <import resource="classpath:signer-service-config.xml" />
   <import resource="classpath:http-config.xml" />
+  <import resource="classpath:rest-service-config.xml" />
+  <import resource="controllers.xml" />
 
   <context:property-placeholder
     location="classpath:connection.properties, file:${user.home}/.ss/config.properties, ${ss.properties}"

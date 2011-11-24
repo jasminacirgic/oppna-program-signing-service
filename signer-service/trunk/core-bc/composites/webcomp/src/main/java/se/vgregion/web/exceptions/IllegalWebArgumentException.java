@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Thrown to indicate that a method has been passed an illegal or inappropriate argument. If thrown from a servlet
- * or web service the response status code is set to BAD REQUEST(300).
+ * or web service the response status code is set to BAD REQUEST(400).
  * 
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  * 

@@ -18,6 +18,6 @@
     <constructor-arg value="${eid.serviceid}" />
   </bean>
 
-  <bean class="se.vgregion.ticket.TicketManager" factory-method="getInstance"/>
+  <bean id="ticketManager" class="se.vgregion.ticket.TicketManager" factory-method="getInstance"/>
   
 </beans>
