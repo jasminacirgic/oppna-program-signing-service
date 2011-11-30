@@ -22,6 +22,7 @@
         </li>
         <li>
           <input type="hidden" name="submitUri" id="submitUri_http" value="${submitUrl}"/>
+          <input type="hidden" name="ticket" id="ticket" value="${ticket}"/>
         </li>
       </ul>
     </fieldset>

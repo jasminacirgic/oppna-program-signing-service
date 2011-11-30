@@ -53,4 +53,13 @@
     <property name="contentType" value="text/html;charset=UTF-8" />
   </bean>
 
+  <bean id="sslContextFactory" class="se.vgregion.ssl.ConvenientSslContextFactory">
+    <constructor-arg name="keyStore"><null/></constructor-arg>
+    <constructor-arg name="keyStorePassword"><null/></constructor-arg>
+    <constructor-arg name="trustStore" value="${user.home}/.appx/truststore.jks"/>
+    <constructor-arg name="trustStorePassword" value="password"/>
+  </bean>
+
+  <bean id="sslContext" factory-bean="sslContextFactory" factory-method="createSslContext"/>
+  
 </beans>

@@ -9,8 +9,7 @@ public final class Ticket {
     private Long due;
     private byte[] signature;
 
-    // Default access constructor
-    Ticket(Long due, byte[] signature) {
+    public Ticket(Long due, byte[] signature) {
         this.due = due;
         this.signature = signature;
     }

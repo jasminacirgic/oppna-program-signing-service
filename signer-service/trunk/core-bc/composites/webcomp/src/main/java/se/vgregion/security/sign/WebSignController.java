@@ -9,16 +9,16 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.ticket.Ticket;
 import se.vgregion.ticket.TicketManager;
+import se.vgregion.ticket.TicketException;
 import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
@@ -26,6 +26,7 @@ import se.vgregion.web.security.services.SignatureService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SignatureException;
+import java.text.ParseException;
 import java.util.Collection;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -85,15 +86,21 @@ public class WebSignController extends AbstractSignController {
      */
     @RequestMapping(value = "/prepare", method = POST, params = {"tbs", "submitUri"})
     public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model,
-                                          HttpServletRequest req) {
+                                          HttpServletRequest req) throws TicketException {
         LOGGER.info("Incoming sign request from {}", req.getRemoteHost());
-        validateTicket(signData.getTicket());
+        validateTicket(new TicketDto(signData.getTicket()).toTicket());
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
     }
 
-    private void validateTicket(Ticket ticket) {
-        //TODO
+    private void validateTicket(Ticket ticket) throws TicketException {
+        if (ticket == null) {
+            throw new TicketException("No ticket was attached with the request.");
+        }
+        boolean valid = getTicketManager().verifyTicket(ticket);
+        if (!valid) {
+            throw new TicketException("Ticket is invalid. It is either too old or corrupt.");
+        }
     }
 
     /**
@@ -172,12 +179,13 @@ public class WebSignController extends AbstractSignController {
      * @param request the httpServletRequest
      * @return a {@link ModelAndView} with an error message and the view to display
      */
-//    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({SignatureException.class, TicketException.class})
     public ModelAndView handleException(Exception ex, HttpServletRequest request) {
         ex.printStackTrace();
         LOGGER.error("Generic Error Handling", ex);
         ModelMap model = new ModelMap();
         model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));
+        model.addAttribute("message", ex.getMessage());
         return new ModelAndView("errorHandling", model);
     }
 

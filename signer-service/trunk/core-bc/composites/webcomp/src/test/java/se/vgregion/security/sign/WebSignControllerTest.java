@@ -22,6 +22,8 @@ import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
 import se.vgregion.ticket.TicketManager;
+import se.vgregion.web.dto.TicketDto;
+import se.vgregion.web.security.services.ServiceIdService;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
 
@@ -73,6 +75,11 @@ public class WebSignControllerTest {
         // Given
         final Model model = new ExtendedModelMap();
         final SignatureData signData = new SignatureData();
+        TicketManager ticketManager = TicketManager.getInstance();
+        ServiceIdService service = mock(ServiceIdService.class);
+        given(service.containsServiceId(eq("existingServiceId"))).willReturn(true);
+        ticketManager.setServiceIdService(service);
+        signData.setTicket(new TicketDto(ticketManager.solveTicket("existingServiceId")).toString());
         given(request.getRemoteHost()).willReturn("example.com");
         // When
         String viewName = signController.prepareSignNoClientType(signData, model, request);

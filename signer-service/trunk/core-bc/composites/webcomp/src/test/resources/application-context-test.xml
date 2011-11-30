@@ -9,15 +9,4 @@
   <import resource="classpath:META-INF/cxf/cxf-extension-http.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
 
-  <!-- Client -->
-  <jaxrs:client id="client" address="http://localhost:9000/service"
-                serviceClass="se.vgregion.security.sign.IRestSignController">
-    <jaxrs:headers>
-      <entry key="Accept" value="application/json"/>
-    </jaxrs:headers>
-    <jaxrs:providers>
-      <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-    </jaxrs:providers>
-  </jaxrs:client>
-
 </beans>

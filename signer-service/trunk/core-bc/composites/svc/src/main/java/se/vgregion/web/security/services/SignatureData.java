@@ -26,7 +26,7 @@ public class SignatureData {
     private ELegType clientType = null;
     private String signature = "";
     private int errorCode = 0;
-    private Ticket ticket;
+    private String ticket;
 
     public String getTbs() {
         return tbs;
@@ -106,11 +106,11 @@ public class SignatureData {
         this.errorCode = errorCode;
     }
 
-    public Ticket getTicket() {
+    public String getTicket() {
         return ticket;
     }
 
-    public void setTicket(Ticket ticket) {
+    public void setTicket(String ticket) {
         this.ticket = ticket;
     }
 }

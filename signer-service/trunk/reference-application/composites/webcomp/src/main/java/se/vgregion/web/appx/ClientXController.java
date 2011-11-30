@@ -1,7 +1,23 @@
 package se.vgregion.web.appx;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import org.bouncycastle.cms.CMSException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
+import se.vgregion.dao.domain.patterns.repository.Repository;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
 
+import javax.annotation.PostConstruct;
+import javax.net.ssl.SSLContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
@@ -9,20 +25,8 @@ import java.security.NoSuchProviderException;
 import java.security.cert.CertStoreException;
 import java.util.Collection;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.bouncycastle.cms.CMSException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import se.vgregion.dao.domain.patterns.repository.Repository;
-import se.vgregion.signera.signature._1.SignatureEnvelope;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class ClientXController {
@@ -33,6 +37,13 @@ public class ClientXController {
     private String signerServiceLocation;
     @Autowired
     private String submitUrl;
+    @Autowired
+    private SSLContext sslContext;
+
+    @Value("${ticket.url}")
+    private String ticketUrl;
+    @Value("${service-id}")
+    private String serviceId;
 
     @ModelAttribute("signatures")
     public Collection<Signature> getSignatures() {
@@ -47,6 +58,11 @@ public class ClientXController {
     @ModelAttribute("submitUrl")
     public String getSubmitUrl() {
         return submitUrl;
+    }
+
+    @PostConstruct
+    public void init() {
+        SSLContext.setDefault(sslContext); //For the web service call to get the ticket
     }
 
     @RequestMapping(value = "/saveSignature", method = POST)
@@ -82,7 +98,16 @@ public class ClientXController {
     }
 
     @RequestMapping(value = "/", method = GET)
-    public String signForm() {
+    public String signForm(Model model) {
+
+        //Get ticket and add to model
+        RestTemplate template = new RestTemplate();
+        ResponseEntity<String> response = template.getForEntity(ticketUrl, String.class, serviceId);
+        String body = response.getBody();
+        if (body != null) {
+            model.addAttribute("ticket", body.trim());
+        }
+
         return "signForm";
     }
 

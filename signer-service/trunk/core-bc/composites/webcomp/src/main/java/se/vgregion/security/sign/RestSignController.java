@@ -7,6 +7,7 @@ import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.ticket.Ticket;
 import se.vgregion.ticket.TicketManager;
+import se.vgregion.ticket.TicketException;
 import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
@@ -15,6 +16,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.security.SignatureException;
 import java.util.Collection;
 
@@ -27,8 +30,8 @@ import java.util.Collection;
  * 
  */
 @Path("/")
-@Produces("application/json")
-public class RestSignController extends AbstractSignController implements IRestSignController {
+@Produces("text/plain")
+public class RestSignController extends AbstractSignController {
 
     /**
      * Constructs an instance of RestSignController.
@@ -78,8 +81,13 @@ public class RestSignController extends AbstractSignController implements IRestS
     @GET
     @Path("/solveTicket/{serviceId}")
     public String solveTicket(@PathParam("serviceId") String serviceId) {
-        Ticket ticket = getTicketManager().solveTicket(serviceId);
-        return TicketDto.createDto(ticket).toString();
+        Ticket ticket;
+        try {
+            ticket = getTicketManager().solveTicket(serviceId);
+        } catch (TicketException e) {
+            throw new WebApplicationException(e, Response.Status.FORBIDDEN);
+        }
+        return new TicketDto(ticket).toString();
     }
 
 

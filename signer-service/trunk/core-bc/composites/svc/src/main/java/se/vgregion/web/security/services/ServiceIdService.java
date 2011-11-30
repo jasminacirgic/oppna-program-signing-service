@@ -1,5 +1,7 @@
 package se.vgregion.web.security.services;
 
+import java.io.IOException;
+
 /**
  * @author Patrik Bergström
  */
@@ -9,6 +11,6 @@ public interface ServiceIdService {
 
     String getAppName(String serviceId);
 
-    void storeServiceId(String serviceId, String appName);
+    void storeServiceId(String serviceId, String appName) throws IOException;
 
 }

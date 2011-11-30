@@ -1,9 +1,5 @@
 package se.vgregion.ticket;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -14,12 +10,12 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.util.Properties;
-import java.util.UUID;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import se.vgregion.web.security.services.ServiceIdService;
 
 /**
  * Singleton package private ticket manager, responsible to manage all solved tickets in a store. It keeps the
@@ -38,13 +34,13 @@ public class TicketManager {
     private static final String SIGNATURE_ALGORITHM = "SHA512withDSA";
     private static final String PROVIDER_NAME = "BC";
 
+    //This is a Spring bean but created with a factory method so it's still a pure singleton.
     private static TicketManager instance = null;
 
-    private final File propertyFile = new File("service-ids.properties"); //todo remove
+    private ServiceIdService serviceIdService;
+
     private final KeyPair keyPair;
     private final Signature signature;
-
-    private Properties serviceIds = new Properties(); //todo remove
 
     private TicketManager() {
         BouncyCastleProvider provider = new BouncyCastleProvider();
@@ -69,26 +65,20 @@ public class TicketManager {
         return instance;
     }
 
-    /*private static void loadServiceIds() {
-        try {
-            if (!propertyFile.exists()) {
-                boolean success = propertyFile.createNewFile();
-                if (!success) {
-                    throw new IllegalStateException("Failed to create property file for service IDs. The "
-                            + "application can't function without this.");
-                }
-            }
-            FileInputStream inputStream = new FileInputStream(propertyFile);
-            serviceIds.load(inputStream);
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to load service IDs. The application can't function without"
-                    + " this.");
-        }
-    }*/
+    @Autowired
+    public void setServiceIdService(ServiceIdService serviceIdService) {
+        this.serviceIdService = serviceIdService;
+    }
 
-    public Ticket solveTicket(String serviceId) {
-        //todo verify serviceId
+    public Ticket solveTicket(String serviceId) throws TicketException {
+        boolean exists = serviceIdService.containsServiceId(serviceId);
+        if (!exists) {
+            throw new TicketException(String.format("Service-id %s cannot be found.", serviceId));
+        }
+
         long due = System.currentTimeMillis() + KEEP_ALIVE;
+        due = due / 1000 * 1000; //round to whole seconds
+
         byte[] signature = createSignature(due);
         Ticket ticket = new Ticket(due, signature);
         return ticket;
@@ -138,14 +128,4 @@ public class TicketManager {
         return due.toString().getBytes();
     }
 
-    public static void main(String[] args) throws IOException {
-        String uuid = UUID.randomUUID().toString();
-        System.out.println(uuid);
-        Properties ids = TicketManager.getInstance().serviceIds;
-        ids.put(uuid, "SomeApp");
-        File file = TicketManager.getInstance().propertyFile;
-        System.out.println(file.getAbsolutePath());
-        FileOutputStream fos = new FileOutputStream(file, false);
-        ids.store(fos, "Modified by Master Control Program");
-    }
 }
