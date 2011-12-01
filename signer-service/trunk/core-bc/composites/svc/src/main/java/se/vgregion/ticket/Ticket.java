@@ -9,9 +9,15 @@ public final class Ticket {
     private Long due;
     private byte[] signature;
 
+    /**
+     * Constructor.
+     *
+     * @param due a {@link Long} denoting the validity date
+     * @param signature a byte array with the signature of the due
+     */
     public Ticket(Long due, byte[] signature) {
         this.due = due;
-        this.signature = signature;
+        this.signature = signature.clone();
     }
 
     public Long getDue() {
@@ -19,7 +25,7 @@ public final class Ticket {
     }
 
     public byte[] getSignature() {
-        return signature;
+        return signature.clone();
     }
 
     @Override

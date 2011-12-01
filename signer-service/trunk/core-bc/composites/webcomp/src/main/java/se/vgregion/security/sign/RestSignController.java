@@ -22,12 +22,11 @@ import java.security.SignatureException;
 import java.util.Collection;
 
 /**
- * RESTfull web service implementation of {@link AbstractSignController}.
- * 
+ * RESTful web service implementation of {@link AbstractSignController}.
+ * <p/>
  * OBS!! Not fully implemented yet!
- * 
+ *
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
- * 
  */
 @Path("/")
 @Produces("text/plain")
@@ -35,11 +34,10 @@ public class RestSignController extends AbstractSignController {
 
     /**
      * Constructs an instance of RestSignController.
-     * 
-     * @param signatureService
-     *            a signatureService
-     * @param eLegTypes
-     *            a repository of e-legitimations
+     *
+     * @param signatureService a signatureService
+     * @param eLegTypes        a repository of e-legitimations
+     * @param ticketManager    the {@link TicketManager} to use
      */
     @Autowired
     public RestSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes,
@@ -78,6 +76,12 @@ public class RestSignController extends AbstractSignController {
         return super.verifySignature(signData);
     }
 
+    /**
+     * Method to request a new {@link Ticket}.
+     *
+     * @param serviceId the requester must have a serviceId in order to be authorized to receive a {@link Ticket}
+     * @return the {@link Ticket} as a {@link String} in the HTTP response body
+     */
     @GET
     @Path("/solveTicket/{serviceId}")
     public String solveTicket(@PathParam("serviceId") String serviceId) {

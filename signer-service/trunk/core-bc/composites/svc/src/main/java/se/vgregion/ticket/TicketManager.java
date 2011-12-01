@@ -18,18 +18,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import se.vgregion.web.security.services.ServiceIdService;
 
 /**
- * Singleton package private ticket manager, responsible to manage all solved tickets in a store. It keeps the
- * tickets in a concurrent map since both {@link Ticket} and {@link TicketCleanup} writes and reads to the store.
- * The class is an internal for the Ticket process thus its declared package private.
+ * Class for managing tasks associated with {@link Ticket}s, like creation and verification. To ensure that a
+ * {@link Ticket} is valid it is created with a signature which can verify only if the timestamp of the
+ * {@link Ticket} is not modified. Therefore it is impossible to tamper with the timestamp.
+ * <p/>
+ * The class is singleton since verification of a {@link Ticket} can only be made by the same instance which
+ * signed it.
  *
  * @author Anders Asplund
+ * @author Patrik Bergström
  */
-public class TicketManager {
+public final class TicketManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TicketManager.class);
     private static final Long MILLIS_IN_A_MINUTE = 1000L * 60;
     private static final Long KEEP_ALIVE = 5 * MILLIS_IN_A_MINUTE; // 5 minutes;
-    private static final String keyAlgorithm = "DSA";
+    private static final String KEY_ALGORITHM = "DSA";
     private static final int KEY_SIZE = 1024;
     private static final String SIGNATURE_ALGORITHM = "SHA512withDSA";
     private static final String PROVIDER_NAME = "BC";
@@ -46,7 +50,7 @@ public class TicketManager {
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
         try {
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm);
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance(KEY_ALGORITHM);
             kpg.initialize(KEY_SIZE, new SecureRandom());
             keyPair = kpg.generateKeyPair();
             signature = Signature.getInstance(SIGNATURE_ALGORITHM, PROVIDER_NAME);
@@ -57,6 +61,11 @@ public class TicketManager {
         }
     }
 
+    /**
+     * Factory method to get the singleton instance.
+     *
+     * @return the instance
+     */
     public static TicketManager getInstance() {
         if (instance == null) {
             TicketManager ticketManager = new TicketManager();
@@ -70,6 +79,14 @@ public class TicketManager {
         this.serviceIdService = serviceIdService;
     }
 
+    /**
+     * Solves a {@link Ticket}, i.e. creates a new {@link Ticket} which is signed. To solve a {@link Ticket} a
+     * serviceId must be provided to authenticate the requester.
+     *
+     * @param serviceId serviceId
+     * @return the new {@link Ticket}
+     * @throws TicketException if the serviceId is not valid
+     */
     public Ticket solveTicket(String serviceId) throws TicketException {
         boolean exists = serviceIdService.containsServiceId(serviceId);
         if (!exists) {
@@ -77,10 +94,11 @@ public class TicketManager {
         }
 
         long due = System.currentTimeMillis() + KEEP_ALIVE;
-        due = due / 1000 * 1000; //round to whole seconds
+        final int thousand = 1000;
+        due = due / thousand * thousand; //round to whole seconds
 
-        byte[] signature = createSignature(due);
-        Ticket ticket = new Ticket(due, signature);
+        byte[] signatureBytes = createSignature(due);
+        Ticket ticket = new Ticket(due, signatureBytes);
         return ticket;
     }
 
@@ -99,17 +117,22 @@ public class TicketManager {
 
     private boolean verifySignature(Ticket ticket) {
         try {
-            Signature signature = this.signature;
             signature.initVerify(keyPair.getPublic());
             signature.update(dueToBytes(ticket.getDue()));
             return signature.verify(ticket.getSignature());
-        }catch (InvalidKeyException e) {
+        } catch (InvalidKeyException e) {
             throw new RuntimeException(e);
         } catch (SignatureException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Verifies the {@link Ticket} according to its date and signature.
+     *
+     * @param ticket the {@link Ticket}
+     * @return <code>true</code> if the {@link Ticket} is valid or <code>false</code> otherwise
+     */
     public boolean verifyTicket(Ticket ticket) {
         return verifyDue(ticket) && verifySignature(ticket);
     }

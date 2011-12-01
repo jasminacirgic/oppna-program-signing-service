@@ -32,7 +32,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class ClientXController {
 
     @Autowired
-    private Repository<Signature, Integer> signatures;
+    private Repository<Signature, Integer> signaturesRepository;
     @Autowired
     private String signerServiceLocation;
     @Autowired
@@ -47,7 +47,7 @@ public class ClientXController {
 
     @ModelAttribute("signatures")
     public Collection<Signature> getSignatures() {
-        return signatures.findAll();
+        return signaturesRepository.findAll();
     }
 
     @ModelAttribute("signerServiceLocation")
@@ -60,11 +60,22 @@ public class ClientXController {
         return submitUrl;
     }
 
+    /**
+     * Called by Spring.
+     */
     @PostConstruct
     public void init() {
         SSLContext.setDefault(sslContext); //For the web service call to get the ticket
     }
 
+    /**
+     * Handler method called by Spring.
+     *
+     * @param req request
+     * @param response response
+     * @param envelope envelope
+     * @throws IOException IOException
+     */
     @RequestMapping(value = "/saveSignature", method = POST)
     public void postback(HttpServletRequest req, HttpServletResponse response,
             @RequestBody SignatureEnvelope envelope) throws IOException {
@@ -75,13 +86,24 @@ public class ClientXController {
             relocateUrl.append("/abort?errormessage=").append(
                     URLEncoder.encode(envelope.getErrorMessage(), "UTF-8"));
         } else {
-            signatures.store(new Signature(envelope.getSignature().getBytes(), envelope.getSignatureFormat()));
+            signaturesRepository.store(new Signature(envelope.getSignature().getBytes(),
+                    envelope.getSignatureFormat()));
             relocateUrl.append("/showSignStatus");
         }
         String encodedRedirectURL = response.encodeRedirectURL(relocateUrl.toString());
         response.sendRedirect(encodedRedirectURL);
     }
 
+    /**
+     * Handler method called by Spring.
+     *
+     * @return a view
+     * @throws CMSException CMSException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     * @throws NoSuchProviderException NoSuchProviderException
+     * @throws CertStoreException CertStoreException
+     * @throws IOException IOException
+     */
     @RequestMapping(value = "/showSignStatus", method = GET)
     public String status() throws CMSException, NoSuchAlgorithmException, NoSuchProviderException,
     CertStoreException, IOException {
@@ -97,6 +119,12 @@ public class ClientXController {
         return "showSignatures";
     }
 
+    /**
+     * Handler method called by Spring.
+     *
+     * @param model the model
+     * @return a view
+     */
     @RequestMapping(value = "/", method = GET)
     public String signForm(Model model) {
 
@@ -111,12 +139,24 @@ public class ClientXController {
         return "signForm";
     }
 
+    /**
+     * Handler method called by Spring.
+     *
+     * @param model the model
+     * @param errorMessage errorMessage
+     * @return a view
+     */
     @RequestMapping(value = "/abort", method = GET)
     public String errorForm(Model model, @RequestParam("errormessage") String errorMessage) {
         model.addAttribute("errormessage", errorMessage);
         return "errorForm";
     }
 
+    /**
+     * Handler method called by Spring.
+     *
+     * @return a view
+     */
     @RequestMapping(value = "/clean", method = POST)
     public String cleanSignatures() {
         Collection<Signature> signatures = getSignatures();

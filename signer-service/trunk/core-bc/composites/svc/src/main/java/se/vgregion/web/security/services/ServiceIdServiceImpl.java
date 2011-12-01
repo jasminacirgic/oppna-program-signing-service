@@ -18,6 +18,9 @@ import java.util.Properties;
 import java.util.UUID;
 
 /**
+ * This implementation of {@link ServiceIdService} uses a property file to keep track of the allowed service ids.
+ * The property file is monitored for file changes and the class reloads the properties into the memory.
+ *
  * @author Patrik Bergström
  */
 public class ServiceIdServiceImpl implements ServiceIdService {
@@ -27,6 +30,14 @@ public class ServiceIdServiceImpl implements ServiceIdService {
     private File propertyFile;
     private Properties properties = new Properties();
 
+    /**
+     * Constructor.
+     *
+     * @param fileName the file name of the property file to use for storage of allowed service ids.
+     * @param scanInterval the interval, in milliseconds, to poll for changes in the property file.
+     *
+     * @throws IOException when something fails in relation to the input and output of the property file
+     */
     public ServiceIdServiceImpl(String fileName, long scanInterval) throws IOException {
         propertyFile = new File(fileName);
         if (!propertyFile.exists()) {
@@ -36,8 +47,15 @@ public class ServiceIdServiceImpl implements ServiceIdService {
             LOGGER.info(String.format("Using existing %s as property file.", propertyFile.getAbsolutePath()));
         }
 
-        properties.load(new FileInputStream(propertyFile));
-
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(propertyFile);
+            properties.load(in);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
         //start file monitor on the property file
         startFileMonitor(scanInterval);
     }
@@ -50,10 +68,12 @@ public class ServiceIdServiceImpl implements ServiceIdService {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(propertyFile);
-            properties.store(out, "Modified by " + this.getClass().getName() + ". Store entries e.g. like " +
-                    "72f6929e-8b72-4e1b-8b7e-49b99cc6c43b=The service name");
+            properties.store(out, "Modified by " + this.getClass().getName() + ". Store entries e.g. like "
+                    + "72f6929e-8b72-4e1b-8b7e-49b99cc6c43b=The service name");
         } finally {
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         }
     }
 
@@ -73,7 +93,7 @@ public class ServiceIdServiceImpl implements ServiceIdService {
     }
 
     @Override
-    public String getAppName(String serviceId) {
+    public String getApplicationName(String serviceId) {
         return properties.getProperty(serviceId);
     }
 
@@ -85,19 +105,31 @@ public class ServiceIdServiceImpl implements ServiceIdService {
             out = new FileOutputStream(propertyFile);
             properties.store(out, "Modified by " + this.getClass().getName());
         } finally {
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         }
     }
 
     private void reloadProperties() {
+        FileInputStream in = null;
         try {
-            properties.load(new FileInputStream(propertyFile));
+            in = new FileInputStream(propertyFile);
+            properties.load(in);
         } catch (IOException e) {
             LOGGER.error("Failed to load properties.", e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    private static class ServiceIdFileMonitor implements FileListener {
+    private static final class ServiceIdFileMonitor implements FileListener {
 
         private ServiceIdServiceImpl service;
 
@@ -122,6 +154,11 @@ public class ServiceIdServiceImpl implements ServiceIdService {
         }
     }
 
+    /**
+     * A main method to generate {@link UUID}s.
+     *
+     * @param args args
+     */
     public static void main(String[] args) {
         String uuid = UUID.randomUUID().toString();
         System.out.println(uuid);

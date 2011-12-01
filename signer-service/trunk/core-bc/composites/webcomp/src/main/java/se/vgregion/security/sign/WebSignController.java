@@ -17,8 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.ticket.Ticket;
-import se.vgregion.ticket.TicketManager;
 import se.vgregion.ticket.TicketException;
+import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
@@ -26,7 +26,6 @@ import se.vgregion.web.security.services.SignatureService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SignatureException;
-import java.text.ParseException;
 import java.util.Collection;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -47,6 +46,7 @@ public class WebSignController extends AbstractSignController {
      *
      * @param signatureService a signatureService
      * @param eLegTypes        a repository of e-legitimations
+     * @param ticketManager    the {@link TicketManager} to use
      */
     @Autowired
     public WebSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes,
@@ -80,11 +80,13 @@ public class WebSignController extends AbstractSignController {
     /**
      * If a pki client type is missing in the request provide a list to select from to the client.
      *
-     * @param model    the model
      * @param signData signature data
+     * @param model    the model
+     * @param req      the request
      * @return name of the view which displays a list of pki clients
+     * @throws TicketException if the {@link Ticket} validation fails
      */
-    @RequestMapping(value = "/prepare", method = POST, params = {"tbs", "submitUri"})
+    @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri" })
     public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model,
                                           HttpServletRequest req) throws TicketException {
         LOGGER.info("Incoming sign request from {}", req.getRemoteHost());
@@ -115,7 +117,7 @@ public class WebSignController extends AbstractSignController {
      * @throws java.io.UnsupportedEncodingException
      *
      */
-    @RequestMapping(value = "/prepare", method = POST, params = {"tbs", "submitUri", "clientType"})
+    @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri", "clientType" })
     public String prepareSign(@ModelAttribute SignatureData signData, Model model, HttpServletRequest req)
             throws SignatureException {
         model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
@@ -130,8 +132,8 @@ public class WebSignController extends AbstractSignController {
      * @return name of view to show to the client
      * @throws SignatureException if validation or submission fails
      */
-    @RequestMapping(value = "/verify", method = POST, params = {"encodedTbs", "submitUri", "clientType",
-            "signature"})
+    @RequestMapping(value = "/verify", method = POST, params = { "encodedTbs", "submitUri", "clientType",
+            "signature" })
     public String verifyAndSaveSignature(@ModelAttribute SignatureData signData) throws SignatureException {
         super.verifySignature(signData);
         String redirectLocation = getSignatureService().save(signData);
@@ -179,7 +181,7 @@ public class WebSignController extends AbstractSignController {
      * @param request the httpServletRequest
      * @return a {@link ModelAndView} with an error message and the view to display
      */
-    @ExceptionHandler({SignatureException.class, TicketException.class})
+    @ExceptionHandler({ SignatureException.class, TicketException.class })
     public ModelAndView handleException(Exception ex, HttpServletRequest request) {
         ex.printStackTrace();
         LOGGER.error("Generic Error Handling", ex);

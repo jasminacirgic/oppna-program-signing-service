@@ -3,14 +3,12 @@
  */
 package se.vgregion.web.security.services;
 
-import java.net.URI;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.builder.ToStringBuilder;
-
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
-import se.vgregion.ticket.Ticket;
+
+import java.net.URI;
 
 /**
  * Bean containing various signature data.

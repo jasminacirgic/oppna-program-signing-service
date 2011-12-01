@@ -11,8 +11,14 @@ public class Signature extends AbstractEntity<Integer> {
     private byte[] signature;
     private SignatureFormat format;
 
+    /**
+     * Constructor.
+     *
+     * @param signature signature
+     * @param format format
+     */
     public Signature(byte[] signature, SignatureFormat format) {
-        this.signature = signature;
+        this.signature = signature.clone();
         this.format = format;
     }
 

@@ -8,10 +8,6 @@ import se.vgregion.signera.signature._1.SignatureFormat;
  * 
  * @author Anders Asplund - Callista Enterprise
  */
-/**
- * @author anders
- * 
- */
 public final class SignatureEnvelopeFactory {
 
     private SignatureEnvelopeFactory() {

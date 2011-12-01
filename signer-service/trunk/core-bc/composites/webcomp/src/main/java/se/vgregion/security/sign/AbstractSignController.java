@@ -12,9 +12,8 @@ import se.vgregion.web.security.services.SignatureService;
 
 /**
  * Abstract class providing common signing functionality for concrete controller implementations.
- * 
+ *
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
- * 
  */
 public abstract class AbstractSignController {
     private SignatureService signatureService;
@@ -25,10 +24,9 @@ public abstract class AbstractSignController {
      * Constructor forces implementors to provide a {@link SignatureService} and a {@link Repository} with
      * {@link ELegType}s.
      *
-     * @param signatureService
-     *            a signatureService
-     * @param eLegTypes
-     * @param ticketManager
+     * @param signatureService a signatureService
+     * @param eLegTypes        eLegTypes
+     * @param ticketManager    the {@link TicketManager} to use
      */
     public AbstractSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes,
                                   TicketManager ticketManager) {
@@ -51,7 +49,7 @@ public abstract class AbstractSignController {
 
     /**
      * Returns an unmodifiable collection of {@link ELegType}s.
-     * 
+     *
      * @return an unmodifiable collection of {@link ELegType}s.
      */
     public Collection<ELegType> getClientTypes() {
@@ -61,12 +59,10 @@ public abstract class AbstractSignController {
     /**
      * Preparation for signing, ie. encode <code>tbs</code> - To Be Signed and generate <code>nonce</code>. The
      * returned string should be the name of a pki client and should mapped to a view with the same name.
-     * 
-     * @param signData
-     *            data used during signing
+     *
+     * @param signData data used during signing
      * @return the name of the pki client
-     * @throws SignatureException
-     *             if preparation fails
+     * @throws SignatureException if preparation fails
      */
     public String prepareSign(SignatureData signData) throws SignatureException {
         encodeTbs(signData);
@@ -77,12 +73,10 @@ public abstract class AbstractSignController {
 
     /**
      * After signing the signature must be verified to ensure that the certificate used for signing is valid.
-     * 
-     * @param signData
-     *            data used during the verification
+     *
+     * @param signData data used during the verification
      * @return true if signature is valid, throws an {@link SignatureException} otherwise
-     * @throws SignatureException
-     *             if validation fails
+     * @throws SignatureException if validation fails
      */
     public boolean verifySignature(SignatureData signData) throws SignatureException {
         signatureService.verifySignature(signData);

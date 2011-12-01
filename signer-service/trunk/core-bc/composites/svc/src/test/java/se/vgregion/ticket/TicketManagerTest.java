@@ -38,7 +38,17 @@ public class TicketManagerTest {
         Ticket ticket = ticketManager.solveTicket("asdf");
 
         boolean valid = ticketManager.verifyTicket(ticket);
+        assertTrue(valid);
 
+        //create another one in between
+        Ticket ticket2 = ticketManager.solveTicket("asdf33");
+
+        //verify again to ensure nothing gets screwed up when repeated
+        valid = ticketManager.verifyTicket(ticket);
+        assertTrue(valid);
+
+        //and verify the second ticket too
+        valid = ticketManager.verifyTicket(ticket2);
         assertTrue(valid);
     }
 
