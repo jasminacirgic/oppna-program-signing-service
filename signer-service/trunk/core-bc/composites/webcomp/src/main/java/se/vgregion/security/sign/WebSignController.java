@@ -90,7 +90,9 @@ public class WebSignController extends AbstractSignController {
     public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model,
                                           HttpServletRequest req) throws TicketException {
         LOGGER.info("Incoming sign request from {}", req.getRemoteHost());
-        validateTicket(new TicketDto(signData.getTicket()).toTicket());
+        TicketDto ticketDto = new TicketDto(signData.getTicket());
+        LOGGER.info("Ticket used: " + ticketDto.toString());
+        validateTicket(ticketDto.toTicket());
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
     }

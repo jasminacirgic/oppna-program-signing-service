@@ -1,5 +1,7 @@
 package se.vgregion.security.sign;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,6 +33,8 @@ import java.util.Collection;
 @Path("/")
 @Produces("text/plain")
 public class RestSignController extends AbstractSignController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestSignController.class);
 
     /**
      * Constructs an instance of RestSignController.
@@ -85,6 +89,7 @@ public class RestSignController extends AbstractSignController {
     @GET
     @Path("/solveTicket/{serviceId}")
     public String solveTicket(@PathParam("serviceId") String serviceId) {
+        LOGGER.info("Client with serviceId=" + serviceId + " requests a ticket.");
         Ticket ticket;
         try {
             ticket = getTicketManager().solveTicket(serviceId);
