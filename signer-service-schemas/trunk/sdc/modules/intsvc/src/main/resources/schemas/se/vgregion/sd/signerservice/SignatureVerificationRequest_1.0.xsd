@@ -8,12 +8,9 @@
 
   <xs:include schemaLocation="SignatureFormat_1.0.xsd"/>
 
-  <xs:element name="signatureEnvelope">
+  <xs:element name="signatureVerificationRequest">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="errorCode" type="xs:int" minOccurs="1" maxOccurs="1" />
-        <xs:element name="errorMessage" type="xs:string" minOccurs="0" maxOccurs="1" />
-        <xs:element name="signatureName" type="xs:string" minOccurs="0" maxOccurs="1" />
         <xs:element name="signatureFormat" type="signatureFormat" minOccurs="0" maxOccurs="1" />
         <xs:element name="signature" type="xs:string" minOccurs="0" maxOccurs="1" />
       </xs:sequence>

@@ -6,7 +6,8 @@ This is the Integration Service (Webservice, Messaging, ...) Maven POM.
 Template version: 1.4
 Generation time : 2011-08-18 09:27:07 CEST
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>se.vgregion.signer-service-schemas</groupId>
@@ -75,7 +76,7 @@ Generation time : 2011-08-18 09:27:07 CEST
               <sourceRoot>${schema.gen.src.dir}</sourceRoot>
               <xsdOptions>
                 <xsdOption>
-                  <xsd>${schema.path}/se/vgregion/sd/signerservice/SignatureEnvelope_1.0.xsd</xsd>
+                  <xsd>${schema.path}/se/vgregion/sd/signerservice/SignatureObjects_1.0.xsd</xsd>
                 </xsdOption>
               </xsdOptions>
             </configuration>
