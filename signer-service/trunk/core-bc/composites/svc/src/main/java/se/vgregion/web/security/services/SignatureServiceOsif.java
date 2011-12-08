@@ -111,7 +111,9 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
         VerifySignatureRequest request = new VerifySignatureRequest();
         request.setTbsText(signData.getEncodedTbs());
         request.setNonce(signData.getEncodedNonce());
-        request.setProvider(signData.getPkiClient().getId());
+        if (signData.getClientType() != null && signData.getPkiClient() != null) {
+            request.setProvider(signData.getPkiClient().getId());
+        }
         request.setSignature(signData.getSignature());
         request.setPolicy(policy);
         return request;

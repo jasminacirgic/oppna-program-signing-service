@@ -1,9 +1,8 @@
 package se.vgregion.security.sign;
 
-import org.bouncycastle.cms.CMSEnvelopedDataParser;
 import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.util.encoders.Base64;
-import org.jcp.xml.dsig.internal.dom.DOMX509Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
+import se.vgregion.domain.security.pkiclient.PkiClient;
 import se.vgregion.signera.signature._1.SignatureFormat;
 import se.vgregion.signera.signature._1.SignatureVerificationRequest;
 import se.vgregion.ticket.Ticket;
@@ -21,7 +21,6 @@ import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
-import sun.security.x509.X509CertImpl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -31,20 +30,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.xml.crypto.KeySelector;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.PublicKey;
 import java.security.SignatureException;
 import java.util.Collection;
 
@@ -105,7 +106,7 @@ public class RestSignController extends AbstractSignController {
     @Path("/verifySignature")
     @Consumes("application/xml")
     @Produces("text/plain")
-    public String verifySignature(SignatureVerificationRequest signatureVerificationRequest) throws SignatureException, CMSException, IOException, ParserConfigurationException, SAXException, MarshalException, XMLSignatureException {
+    public String verifySignature(SignatureVerificationRequest signatureVerificationRequest) throws CMSException, IOException, ParserConfigurationException, SAXException, MarshalException, XMLSignatureException {
 
         SignatureFormat format = signatureVerificationRequest.getSignatureFormat();
         if (SignatureFormat.XMLDIGSIG.equals(format)) {
@@ -120,25 +121,62 @@ public class RestSignController extends AbstractSignController {
 
             XMLSignature xmlSignature = XMLSignatureFactory.getInstance().unmarshalXMLSignature(new DOMStructure(document));
             xmlSignature.getKeyInfo().getContent();
-            PublicKey publicKey = ((X509CertImpl) ((DOMX509Data) (xmlSignature.getKeyInfo()).getContent().get(0)).getContent().get(0)).getPublicKey();
-            DOMValidateContext validateContext = new DOMValidateContext(KeySelector.singletonKeySelector(publicKey), document);
-            boolean validate = xmlSignature.validate(validateContext);
 
-//        CMSEnvelopedDataParser envelopedDataParser = new CMSEnvelopedDataParser(signature.getBytes());
-//        CMSSignedData cmsSignedData = new CMSSignedData(signature.getBytes());
-//        X509CertParser certParser = new X509CertParser();
+            SignatureData signatureData = new SignatureData();
+            signatureData.setClientType(new ELegType("test", "test", PkiClient.NEXUS_PERSONAL_4X));
+            signatureData.setSignature(new String(Base64.encode(signature.getBytes())));
+            signatureData.setNonce(getNonce(signature));
+            signatureData.setTbs("TODO"); //TODO
 
-//        super.verifySignature()
+            xmlSignature.getObjects().get(0);
+
+            boolean verified = false;
+            try {
+                verified = super.verifySignature(signatureData);
+            } catch (SignatureException e) {
+                e.printStackTrace();
+            }
+            System.out.println(verified);
         } else if (SignatureFormat.CMS.equals(format)) {
             String signature = signatureVerificationRequest.getSignature();
             byte[] decoded = Base64.decode(signature);
-            System.out.println(new String(decoded));
-            org.apache.commons.codec.binary.Base64.decodeBase64(signature);
-            CMSEnvelopedDataParser parser = new CMSEnvelopedDataParser(decoded);
-            System.out.println(parser);
+
+            CMSSignedData cmsSignedData = new CMSSignedData(decoded);
+            String signedData = new String((byte[]) cmsSignedData.getSignedContent().getContent());
+
+            SignatureData signData = new SignatureData();
+            signData.setEncodedTbs(signedData);
+            signData.setSignature(signature);
+            ELegType clientType = new ELegType("test", "test", PkiClient.NETMAKER_NETID_4);
+            signData.setClientType(clientType);
+            boolean verified = false;
+            try {
+                verified = super.verifySignature(signData);
+            } catch (SignatureException e) {
+                e.printStackTrace();
+            }
+            System.out.println(verified);
+
         }
         return "hej";
-//        return super.verifySignature(signData);
+    }
+
+    private String getNonce(String signature) throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(false);
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(new ByteArrayInputStream(signature.getBytes()));
+
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        try {
+            XPathExpression expression = xpath.compile("/Signature/Object/bankIdSignedData/srvInfo/nonce/text()");
+            String nonce = (String) expression.evaluate(document, XPathConstants.STRING);
+            String decoded = new String(Base64.decode(nonce));
+            return decoded;
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return "";
     }
 
     /**
