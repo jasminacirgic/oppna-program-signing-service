@@ -14,7 +14,9 @@ import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
 import se.vgregion.signera.signature._1.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureStatus;
 import se.vgregion.signera.signature._1.SignatureVerificationRequest;
+import se.vgregion.signera.signature._1.SignatureVerificationResponse;
 import se.vgregion.ticket.Ticket;
 import se.vgregion.ticket.TicketException;
 import se.vgregion.ticket.TicketManager;
@@ -22,30 +24,16 @@ import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.xml.crypto.MarshalException;
-import javax.xml.crypto.dom.DOMStructure;
-import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.SignatureException;
 import java.util.Collection;
 
@@ -105,38 +93,33 @@ public class RestSignController extends AbstractSignController {
     @POST
     @Path("/verifySignature")
     @Consumes("application/xml")
-    @Produces("text/plain")
-    public String verifySignature(SignatureVerificationRequest signatureVerificationRequest) throws CMSException, IOException, ParserConfigurationException, SAXException, MarshalException, XMLSignatureException {
+    @Produces("application/xml")
+    public SignatureVerificationResponse verifySignature(SignatureVerificationRequest signatureVerificationRequest) throws CMSException, IOException, ParserConfigurationException, SAXException, MarshalException, XMLSignatureException {
+
+        boolean verified = false;
+        String message = null;
 
         SignatureFormat format = signatureVerificationRequest.getSignatureFormat();
         if (SignatureFormat.XMLDIGSIG.equals(format)) {
-            String signature = signatureVerificationRequest.getSignature();
+            String signature = new String(Base64.decode(signatureVerificationRequest.getSignature()));
 
-            InputStream is = new ByteArrayInputStream(signature.getBytes());
+//            InputStream is = new ByteArrayInputStream(signature.getBytes());
 
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(is);
+//            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+//            documentBuilderFactory.setNamespaceAware(true);
+//            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+//            Document document = documentBuilder.parse(is);
 
-            XMLSignature xmlSignature = XMLSignatureFactory.getInstance().unmarshalXMLSignature(new DOMStructure(document));
-            xmlSignature.getKeyInfo().getContent();
+//            XMLSignature xmlSignature = XMLSignatureFactory.getInstance().unmarshalXMLSignature(new DOMStructure(document));
 
-            SignatureData signatureData = new SignatureData();
-            signatureData.setClientType(new ELegType("test", "test", PkiClient.NEXUS_PERSONAL_4X));
-            signatureData.setSignature(new String(Base64.encode(signature.getBytes())));
-            signatureData.setNonce(getNonce(signature));
-            signatureData.setTbs("TODO"); //TODO
 
-            xmlSignature.getObjects().get(0);
-
-            boolean verified = false;
             try {
+                SignatureData signatureData = createSignatureDataFromXmlDigSig(signature);
                 verified = super.verifySignature(signatureData);
             } catch (SignatureException e) {
                 e.printStackTrace();
+                message = e.getMessage();
             }
-            System.out.println(verified);
         } else if (SignatureFormat.CMS.equals(format)) {
             String signature = signatureVerificationRequest.getSignature();
             byte[] decoded = Base64.decode(signature);
@@ -144,39 +127,70 @@ public class RestSignController extends AbstractSignController {
             CMSSignedData cmsSignedData = new CMSSignedData(decoded);
             String signedData = new String((byte[]) cmsSignedData.getSignedContent().getContent());
 
+            //Create the SignatureData to be verified
             SignatureData signData = new SignatureData();
             signData.setEncodedTbs(signedData);
             signData.setSignature(signature);
             ELegType clientType = new ELegType("test", "test", PkiClient.NETMAKER_NETID_4);
             signData.setClientType(clientType);
-            boolean verified = false;
+
             try {
+                //Verify
                 verified = super.verifySignature(signData);
             } catch (SignatureException e) {
                 e.printStackTrace();
+                message = e.getMessage();
             }
-            System.out.println(verified);
-
         }
-        return "hej";
+
+        SignatureVerificationResponse response = new SignatureVerificationResponse();
+        response.setStatus(verified ? SignatureStatus.SUCCESS : SignatureStatus.FAILURE);
+        if (message != null) {
+            response.setMessage(message);
+        }
+
+        return response;
     }
 
-    private String getNonce(String signature) throws ParserConfigurationException, SAXException, IOException {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(false);
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(new ByteArrayInputStream(signature.getBytes()));
+    private SignatureData createSignatureDataFromXmlDigSig(String signature) throws SignatureException {
 
-        XPath xpath = XPathFactory.newInstance().newXPath();
+        //Start with setting some fields that are known directly
+        SignatureData signatureData = new SignatureData();
+        signatureData.setClientType(new ELegType("test", "test", PkiClient.NEXUS_PERSONAL_4X));
+        signatureData.setSignature(new String(Base64.encode(signature.getBytes())));
+
+        //For the rest we need to parse the XML
         try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(false);
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document document = documentBuilder.parse(new ByteArrayInputStream(signature.getBytes()));
+
+            //nonce and tbs
+            XPath xpath = XPathFactory.newInstance().newXPath();
             XPathExpression expression = xpath.compile("/Signature/Object/bankIdSignedData/srvInfo/nonce/text()");
-            String nonce = (String) expression.evaluate(document, XPathConstants.STRING);
-            String decoded = new String(Base64.decode(nonce));
-            return decoded;
+            String encodedNonce = (String) expression.evaluate(document, XPathConstants.STRING);
+            String decodedNonce = new String(Base64.decode(encodedNonce)); //this will be re-encoded again before it is sent
+            signatureData.setNonce(decodedNonce);
+
+            expression = xpath.compile("/Signature/Object/bankIdSignedData/usrVisibleData/text()");
+            String encodedTbs = (String) expression.evaluate(document, XPathConstants.STRING);
+            String decodedTbs = new String(Base64.decode(encodedTbs)); //this will be re-encoded again before it is sent
+
+            signatureData.setEncodedTbs(encodedTbs);
+            signatureData.setTbs(decodedTbs);
+
         } catch (XPathExpressionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new SignatureException(e);
+        } catch (ParserConfigurationException e) {
+            throw new SignatureException(e);
+        } catch (SAXException e) {
+            throw new SignatureException(e);
+        } catch (IOException e) {
+            throw new SignatureException(e);
         }
-        return "";
+
+        return signatureData;
     }
 
     /**

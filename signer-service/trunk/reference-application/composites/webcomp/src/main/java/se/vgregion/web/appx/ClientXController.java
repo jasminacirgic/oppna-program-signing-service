@@ -1,28 +1,36 @@
 package se.vgregion.web.appx;
 
+import org.apache.mina.filter.ssl.SslContextFactory;
 import org.bouncycastle.cms.CMSException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.signera.signature._1.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureVerificationRequest;
+import se.vgregion.signera.signature._1.SignatureVerificationResponse;
 
 import javax.annotation.PostConstruct;
+import javax.net.ssl.CertPathTrustManagerParameters;
 import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertStoreException;
+import java.security.cert.PKIXBuilderParameters;
 import java.util.Collection;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -44,6 +52,8 @@ public class ClientXController {
     private String ticketUrl;
     @Value("${service-id}")
     private String serviceId;
+    @Value("${verify_signature.url}")
+    private String verifySignatureUrl;
 
     @ModelAttribute("signatures")
     public Collection<Signature> getSignatures() {
@@ -118,6 +128,65 @@ public class ClientXController {
         // }
         return "showSignatures";
     }
+    
+    @RequestMapping(value = "/verifySignature", method = POST)
+    @ResponseBody
+    public void verifySignature(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        httpServletResponse.setHeader("Content-Type", "text/xml");
+        
+        String encodedSignature = httpServletRequest.getParameter("signature");
+        String format = httpServletRequest.getParameter("signatureFormat");
+
+        if (encodedSignature == null || format == null) {
+            try {
+                PrintWriter writer = httpServletResponse.getWriter();
+                writer.append("Illegal arguments");
+                writer.close();
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        SignatureVerificationRequest verificationRequest = new SignatureVerificationRequest();
+        verificationRequest.setSignature(encodedSignature);
+        verificationRequest.setSignatureFormat(SignatureFormat.fromValue(format));
+
+        //Marshal the SignatureVerificationRequest
+        String requestBody = createRequestBody(verificationRequest);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        HttpEntity<String> entity = new HttpEntity<String>(requestBody, headers);
+
+        RestTemplate template = new RestTemplate();
+
+        ResponseEntity<String> response = template.exchange(verifySignatureUrl, HttpMethod.POST, entity,
+                String.class);
+
+        String body = response.getBody();
+
+        try {
+            PrintWriter writer = httpServletResponse.getWriter();
+            writer.append(body);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String createRequestBody(SignatureVerificationRequest verificationRequest) {
+        ByteArrayOutputStream baos;
+        try {
+            JAXBContext jc = JAXBContext.newInstance(SignatureVerificationRequest.class);
+            baos = new ByteArrayOutputStream();
+            jc.createMarshaller().marshal(verificationRequest, baos);
+        } catch (JAXBException e) {
+            throw new RuntimeException("Unable to marshal SignatureVerificationRequest");
+        }
+        return baos.toString();
+    }
 
     /**
      * Handler method called by Spring.
@@ -130,6 +199,7 @@ public class ClientXController {
 
         //Get ticket and add to model
         RestTemplate template = new RestTemplate();
+
         ResponseEntity<String> response = template.getForEntity(ticketUrl, String.class, serviceId);
         String body = response.getBody();
         if (body != null) {

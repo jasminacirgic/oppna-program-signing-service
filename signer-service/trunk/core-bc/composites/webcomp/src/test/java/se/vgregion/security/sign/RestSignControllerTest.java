@@ -19,7 +19,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.signera.signature._1.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureStatus;
 import se.vgregion.signera.signature._1.SignatureVerificationRequest;
+import se.vgregion.signera.signature._1.SignatureVerificationResponse;
 import se.vgregion.ticket.Ticket;
 import se.vgregion.ticket.TicketException;
 import se.vgregion.ticket.TicketManager;
@@ -86,7 +88,7 @@ public class RestSignControllerTest {
 
         //Create the SignatureVerificationRequest
         SignatureVerificationRequest request = new SignatureVerificationRequest();
-        request.setSignature(baos.toString());
+        request.setSignature(new String(Base64.encode(baos.toByteArray())));
         request.setSignatureFormat(SignatureFormat.XMLDIGSIG);
 
         //Marshal the SignatureVerificationRequest
@@ -101,18 +103,14 @@ public class RestSignControllerTest {
 
         RestTemplate template = new RestTemplate();
 
-        //Create proxy
-//        SimpleClientHttpRequestFactory factory = (SimpleClientHttpRequestFactory) template.getRequestFactory();
-//        factory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 8888)));
+        ResponseEntity<SignatureVerificationResponse> response = template.exchange(baseAddress + "/verifySignature",
+                HttpMethod.POST, entity, SignatureVerificationResponse.class);
 
-        ResponseEntity<String> response = template.exchange(baseAddress + "/verifySignature", HttpMethod.POST,
-                entity, String.class);
+        SignatureVerificationResponse body = response.getBody();
 
-        String body = response.getBody();
-
-        System.out.println(body);
-
+        assertEquals(body.getStatus(), SignatureStatus.SUCCESS);
     }
+
     @Test
     public void testVerifySignatureWithCms() throws IOException, JAXBException {
 
@@ -138,17 +136,12 @@ public class RestSignControllerTest {
 
         RestTemplate template = new RestTemplate();
 
-        //Create proxy
-//        SimpleClientHttpRequestFactory factory = (SimpleClientHttpRequestFactory) template.getRequestFactory();
-//        factory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 8888)));
+        ResponseEntity<SignatureVerificationResponse> response = template.exchange(baseAddress + "/verifySignature",
+                HttpMethod.POST, entity, SignatureVerificationResponse.class);
 
-        ResponseEntity<String> response = template.exchange(baseAddress + "/verifySignature", HttpMethod.POST,
-                entity, String.class);
+        SignatureVerificationResponse body = response.getBody();
 
-        String body = response.getBody();
-
-        System.out.println(body);
-
+        assertEquals(body.getStatus(), SignatureStatus.SUCCESS);
     }
 
     @Test

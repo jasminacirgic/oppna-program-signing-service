@@ -54,10 +54,10 @@
   </bean>
 
   <bean id="sslContextFactory" class="se.vgregion.ssl.ConvenientSslContextFactory">
-    <constructor-arg name="keyStore"><null/></constructor-arg>
-    <constructor-arg name="keyStorePassword"><null/></constructor-arg>
-    <constructor-arg name="trustStore" value="${user.home}/.appx/truststore.jks"/>
-    <constructor-arg name="trustStorePassword" value="password"/>
+    <constructor-arg index="0" value="${user.home}/.appx/truststore.jks"/>
+    <constructor-arg index="1" value="password"/>
+    <constructor-arg index="2"><null/></constructor-arg>
+    <constructor-arg index="3"><null/></constructor-arg>
   </bean>
 
   <bean id="sslContext" factory-bean="sslContextFactory" factory-method="createSslContext"/>

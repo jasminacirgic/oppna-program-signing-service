@@ -29,6 +29,10 @@ public class Signature extends AbstractEntity<Integer> {
     public String getDecoded() {
         return new String(Base64.decodeBase64(signature));
     }
+    
+    public String getEncoded() {
+        return new String(signature);
+    }
 
     public SignatureFormat getFormat() {
         return format;

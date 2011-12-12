@@ -7,6 +7,7 @@
     <groupId>se.vgregion.signer-service</groupId>
     <artifactId>signer-service-core-bc</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>se.vgregion.signer-service</groupId>
   <artifactId>signer-service-core-bc-composite-svc</artifactId>
