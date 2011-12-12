@@ -8,5 +8,6 @@
 
   <xs:include schemaLocation="SignatureEnvelope_1.0.xsd"/>
   <xs:include schemaLocation="SignatureVerificationRequest_1.0.xsd"/>
+  <xs:include schemaLocation="SignatureVerificationResponse_1.0.xsd"/>
 
 </xs:schema>

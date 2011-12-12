@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://signera.vgregion.se/signature/1/"
+  xmlns="http://signera.vgregion.se/signature/1/"
+  elementFormDefault="qualified"
+  version="1.0">
+
+  <xs:element name="signatureVerificationResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="status" type="signatureStatus" minOccurs="1" maxOccurs="1" />
+        <xs:element name="message" type="xs:string" minOccurs="0" maxOccurs="1" />
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="signatureStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SUCCESS" />
+      <xs:enumeration value="FAILURE" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
