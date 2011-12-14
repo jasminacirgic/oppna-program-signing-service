@@ -71,6 +71,7 @@ public class RestSignControllerTest {
         controller = new RestSignController(Mockito.mock(SignatureService.class), mock(Repository.class),
                 ticketManager);
 
+        //Start test server
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
         sf.setResourceClasses(RestSignController.class);
         sf.setResourceProvider(RestSignController.class, new SingletonResourceProvider(controller));
@@ -108,6 +109,8 @@ public class RestSignControllerTest {
 
         SignatureVerificationResponse body = response.getBody();
 
+        System.out.println(body.getMessage());
+
         assertEquals(body.getStatus(), SignatureStatus.SUCCESS);
     }
 
@@ -140,6 +143,8 @@ public class RestSignControllerTest {
                 HttpMethod.POST, entity, SignatureVerificationResponse.class);
 
         SignatureVerificationResponse body = response.getBody();
+
+        System.out.println(body.getMessage());
 
         assertEquals(body.getStatus(), SignatureStatus.SUCCESS);
     }

@@ -1,8 +1,19 @@
 package se.vgregion.security.sign;
 
+import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1UTCTime;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.util.encoders.Base64;
+import org.jcp.xml.dsig.internal.dom.DOMX509Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +38,22 @@ import se.vgregion.web.security.services.SignatureService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.dom.DOMStructure;
+import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.SignatureException;
-import java.util.Collection;
+import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * RESTful web service implementation of {@link AbstractSignController}.
@@ -94,24 +112,44 @@ public class RestSignController extends AbstractSignController {
     @Path("/verifySignature")
     @Consumes("application/xml")
     @Produces("application/xml")
-    public SignatureVerificationResponse verifySignature(SignatureVerificationRequest signatureVerificationRequest) throws CMSException, IOException, ParserConfigurationException, SAXException, MarshalException, XMLSignatureException {
+    public SignatureVerificationResponse verifySignature(SignatureVerificationRequest signatureVerificationRequest)
+            throws CMSException, IOException, ParserConfigurationException, SAXException, MarshalException,
+            XMLSignatureException {
 
         boolean verified = false;
         String message = null;
+        String separator = System.getProperty("line.separator");
 
         SignatureFormat format = signatureVerificationRequest.getSignatureFormat();
         if (SignatureFormat.XMLDIGSIG.equals(format)) {
             String signature = new String(Base64.decode(signatureVerificationRequest.getSignature()));
 
-//            InputStream is = new ByteArrayInputStream(signature.getBytes());
+            InputStream is = new ByteArrayInputStream(signature.getBytes());
 
-//            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-//            documentBuilderFactory.setNamespaceAware(true);
-//            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-//            Document document = documentBuilder.parse(is);
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(true);
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document document = documentBuilder.parse(is);
 
-//            XMLSignature xmlSignature = XMLSignatureFactory.getInstance().unmarshalXMLSignature(new DOMStructure(document));
+            XMLSignature xmlSignature = XMLSignatureFactory.getInstance().unmarshalXMLSignature(new DOMStructure(document));
 
+            List content = xmlSignature.getKeyInfo().getContent();
+
+            List<String> subjectDns = new ArrayList<String>();
+            for (Object o : content) {
+                if (o instanceof DOMX509Data) {
+                    DOMX509Data data = (DOMX509Data) o;
+                    List contentList = data.getContent();
+                    for (Object certificateObject : contentList) {
+                        if (certificateObject instanceof X509Certificate) {
+                            X509Certificate cert = (X509Certificate) certificateObject;
+                            subjectDns.add(cert.getSubjectDN().getName());
+                        }
+                    }
+                }
+            }
+
+            message = "Signerat av:" + separator + StringUtils.join(subjectDns, separator);
 
             try {
                 SignatureData signatureData = createSignatureDataFromXmlDigSig(signature);
@@ -126,6 +164,21 @@ public class RestSignController extends AbstractSignController {
 
             CMSSignedData cmsSignedData = new CMSSignedData(decoded);
             String signedData = new String((byte[]) cmsSignedData.getSignedContent().getContent());
+
+            //Fetch information about the issuers
+            List<String> subjects = new ArrayList<String>();
+            Collection certificates = cmsSignedData.getCertificates().getMatches(null);
+            for (Object certificate : certificates) {
+                X509CertificateHolder holder = (X509CertificateHolder) certificate;
+                subjects.add(holder.getSubject().toString());
+            }
+            message = "Signerat av:" + separator + StringUtils.join(subjects, separator);
+
+            //Fetch timestamp
+            Date signingDate = findTimestamp(cmsSignedData);
+
+            String dateString = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(signingDate);
+            message += separator + dateString;
 
             //Create the SignatureData to be verified
             SignatureData signData = new SignatureData();
@@ -150,6 +203,46 @@ public class RestSignController extends AbstractSignController {
         }
 
         return response;
+    }
+
+    private Date findTimestamp(CMSSignedData cmsSignedData) {
+        Iterator iterator = cmsSignedData.getSignerInfos().getSigners().iterator();
+
+        while (iterator.hasNext()) {
+
+            SignerInformation signerInformation = (SignerInformation) iterator.next();
+//            signerInformation.getSigningTime();
+            AttributeTable signedAttrTable = signerInformation.getSignedAttributes();
+            if (signedAttrTable == null) {
+                continue;
+            }
+
+            ASN1EncodableVector v = signedAttrTable.getAll(CMSAttributes.signingTime);
+            switch (v.size()) {
+                case 0:
+                    continue;
+                case 1: {
+                    Attribute t = (Attribute) v.get(0);
+                    ASN1Set attrValues = t.getAttrValues();
+                    if (attrValues.size() != 1) {
+                        continue;
+                    }
+
+                    //found it
+                    try {
+                        return ((ASN1UTCTime) attrValues.getObjectAt(0).getDERObject()).getDate();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                default:
+                    continue;
+            }
+        }
+
+        //no timestamp found
+        return null;
     }
 
     private SignatureData createSignatureDataFromXmlDigSig(String signature) throws SignatureException {
