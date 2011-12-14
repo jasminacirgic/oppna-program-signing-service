@@ -11,6 +11,7 @@ import java.security.NoSuchProviderException;
 import java.security.cert.CertStoreException;
 import java.util.Collection;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
@@ -55,6 +56,8 @@ public class ClientXController {
     private String serviceId;
     @Value("${verify_signature.url}")
     private String verifySignatureUrl;
+    @Value("${ticket.url}")
+    private String ticketUrl;
 
     @ModelAttribute("signatures")
     public Collection<Signature> getSignatures() {
@@ -148,21 +151,13 @@ public class ClientXController {
         //Marshal the SignatureVerificationRequest
         String requestBody = createRequestBody(verificationRequest);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_XML);
-        HttpEntity<String> entity = new HttpEntity<String>(requestBody, headers);
-
-        RestTemplate template = new RestTemplate();
-
-        ResponseEntity<String> response = template.exchange(verifySignatureUrl, HttpMethod.POST, entity,
-                String.class);
-
-        String body = response.getBody();
+        client.accept("application/xml");
+        String body = client.path(verifySignatureUrl).post(requestBody, String.class);
 
         try {
-            PrintWriter writer = httpServletResponse.getWriter();
-            writer.append(body);
-            writer.close();
+            ServletOutputStream outputStream = httpServletResponse.getOutputStream();
+            outputStream.write(body.getBytes("UTF-8"));
+            outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -191,7 +186,7 @@ public class ClientXController {
     public String signForm(Model model) {
         //Get ticket and add to model
         client.accept("application/json");
-        String ticket = client.path("{serviceId}", serviceId).get(String.class);
+        String ticket = client.path(ticketUrl).get(String.class);
         model.addAttribute("ticket", ticket);
         return "signForm";
     }

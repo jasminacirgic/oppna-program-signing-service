@@ -8,7 +8,7 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
-  <import resource="classpath*:https.xml" />
+  <import resource="classpath*:webservice-client-config.xml" />
   
   <mvc:annotation-driven />
   <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ 
@@ -55,16 +55,5 @@
     <property name="suffix" value=".jsp" />
     <property name="contentType" value="text/html;charset=UTF-8" />
   </bean>
-
-
-
-  <!-- <bean id="sslContextFactory" class="se.vgregion.ssl.ConvenientSslContextFactory"> -->
-  <!-- <constructor-arg index="0" value="${user.home}/.appx/truststore.jks"/> -->
-  <!-- <constructor-arg index="1" value="password"/> -->
-  <!-- <constructor-arg index="2"><null/></constructor-arg> -->
-  <!-- <constructor-arg index="3"><null/></constructor-arg> -->
-  <!-- </bean> -->
-
-  <!-- <bean id="sslContext" factory-bean="sslContextFactory" factory-method="createSslContext"/> -->
 
 </beans>
