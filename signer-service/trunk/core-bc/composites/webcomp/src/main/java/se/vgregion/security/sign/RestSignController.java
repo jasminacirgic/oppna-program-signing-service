@@ -1,6 +1,5 @@
 package se.vgregion.security.sign;
 
-import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1UTCTime;
@@ -37,6 +36,7 @@ import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,8 +44,6 @@ import javax.xml.xpath.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -134,13 +132,8 @@ public class RestSignController extends AbstractSignController {
             List contentList = xmlSignature.getKeyInfo().getContent();
 
             for (Object content : contentList) {
-                try {
-                    // We assume "content" is of type DOMX509Data but we don't use the class since it is in an internal
-                    // package which is not allowed on all platforms (since they have different security settings).
-                    // This is why we were forced to use reflection here.
-                    Method getContentMethod = content.getClass().getMethod("getContent");
-                    Object list = getContentMethod.invoke(content);
-                    List certificateList = (List) list;
+                if (content instanceof X509Data) {
+                    List certificateList = ((X509Data) content).getContent();
                     for (Object certificateObject : certificateList) {
                         if (certificateObject instanceof X509Certificate) {
                             X509Certificate cert = (X509Certificate) certificateObject;
@@ -150,13 +143,7 @@ public class RestSignController extends AbstractSignController {
                             response.getCertificateInfos().getCertificateInfo().add(ci);
                         }
                     }
-                } catch (NoSuchMethodException e) {
-                    LOGGER.warn("Unable to read certificate from signature");
-                } catch (InvocationTargetException e) {
-                    LOGGER.warn("Unable to read certificate from signature");
-                } catch (IllegalAccessException e) {
-                    LOGGER.warn("Unable to read certificate from signature");
-                } 
+                }
             }
 
             try {

@@ -13,6 +13,7 @@ Generation time : 2011-08-18 09:27:07 CEST
     <groupId>se.vgregion.signer-service-schemas</groupId>
     <artifactId>signer-service-schemas-sdc</artifactId>
     <version>1.2-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>se.vgregion.signer-service-schemas</groupId>
   <artifactId>signer-service-schemas-sdc-module-intsvc</artifactId>
