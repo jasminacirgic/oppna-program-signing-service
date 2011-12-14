@@ -105,9 +105,13 @@ public class RestSignControllerTest {
 
         SignatureVerificationResponse body = response.getBody();
 
-        System.out.println(body.getMessage());
-
         assertEquals(body.getStatus(), SignatureStatus.SUCCESS);
+
+        //just to see the response in raw format
+        ResponseEntity<String> stringResponse = template.exchange(baseAddress + "/verifySignature",
+                HttpMethod.POST, entity, String.class);
+
+        System.out.println(stringResponse.getBody());
     }
 
     @Test
@@ -140,9 +144,13 @@ public class RestSignControllerTest {
 
         SignatureVerificationResponse body = response.getBody();
 
-        System.out.println(body.getMessage());
-
         assertEquals(body.getStatus(), SignatureStatus.SUCCESS);
+
+       //just to see the response in raw format
+       ResponseEntity<String> stringResponse = template.exchange(baseAddress + "/verifySignature",
+                HttpMethod.POST, entity, String.class);
+
+        System.out.println(stringResponse.getBody());
     }
 
     @Test

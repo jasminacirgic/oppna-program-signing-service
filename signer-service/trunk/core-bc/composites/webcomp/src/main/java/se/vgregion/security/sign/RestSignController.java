@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1UTCTime;
-import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
@@ -13,7 +12,6 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.util.encoders.Base64;
-import org.jcp.xml.dsig.internal.dom.DOMX509Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
-import se.vgregion.signera.signature._1.SignatureFormat;
-import se.vgregion.signera.signature._1.SignatureStatus;
-import se.vgregion.signera.signature._1.SignatureVerificationRequest;
-import se.vgregion.signera.signature._1.SignatureVerificationResponse;
+import se.vgregion.signera.signature._1.*;
 import se.vgregion.ticket.Ticket;
 import se.vgregion.ticket.TicketException;
 import se.vgregion.ticket.TicketManager;
@@ -50,6 +44,8 @@ import javax.xml.xpath.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -62,12 +58,14 @@ import java.util.*;
  * OBS!! Not fully implemented yet!
  *
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
+ * @author Patrik Bergström - <a href="http://www.knowit.se">Know IT</a>
  */
 @Path("/")
 @Produces("application/json")
 public class RestSignController extends AbstractSignController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestSignController.class);
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     /**
      * Constructs an instance of RestSignController.
@@ -78,7 +76,7 @@ public class RestSignController extends AbstractSignController {
      */
     @Autowired
     public RestSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes,
-            TicketManager ticketManager) {
+                              TicketManager ticketManager) {
         super(signatureService, eLegTypes, ticketManager);
     }
 
@@ -117,9 +115,11 @@ public class RestSignController extends AbstractSignController {
             throws CMSException, IOException, ParserConfigurationException, SAXException, MarshalException,
             XMLSignatureException {
 
+        SignatureVerificationResponse response = new SignatureVerificationResponse();
+        response.setCertificateInfos(new CertificateInfos());
+
         boolean verified = false;
         String message = null;
-        String separator = System.getProperty("line.separator");
 
         SignatureFormat format = signatureVerificationRequest.getSignatureFormat();
         if (SignatureFormat.XMLDIGSIG.equals(format)) {
@@ -127,30 +127,37 @@ public class RestSignController extends AbstractSignController {
 
             InputStream is = new ByteArrayInputStream(signature.getBytes());
 
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(is);
+            Document document = createDocument(is, true);
 
             XMLSignature xmlSignature = XMLSignatureFactory.getInstance().unmarshalXMLSignature(new DOMStructure(document));
 
-            List content = xmlSignature.getKeyInfo().getContent();
+            List contentList = xmlSignature.getKeyInfo().getContent();
 
-            List<String> subjectDns = new ArrayList<String>();
-            for (Object o : content) {
-                if (o instanceof DOMX509Data) {
-                    DOMX509Data data = (DOMX509Data) o;
-                    List contentList = data.getContent();
-                    for (Object certificateObject : contentList) {
+            for (Object content : contentList) {
+                try {
+                    // We assume "content" is of type DOMX509Data but we don't use the class since it is in an internal
+                    // package which is not allowed on all platforms (since they have different security settings).
+                    // This is why we were forced to use reflection here.
+                    Method getContentMethod = content.getClass().getMethod("getContent");
+                    Object list = getContentMethod.invoke(content);
+                    List certificateList = (List) list;
+                    for (Object certificateObject : certificateList) {
                         if (certificateObject instanceof X509Certificate) {
                             X509Certificate cert = (X509Certificate) certificateObject;
-                            subjectDns.add(cert.getSubjectDN().getName());
+                            CertificateInfo ci = new CertificateInfo();
+                            ci.setSubjectDn(cert.getSubjectDN().getName());
+                            ci.setValidTo(simpleDateFormat.format(cert.getNotAfter()));
+                            response.getCertificateInfos().getCertificateInfo().add(ci);
                         }
                     }
-                }
+                } catch (NoSuchMethodException e) {
+                    LOGGER.warn("Unable to read certificate from signature");
+                } catch (InvocationTargetException e) {
+                    LOGGER.warn("Unable to read certificate from signature");
+                } catch (IllegalAccessException e) {
+                    LOGGER.warn("Unable to read certificate from signature");
+                } 
             }
-
-            message = "Signerat av:" + separator + StringUtils.join(subjectDns, separator);
 
             try {
                 SignatureData signatureData = createSignatureDataFromXmlDigSig(signature);
@@ -162,28 +169,29 @@ public class RestSignController extends AbstractSignController {
         } else if (SignatureFormat.CMS.equals(format)) {
             String signature = signatureVerificationRequest.getSignature();
             byte[] decoded = Base64.decode(signature);
-
             CMSSignedData cmsSignedData = new CMSSignedData(decoded);
-            String signedData = new String((byte[]) cmsSignedData.getSignedContent().getContent());
+            String encodedSignedData = new String((byte[]) cmsSignedData.getSignedContent().getContent());
 
             //Fetch information about the issuers
-            List<String> subjects = new ArrayList<String>();
+            List<String> certInfos = new ArrayList<String>();
             Collection certificates = cmsSignedData.getCertificates().getMatches(null);
             for (Object certificate : certificates) {
                 X509CertificateHolder holder = (X509CertificateHolder) certificate;
-                subjects.add(holder.getSubject().toString());
+                certInfos.add(holder.getSubject().toString());
+                CertificateInfo ci = new CertificateInfo();
+                ci.setSubjectDn(holder.getSubject().toString());
+                ci.setValidTo(simpleDateFormat.format(holder.getNotAfter()));
+                response.getCertificateInfos().getCertificateInfo().add(ci);
             }
-            message = "Signerat av:" + separator + StringUtils.join(subjects, separator);
 
             //Fetch timestamp
             Date signingDate = findTimestamp(cmsSignedData);
-
-            String dateString = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(signingDate);
-            message += separator + dateString;
+            String dateString = simpleDateFormat.format(signingDate);
+            response.setSignatureDate(dateString);
 
             //Create the SignatureData to be verified
             SignatureData signData = new SignatureData();
-            signData.setEncodedTbs(signedData);
+            signData.setEncodedTbs(encodedSignedData);
             signData.setSignature(signature);
             ELegType clientType = new ELegType("test", "test", PkiClient.NETMAKER_NETID_4);
             signData.setClientType(clientType);
@@ -197,7 +205,6 @@ public class RestSignController extends AbstractSignController {
             }
         }
 
-        SignatureVerificationResponse response = new SignatureVerificationResponse();
         response.setStatus(verified ? SignatureStatus.SUCCESS : SignatureStatus.FAILURE);
         if (message != null) {
             response.setMessage(message);
@@ -206,13 +213,20 @@ public class RestSignController extends AbstractSignController {
         return response;
     }
 
+    private Document createDocument(InputStream is, boolean namespaceAware)
+            throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(namespaceAware);
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        return documentBuilder.parse(is);
+    }
+
     private Date findTimestamp(CMSSignedData cmsSignedData) {
         Iterator iterator = cmsSignedData.getSignerInfos().getSigners().iterator();
 
         while (iterator.hasNext()) {
 
             SignerInformation signerInformation = (SignerInformation) iterator.next();
-//            signerInformation.getSigningTime();
             AttributeTable signedAttrTable = signerInformation.getSignedAttributes();
             if (signedAttrTable == null) {
                 continue;
@@ -255,10 +269,7 @@ public class RestSignController extends AbstractSignController {
 
         //For the rest we need to parse the XML
         try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(false);
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(new ByteArrayInputStream(signature.getBytes()));
+            Document document = createDocument(new ByteArrayInputStream(signature.getBytes()), false);
 
             //nonce and tbs
             XPath xpath = XPathFactory.newInstance().newXPath();

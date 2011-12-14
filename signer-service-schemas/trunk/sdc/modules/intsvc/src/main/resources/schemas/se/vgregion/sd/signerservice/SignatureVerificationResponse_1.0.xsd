@@ -11,7 +11,8 @@
       <xs:sequence>
         <xs:element name="status" type="signatureStatus" minOccurs="1" maxOccurs="1" />
         <xs:element name="message" type="xs:string" minOccurs="0" maxOccurs="1" />
-
+        <xs:element name="certificateInfos" type="certificateInfos" minOccurs="0" maxOccurs="1" />
+        <xs:element name="signatureDate" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -23,4 +24,16 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:complexType name="certificateInfos">
+    <xs:sequence>
+      <xs:element name="certificateInfo" type="certificateInfo" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="certificateInfo">
+    <xs:sequence>
+      <xs:element name="subjectDn" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="validTo" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>
