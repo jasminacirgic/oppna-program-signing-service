@@ -1,0 +1,40 @@
+style=default&apiVersion=1&format=png&message=Browser->AppX: <<Signature request>>
+AppX->SS: solveTicket(serviceID)
+SS-->AppX:<ticket>
+AppX-->Browser: offer signing
+opt clientType not defined
+Browser->SS: prepareSign(ticket, tbs, submitUri)
+  SS-->Browser: show clientType selection page
+end
+Browser->SS: prepareSign(ticket, tbs, submitUri, clientType)
+alt clientType is BankId
+  SS-->Browser: BankID PKI client form
+else clientType is Telia or Siths
+  SS-->Browser: NetId PKI Client form
+else clientType is Nordea
+  SS-->Browser: Nexus PKI Client form
+end
+Browser->PKI Client: Display PKI Client (BankID, Nexus or NetID)
+PKI Client->User: Request for password
+PKI Client->PKI Client: Sign data
+PKI Client->SS: Post Signature
+SS->Logica: verifySignature(tbs, signature, clientType)
+Logica-->SS: <verification status>
+SS->AppX: submitSignature
+AppX->AppX: storeSignature
+alt AppX returns http 200 OK
+AppX-->SS: http 200 OK
+SS-->Browser: Shows success page
+else AppX returns http 307 Temporary Redirect
+  note over AppX, SS
+    AppX can redirect to itself if he wishes to show a custom success page.
+In this example sequence we assume that <location> is hosted at AppX.
+  end note
+  AppX-->SS: http 307 Temporary Redirect<location>
+note over SS
+SS does not follow the redirect from AppX, but just forwards it to AppX.
+end note
+  SS-->Browser: http 307 Temporary Redirect<location>
+  Browser->AppX: GET <location>
+  AppX-->Browser: Display <location>
+end

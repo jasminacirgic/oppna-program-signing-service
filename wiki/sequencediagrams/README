@@ -1,0 +1,1 @@
+curl -i http://www.websequencediagrams.com/index.php -d "style=default&apiVersion=1&format=svg&message=Browser->AppX:Signature"
