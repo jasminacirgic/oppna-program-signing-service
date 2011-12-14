@@ -43,6 +43,12 @@
               <needClientAuth>true</needClientAuth>
             </connector>
           </connectors>
+          <systemProperties>
+            <systemProperty>
+              <name>javax.net.debug</name>
+              <value>ssl</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>

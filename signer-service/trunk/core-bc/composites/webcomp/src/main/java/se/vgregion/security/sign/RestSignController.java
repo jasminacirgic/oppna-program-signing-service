@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
@@ -63,7 +64,7 @@ import java.util.*;
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  */
 @Path("/")
-@Produces("text/plain")
+@Produces("application/json")
 public class RestSignController extends AbstractSignController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestSignController.class);
@@ -77,7 +78,7 @@ public class RestSignController extends AbstractSignController {
      */
     @Autowired
     public RestSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes,
-                              TicketManager ticketManager) {
+            TicketManager ticketManager) {
         super(signatureService, eLegTypes, ticketManager);
     }
 
@@ -107,7 +108,7 @@ public class RestSignController extends AbstractSignController {
      * 
      * @see AbstractSignController#verifySignature(SignatureData)
      */
-//    @Override
+    //    @Override
     @POST
     @Path("/verifySignature")
     @Consumes("application/xml")

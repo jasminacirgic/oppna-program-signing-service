@@ -1,5 +1,21 @@
 package se.vgregion.security.sign;
 
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
@@ -13,10 +29,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
+
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.signera.signature._1.SignatureFormat;
 import se.vgregion.signera.signature._1.SignatureStatus;
@@ -28,26 +44,6 @@ import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.ServiceIdService;
 import se.vgregion.web.security.services.SignatureService;
-
-import javax.ws.rs.core.Response;
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
-import java.net.URLConnection;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Patrik Bergström
@@ -171,7 +167,7 @@ public class RestSignControllerTest {
         assertEquals(Response.Status.OK.getStatusCode(), responseCode);
 
         String contentType = httpURLConnection.getContentType();
-        assertEquals("text/plain", contentType);
+        assertEquals("application/json", contentType);
 
         String response = extractBodyAsString(httpURLConnection).trim(); //remove the \r\n
 

@@ -1,28 +1,7 @@
 package se.vgregion.web.appx;
 
-import org.apache.mina.filter.ssl.SslContextFactory;
-import org.bouncycastle.cms.CMSException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import se.vgregion.dao.domain.patterns.repository.Repository;
-import se.vgregion.signera.signature._1.SignatureEnvelope;
-import se.vgregion.signera.signature._1.SignatureFormat;
-import se.vgregion.signera.signature._1.SignatureVerificationRequest;
-import se.vgregion.signera.signature._1.SignatureVerificationResponse;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import javax.annotation.PostConstruct;
-import javax.net.ssl.CertPathTrustManagerParameters;
-import javax.net.ssl.SSLContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,11 +9,35 @@ import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertStoreException;
-import java.security.cert.PKIXBuilderParameters;
 import java.util.Collection;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.bouncycastle.cms.CMSException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
+
+import se.vgregion.dao.domain.patterns.repository.Repository;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureVerificationRequest;
 
 @Controller
 public class ClientXController {
@@ -46,10 +49,8 @@ public class ClientXController {
     @Autowired
     private String submitUrl;
     @Autowired
-    private SSLContext sslContext;
+    private WebClient client;// = WebClient.create("https://localhost:9443/service/solveTicket/");
 
-    @Value("${ticket.url}")
-    private String ticketUrl;
     @Value("${service-id}")
     private String serviceId;
     @Value("${verify_signature.url}")
@@ -68,14 +69,6 @@ public class ClientXController {
     @ModelAttribute("submitUrl")
     public String getSubmitUrl() {
         return submitUrl;
-    }
-
-    /**
-     * Called by Spring.
-     */
-    @PostConstruct
-    public void init() {
-        SSLContext.setDefault(sslContext); //For the web service call to get the ticket
     }
 
     /**
@@ -128,12 +121,12 @@ public class ClientXController {
         // }
         return "showSignatures";
     }
-    
+
     @RequestMapping(value = "/verifySignature", method = POST)
     @ResponseBody
     public void verifySignature(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         httpServletResponse.setHeader("Content-Type", "text/xml");
-        
+
         String encodedSignature = httpServletRequest.getParameter("signature");
         String format = httpServletRequest.getParameter("signatureFormat");
 
@@ -196,16 +189,10 @@ public class ClientXController {
      */
     @RequestMapping(value = "/", method = GET)
     public String signForm(Model model) {
-
         //Get ticket and add to model
-        RestTemplate template = new RestTemplate();
-
-        ResponseEntity<String> response = template.getForEntity(ticketUrl, String.class, serviceId);
-        String body = response.getBody();
-        if (body != null) {
-            model.addAttribute("ticket", body.trim());
-        }
-
+        client.accept("application/json");
+        String ticket = client.path("{serviceId}", serviceId).get(String.class);
+        model.addAttribute("ticket", ticket);
         return "signForm";
     }
 
@@ -236,4 +223,11 @@ public class ClientXController {
         return "showSignatures";
     }
 
+    public static void main(String[] args) {
+        final WebClient client = WebClient.create("https://localhost:9443/service/solveTicket/",
+                "/Users/anders/src/vgr/oppna-program-signing-service/signer-service/trunk/reference-application/modules/web/src/main/resources/https.xml");
+        client.accept("application/json");
+        String ticket = client.path("{serviceId}", "someServiceId").get(String.class);
+        System.out.println(ticket);
+    }
 }
