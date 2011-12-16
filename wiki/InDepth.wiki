@@ -81,4 +81,4 @@ In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter 
 
 == Certikathantering ==
 Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
-http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Certificathantering.png
+http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Certifikathantering.png
