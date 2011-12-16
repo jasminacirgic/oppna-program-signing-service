@@ -28,6 +28,38 @@ Signeringstjänsten hjälper till med följande:
  * Hantering av olika webbläsare
  * Verifiering av utfärdad signatur
 
+= Översiktlig systembeskrivning =
+<img src="http://oppna-program-signing-service.googlecode.com/svn/wiki/images/solution.png" width="800"/>
+
+ # Klienten begär att få något signerat(TBS – To Be Signed) av SS. Rekommenderat är att skicka en kontrollsumma av TBS. Kontrollsumman är förslagsvis beräknad utifrån [http://en.wikipedia.org/wiki/SHA-2 SHA-2](t.ex. SHA-256) för att få en ökad säkerhet. SS behöver även ha en submitUri dit signaturen skall skickas när den är klar. Valbart(optional) är att skicka in en clientType.
+ # Har ingen clientType skickats med visas ett val av tillgängliga clientTypes för användaren. SS tar fram ett block av html/xhtml([http://en.wikipedia.org/wiki/Public_key_infrastructure PKI] Client Code) baserat på clientType och TBS som den visar för klienten.
+ # [http://en.wikipedia.org/wiki/Public_key_infrastructure PKI]-klienten startar upp för signering hos användaren.
+ # Användaren matar in lösenord för sin privata nyckel och TBS signeras. [http://en.wikipedia.org/wiki/Public_key_infrastructure PKI]-klienten postar signaturen [http://en.wikipedia.org/wiki/Cryptographic_Message_Syntax PKSC#7] eller [http://www.w3.org/TR/xmldsig-core/ XML-Signature]) till SS. Vilket format som skickas till SS beror på clientType.
+ # Signaturen verifieras via en [http://sveid.episerverhotell.net/SVEIDtemplates/SVEIDpage.aspx?id=124 OSIF] tjänst.
+ # Status för hur valideringen gick skickas tillbaka till SS.
+ # SS skickar signaturen till submitUri för lagring, detta sker över ftps eller https. Om https väljs finns även en möjlighet för applikationen att själv presentera status för signeringen (se steg 7). I annat fall kommer SS att hantera presentationen av status.
+ # Om X själv kan och vill presentera status för signeringen gör den en [http://en.wikipedia.org/wiki/HTTP_302 302 Moved Temporary] till en url som hanterar presentationen. Om X vill överlåta detta till SS räcker det med att svara med en vanlig [http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 200 OK] response.
+ # Om SS får en [http://en.wikipedia.org/wiki/HTTP_302 302 Moved Temporary] från X skickar även SS en [http://en.wikipedia.org/wiki/HTTP_302 302 redirect] tillbaka till klienten med samma location som X satte i sin redirect. Om SS får en [http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 200 OK] visar den en status sida för klienten.
+ # [http://en.wikipedia.org/wiki/HTTP_302 302 Moved Temporary] till location satt av X.
+ # X visar ett svar för klienten.
+*Kommentarer*
+ * Steg 10 och 11 kommer endast att inträffa om X gör en [http://en.wikipedia.org/wiki/HTTP_302 302 Moved Temporary] i steg 8.
+
+== Säkerhet ==
+För att garantera säkerheten bör all kommunikation ske över en krypterad anslutning – https. Det finns dock fortfarande en risk att SS blir utsatt för en attack och [http://en.wikipedia.org/wiki/Man-in-the-middle_attack ersätts av en ”elak”] SS som byter ut signatur och certifikat. För att förhindra detta är det starkt rekommenderat att X sätter upp [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] mot SS. [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] syftar till att genom utbyte av certifikat mellan SS och X kan X grantera att identiteten på SS. Alltså, med tillgång till SS publika nyckel kan X verifiera att det är SS som skickar signaturen till submitUri.
+
+== Ordlista ==
+|| *Begrepp* || *Förklaring* ||
+|| TBS || To Be Signed. Data som skall signeras. ||
+|| submitUri  || Uri dit signaturen skall skickas efter signering. ||
+|| clientType || Typ av signering, i dagsläget har Signeringstjänsten stöd för !BankId, Nordea, Posten och SITHS. ||
+
+= Sekvensdiagram =
+http://oppna-program-signing-service.googlecode.com/svn/wiki/sequencediagrams/system-level.png
+
+= Installation =
+==  Sätta upp en instans av signeringstjänsten ==
+
 == Anslut till signeringstjänsten ==
 In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
 
@@ -44,9 +76,9 @@ In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter 
  # Slutligen så skall vi aktivera Mutual Authentication, detta för att den anslutande applikationen skall veta att det är signeringstjänsten som skickar signaturen och inte någon annan som utger sig för att vara det. Detta t.ex. kan ske i en [http://en.wikipedia.org/wiki/Man-in-the-middle_attack man-in-the-middle-attack]. Vi gör även detta i två steg:
   # Aktivera Mutual Authentication på webbservern. Detta är levereantörsspecifikt, på tomcat t.ex. sätts attributet clientAuth på connector-taggen i server.xml till true.
   # Ladda ner och lägg in signeringstjänstens [klient-certifikat] i ditt truststore.
+
+== Konfiguration ==
+
 == Certikathantering ==
 Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
 http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Certificathantering.png
-http://oppna-program-signing-service.googlecode.com/svn/wiki/sequencediagrams/system-level.png
-
-http://oppna-program-signing-service.googlecode.com/svn/wiki/sequencediagrams/system-level.png
