@@ -32,7 +32,7 @@ else AppX returns http 302 Moved Temporary
   end note
   AppX-->SS: http 302 Moved Temporary<location>
 note over SS
-  SS does not follow the redirect from AppX, but just forwards it to AppX.
+  SS does not follow the redirect from AppX, but just forwards it to Browser.
 end note
   SS-->Browser: http 302 Moved Temporary<location>
   Browser->AppX: GET <location>
