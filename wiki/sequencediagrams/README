@@ -1,1 +1,17 @@
-curl -i http://www.websequencediagrams.com/index.php -d "style=default&apiVersion=1&format=svg&message=Browser->AppX:Signature"
+För att generera sekvensdiagram används en webb-tjänst hos http://www.websequencediagrams.com/. Denna tjänst genererar ett sekvensdiagram utifrån en definierad DSL. DSL:en skickas mha ett python-script till websequencediagrams som returnerar en bild. I detta projekt ligger sekvens-dsl:erna i följande filer:
+
+ * system-level.txt
+
+För att generera nya bilder måste python-scripet konfigureras så att den körs mot rätt sekvens-dsl samt genererar önskat bildformat Detta görs genom att editera generate-sequence-diagram.py som ligger i samma folder som denna README, följande variabler i filen kan ändras:
+
+style         - Bestämmer vilken stilmall som skall användas för diagrammet: default | earth | modern-blue | mscgen | omegapple | qsd | rose | roundgreen | napkin
+fileName      - Namnet på filen där sekvensbeskrivningen finns
+inputFormat   - Formatet på filen där sekvensbeskrivningen finns.
+outputFormat  - Bildformatet som skall genereras: png | svg | pdf
+
+När detta är gjort körs följande kommando från ett terminal-fönster:
+
+	python generate-sequence-diagram.py
+
+
+Om man saknar pyton kan även bilden genereras i en web browser hos http://www.websequencediagrams.com genom att klistra in sekvens-dsl:en i den vänstra panelen på sidan.
