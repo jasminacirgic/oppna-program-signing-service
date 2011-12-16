@@ -31,6 +31,6 @@ def getSequenceDiagram( fileName, inputFormat, outputFormat, style = 'default' )
 style = "qsd" # Bestämmer vilken stilmall som skall användas för diagrammet: default | earth | modern-blue | mscgen | omegapple | qsd | rose | roundgreen | napkin
 fileName = 'system-level' # Namnet på filen där sekvensbeskrivningen finns
 inputFormat = 'txt' # Formatet på filen där sekvensbeskrivningen finns.
-outputFormat = 'svg' # Bildformatet som skall genereras: png | svg | pdf
+outputFormat = 'png' # Bildformatet som skall genereras: png | svg | pdf
 
 getSequenceDiagram( fileName, inputFormat, outputFormat, style ) 
