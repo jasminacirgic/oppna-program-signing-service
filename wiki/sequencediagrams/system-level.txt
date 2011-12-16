@@ -25,16 +25,16 @@ AppX->AppX: storeSignature
 alt AppX returns http 200 OK
   AppX-->SS: http 200 OK
   SS-->Browser: Shows success page
-else AppX returns http 307 Temporary Redirect
+else AppX returns http 302 Moved Temporary
   note over AppX, SS
     AppX can redirect to itself if he wishes to show a custom success page.
     In this example sequence we assume that <location> is hosted at AppX.
   end note
-  AppX-->SS: http 307 Temporary Redirect<location>
+  AppX-->SS: http 302 Moved Temporary<location>
 note over SS
   SS does not follow the redirect from AppX, but just forwards it to AppX.
 end note
-  SS-->Browser: http 307 Temporary Redirect<location>
+  SS-->Browser: http 302 Moved Temporary<location>
   Browser->AppX: GET <location>
   AppX-->Browser: Display <location>
 end
