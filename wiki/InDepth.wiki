@@ -65,19 +65,18 @@ Signeringstjänsten består egentligen av två projekt:
  * *signer-service-schemas* - innehåller schemat för det xml-meddelande, innehållandes signaturen, som skickas från signeringstjänsten till konsumenten.
 
 = Installation =
-Signeringstjänsten behöver konfigureras en hel  innan den kan startas. Detta beror på att den använder sig av TLS för att datan som skickas mellan den och konsumenterna. För att i möjligaste mån underlätta så mycket som möjligt för utvecklarna av tjänsten har en viss default-konfiguration paketerats med i projektet. För en produktionsinstans måste dock denna konfiguration anpassas. Hur man gör detta beskrivs i avsnittet [InDepth#Konfiguration konfiguration] längre ner i dokumentationen.
+Signeringstjänsten behöver konfigureras en hel  innan den kan startas. Detta beror på att den använder sig av [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] för att datan som skickas mellan den och konsumenterna. För att i möjligaste mån underlätta så mycket som möjligt för utvecklarna av tjänsten har en viss default-konfiguration paketerats med i projektet. För en produktionsinstans måste dock denna konfiguration anpassas. Hur man gör detta beskrivs i avsnittet [InDepth#Konfiguration konfiguration] längre ner i dokumentationen.
 
 Även konsumenterna av signeringstjänsten kräver en del TLS-konfiguration vilket finns beskrivet i avsnittet [http://code.google.com/p/oppna-program-signing-service/wiki/InDepth#Anslut_till_signeringstjänsten Anslut till signeringstjänsten].
 
 ==  Sätta upp en instans av signeringstjänsten ==
-Signeringstjänsten är en webbapplikation som installeras på en webbserver, t.ex. Tomcat eller Jetty. 
 
 === Utvecklingsmiljö ===
-För att starta en instans under utveckling räcker det att göra följande:
+Att sätta upp en utvecklingsmiljö för signeringstjänsten är relativt enkelt:
  # Ladda ner källkoden från https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk/
-# 
- # Skapa en folder i din hemkatalog med namnet .ss (ex. /Users/<username>/.ss).
- # Skapa en fil i den nya foldern med namnet config.properites. 
+ # Kopiera hela katalogen core-bc/modules/web/doc/.ss till din hemkatalog (/Users/<name>/.ss). Mer om vad den innehåller finns beskrivet i avsnittet [InDepth#Konfiguration konfiguration]
+ # Navigera dig fram till core-bc/modules/web i ett terminal-/kommandofönster
+ # Kör maven-kommandot {{{mvn jetty:run}}}
 
 === Produktionsmiljö ===
 
