@@ -86,10 +86,28 @@ Vill man istället använda tomcat från sin IDE bör man utöver [http://code.g
  # I fältet _VM arguments_ lägg in {{{-Dssl.hostname.verification=lenient}}} 
  # För att slå på SSL/TLS debug lägg även in {{{-Djavax.net.debug=ssl}}} 
 
-Alla dessa inställningar som görs för tomcat är redan förkonfigurerade i projektet om man väljer att använda jetty.
+Alla dessa inställningar som görs för tomcat är redan förkonfigurerade i web-modulens pom.xml om man väljer att använda jetty.
+
 === Produktionsmiljö ===
+Att installera och konfigurera signeringstjänsten i en produktionsmiljö ganska trixit. Installationen består av två steg: först skapar man en katalog med namnet {{{.ss}}} i hemkatalogen (här kommer konfigurationen att hamna) för den användare som kör webbservern (t.ex. Tomcat) och sen installerar man war-filen. Mellan dessa steg måste dock en hel del konfiguration göras, se avsnittet om [InDepth#Konfiguration konfiguration].
 
 == Konfiguration ==
+För att få en bakgrund till hur man skall konfigurera signeringstjänsten är det lämpligt att läsa  [http://blog.callistaenterprise.se/2011/11/17/configure-your-spring-web-application/ denna blog-post] som på ett bra sätt beskriver hur applikationen läser in sin konfiguration.
+
+Med bakgrund till ovan nämnda blogg kommer här en förklaring till inställningar som kan göras för signeringstjänsten. Till att börja med måste en fil med namnet {{{config.properties}}} skapas och läggas in under {{{~/.ss}}}. Om man vill ha en mall att utgå ifrån så kan man använda sig av default-konfigurationen som ligger i projektets web-modul ({{{$PROJECT_HOME/core-bc/modules/web/src/main/resources/default.properties}}}). I denna fil kan följande parametrar sättas:
+
+|| *Parameter* || *Beskrivning* ||
+|| connectionTimeout  || Vid överföring av signaturen till konsumenten används en http-klient. Detta värde anger hur länge applikationen skall vänta på en connection till servern. ||
+|| soTimeout  || Vid överföring av signaturen till konsumenten används en http-klient. Detta värde anger hur länge en socket skall vänta på svar när den läser och skriver paket. Detta ligger på en lägre nivå i nätverksstacken än connectionTimeout. ||
+|| maxTotalConnections  || Signeringstjänsten använder sig av en connection-pool för de http-connections den använder. Max antal connections som denna pool hanterar styrs av denna parameter. ||
+|| keystore.type || Överföring av signaturen till konsumenten rekommenderas att ske över TLS med sk. [http://en.wikipedia.org/wiki/Mutual_authentication Mutual Authentication] används. Detta aktiveras av konsumentens mottagande server (Finns beskrivet i  [http://code.google.com/p/oppna-program-signing-service/wiki/InDepth#Anslut_till_signeringstjänsten anslut till signeringstjänsten]). För att Mutual Authentication skall fungera måste klienten (i det här fallet signeringstjänsten, se steg x i bilden under [http://code.google.com/p/oppna-program-signing-service/wiki/InDepth#Översiktlig_systembeskrivning översiktlig systembeskrivning]) presentera sig med ett SITHS-certifikat innehållande en privat nyckel. Detta certifikat lagras i en viss typ av  i något som kallas [http://en.wikipedia.org/wiki/Keystore keystore]. Det är denna typ som anges i detta fält. Exempel på olika typer är JKS, P12 och PFX. ||
+|| keystore.location || Anger sökvägen på ovan nämnda keystore ||
+|| keystore.password || Anger lösenordet på ovan nämnda keystore ||
+|| truststore.type || Överföring av signaturen till konsumenten rekommenderas att ske över [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS]. Detta innebär att den http-klient som signeringstjänsten använder sig av för detta förfarande måste lita på mottagaren av signaturen. Signeringstjänsten måste således ta del av mottagarens (konsumentens) publika certifikat och lägga in det i sitt truststore. På samma sätt som keystore finns även truststore i olika format och det är detta format som skall anges i det här fältet. Exempel på olika typer är JKS, P12 och PFX. ||
+|| truststore.location || Anger sökvägen på ovan nämnda keystore ||
+|| truststore.password || Anger lösenordet på ovan nämnda keystore ||
+|| eid.endpoint || För att verifiera en signatur använder sig signeringstjänsten av en annan tjänst. Denna tjänst kallas [http://sveid.episerverhotell.net/SVEIDtemplates/SVEIDpage.aspx?id=124 OSIF] och hostas idag av Logica. I detta fält anges servicens endpoint adress. ||
+|| eid.serviceid || För att få nyttja [http://sveid.episerverhotell.net/SVEIDtemplates/SVEIDpage.aspx?id=124 OSIF]-tjänsten krävs att man skickar med ett seriviceId. Detta seriviceId anges här. ||
 
 == Certikathantering ==
 Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
