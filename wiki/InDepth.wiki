@@ -67,7 +67,7 @@ Signeringstjänsten består egentligen av två projekt:
 = Installation =
 Signeringstjänsten behöver konfigureras en hel  innan den kan startas. Detta beror på att den använder sig av TLS för att datan som skickas mellan den och konsumenterna. För att i möjligaste mån underlätta så mycket som möjligt för utvecklarna av tjänsten har en viss default-konfiguration paketerats med i projektet. För en produktionsinstans måste dock denna konfiguration anpassas. Hur man gör detta beskrivs i avsnittet [InDepth#Konfiguration konfiguration] längre ner i dokumentationen.
 
-Även konsumenterna av signeringstjänsten kräver en del TLS-konfiguration vilket finns beskrivet i avsnittet [InDepth#Översiktlig_systembeskrivning].
+Även konsumenterna av signeringstjänsten kräver en del TLS-konfiguration vilket finns beskrivet i avsnittet [WikiSyntax#Wiki-style_markup].
 
 ==  Sätta upp en instans av signeringstjänsten ==
 Signeringstjänsten är en webbapplikation som installeras på en webbserver, t.ex. Tomcat eller Jetty. 
