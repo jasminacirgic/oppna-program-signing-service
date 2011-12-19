@@ -1,7 +1,4 @@
- * [Bakgrund och ändamål]
- * [Vad är en elektronisk signatur?]
-Hur signerar jag utan signeringtjänsten?
-Funktionsbeskrivning
+ * [Funktionsbeskrivning] 
 Hur signerar jag med signeringtjänsten?
 Vad gör signeringstjänsten för mig?
 Översiktlig systembeskrivning
