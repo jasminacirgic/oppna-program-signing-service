@@ -109,7 +109,7 @@
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcmail-jdk16</artifactId>
       <version>1.46</version>
-    </dependency> <!-- TODO necessary ? -->
+    </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
