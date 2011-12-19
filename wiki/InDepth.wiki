@@ -1,4 +1,5 @@
 #summary Djupgående genomgång av hur man använder signeringstjänsten.
+#sidebar TableOfContents
 
 <wiki:toc max_depth="3" />
 
