@@ -35,7 +35,7 @@
               <maxIdleTime>60000</maxIdleTime>
               <keystoreType>JKS</keystoreType>
               <keystore>file:${user.home}/.appx/keystore.jks</keystore>
-              <truststore>file:${user.home}/.appx/truststore.jks</truststore>
+              <truststore>file:${user.home}/.appx/truststore7443.jks</truststore>
               <truststoreType>JKS</truststoreType>
               <password>password</password>
               <keyPassword>password</keyPassword>
