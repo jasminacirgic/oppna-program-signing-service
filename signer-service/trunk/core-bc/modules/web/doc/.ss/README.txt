@@ -5,7 +5,7 @@ signer-service-truststore.jks. It is used for the HTTPS transport when the Signi
 Appx.
 
 config.properties - Properties for the application. The properties in this file override the properties in
-connection.properties.
+default.properties.
 
 service-ids.properties - Here the service-ids are stored which are authorized to request a ticket for the signing.
 
