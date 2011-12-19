@@ -43,7 +43,7 @@ Signeringstjänsten hjälper till med följande:
  # [http://en.wikipedia.org/wiki/HTTP_302 302 Moved Temporary] till location satt av X.
  # X visar ett svar för klienten.
 *Kommentarer*
- * Steg 10 och 11 kommer endast att inträffa om X gör en [http://en.wikipedia.org/wiki/HTTP_302 302 Moved Temporary] i steg 8.
+ &#42;Steg 10 och 11 kommer endast att inträffa om X gör en [http://en.wikipedia.org/wiki/HTTP_302 302 Moved Temporary] i steg 8.
 
 == Säkerhet ==
 För att garantera säkerheten bör all kommunikation ske över en krypterad anslutning – https. Det finns dock fortfarande en risk att SS blir utsatt för en attack och [http://en.wikipedia.org/wiki/Man-in-the-middle_attack ersätts av en ”elak”] SS som byter ut signatur och certifikat. För att förhindra detta är det starkt rekommenderat att X sätter upp [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] mot SS. [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS] syftar till att genom utbyte av certifikat mellan SS och X kan X grantera att identiteten på SS. Alltså, med tillgång till SS publika nyckel kan X verifiera att det är SS som skickar signaturen till submitUri.
@@ -57,8 +57,35 @@ För att garantera säkerheten bör all kommunikation ske över en krypterad ans
 = Sekvensdiagram =
 http://oppna-program-signing-service.googlecode.com/svn/wiki/sequencediagrams/system-level.png
 
+= Projektstruktur =
+Signeringstjänsten består egentligen av två projekt:
+ * *signer-service* som i sin tur består av två moduler:
+   * core-bc - detta är själva signeringstjänsten
+   * reference-application - en konsument  som fungerar som ett exempel på hur man kan utnyttja signeringstjänsten
+ * *signer-service-schemas* - innehåller schemat för det xml-meddelande, innehållandes signaturen, som skickas från signeringstjänsten till konsumenten.
+
 = Installation =
+Signeringstjänsten behöver konfigureras en hel  innan den kan startas. Detta beror på att den använder sig av TLS för att datan som skickas mellan den och konsumenterna. För att i möjligaste mån underlätta så mycket som möjligt för utvecklarna av tjänsten har en viss default-konfiguration paketerats med i projektet. För en produktionsinstans måste dock denna konfiguration anpassas. Hur man gör detta beskrivs i avsnittet _Konfiguration_ längre ner i dokumentationen.
+
+Även konsumenterna av signeringstjänsten kräver en del TLS-konfiguration vilket finns beskrivet i avsnittet [InDepth#Anslut till signeringstjänsten].
+
 ==  Sätta upp en instans av signeringstjänsten ==
+Signeringstjänsten är en webbapplikation som installeras på en webbserver, t.ex. Tomcat eller Jetty. 
+
+=== Utvecklingsmiljö ===
+För att starta en instans under utveckling räcker det att göra följande:
+ # Ladda ner källkoden från https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk/
+# 
+ # Skapa en folder i din hemkatalog med namnet .ss (ex. /Users/<username>/.ss).
+ # Skapa en fil i den nya foldern med namnet config.properites. 
+
+=== Produktionsmiljö ===
+
+== Konfiguration ==
+
+== Certikathantering ==
+Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
+http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Certifikathantering.png
 
 == Anslut till signeringstjänsten ==
 In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
@@ -76,9 +103,3 @@ In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter 
  # Slutligen så skall vi aktivera Mutual Authentication, detta för att den anslutande applikationen skall veta att det är signeringstjänsten som skickar signaturen och inte någon annan som utger sig för att vara det. Detta t.ex. kan ske i en [http://en.wikipedia.org/wiki/Man-in-the-middle_attack man-in-the-middle-attack]. Vi gör även detta i två steg:
   # Aktivera Mutual Authentication på webbservern. Detta är levereantörsspecifikt, på tomcat t.ex. sätts attributet clientAuth på connector-taggen i server.xml till true.
   # Ladda ner och lägg in signeringstjänstens [klient-certifikat] i ditt truststore.
-
-== Konfiguration ==
-
-== Certikathantering ==
-Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
-http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Certifikathantering.png
