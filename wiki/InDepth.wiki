@@ -112,7 +112,7 @@ Med bakgrund till ovan nämnda blogg kommer här en förklaring till inställnin
 Utöver denna konfiguration har man även möjlighet att sätta en System Properties vid uppstart av applikationen. Dessa sätts mha -D-flaggan när jvm;en startas.
 
 || System Property || Värden || Beskrivning ||
-|| {{{ssl.hostname.verification}}} || {{{strict}}} eller {{{lenient}}} || Normalt när ett certifikat verifieras vid en TLS-konversation krävs att hostnamnet överensstämmer med certifikatnamnet. Genom att sätta denna property till {{{lenient}}} så kan man komma runt det kravet. Detta är bra framför allt under utveckling och test. I en produktionsmiljö är det rekommenderat att använda {{{strict}}} validering av hostnamnet. Utelämnas denna konfiguration så används {{{}strict}} som default.||
+|| {{{ssl.hostname.verification}}} || {{{strict}}} eller {{{lenient}}} || Normalt när ett certifikat verifieras vid en TLS-konversation krävs att hostnamnet överensstämmer med certifikatnamnet. Genom att sätta denna property till {{{lenient}}} så kan man komma runt det kravet. Detta är bra framför allt under utveckling och test. I en produktionsmiljö är det rekommenderat att använda {{{strict}}} validering av hostnamnet. Utelämnas denna konfiguration så används {{{strict}}} som default.||
 
 == Certikathantering ==
 Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
