@@ -1,7 +1,5 @@
 #summary Djupgående genomgång av hur man använder signeringstjänsten.
 
-#sidebar
-
 <wiki:toc max_depth="3" />
 
 = Bakgrund och ändamål =
