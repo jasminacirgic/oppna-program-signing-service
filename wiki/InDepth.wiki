@@ -74,7 +74,7 @@ Signeringstjänsten behöver konfigureras en hel  innan den kan startas. Detta b
 === Utvecklingsmiljö ===
 Att sätta upp en utvecklingsmiljö för signeringstjänsten är relativt enkelt:
  # Ladda ner källkoden från https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk/
- # Kopiera hela katalogen core-bc/modules/web/doc/.ss till din hemkatalog (/Users/`<name>`/.ss). Mer om vad den innehåller finns beskrivet i avsnittet [InDepth#Konfiguration konfiguration]
+ # Kopiera hela katalogen core-bc/modules/web/doc/.ss till din hemkatalog (ex. {{{/Users/<name>/.ss}}}). Mer om vad den innehåller finns beskrivet i avsnittet [InDepth#Konfiguration konfiguration]
  # Navigera dig fram till core-bc/modules/web i ett terminal-/kommandofönster
  # Kör maven-kommandot {{{mvn jetty:run}}}
 
