@@ -85,6 +85,7 @@ Vill man istället använda tomcat från sin IDE bör man utöver [http://code.g
  # I fältet _VM arguments_ lägg in {{{-Dssl.hostname.verification=lenient}}} 
  # För att slå på SSL/TLS debug lägg även in {{{-Djavax.net.debug=ssl}}} 
 
+Alla dessa inställningar som görs för tomcat är redan förkonfigurerade i projektet om man väljer att använda jetty.
 === Produktionsmiljö ===
 
 == Konfiguration ==
