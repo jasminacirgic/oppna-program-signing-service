@@ -1,11 +1,9 @@
 #summary Djupgående genomgång av hur man använder signeringstjänsten.
-#sidebar TableOfContents
 
 = Innehållsförteckning =
 <wiki:toc max_depth="3" />
 
 = Bakgrund och ändamål =
-
 En elektronisk signatur ska säkerställa att elektroniskt överförd information inte har ändrats
 och för att identifiera informationens avsändare. Genom kryptering skyddas uppgifter i ett
 dokument mot obehörig åtkomst.
@@ -20,7 +18,6 @@ Första steget för en applikation är att erbjuda signering för en användare.
 http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Signature-process.png
 
 = Funktionsbeskrivning =
-
 == Hur signerar jag med signeringtjänsten? ==
 Första steget för en applikation är att erbjuda signering för en användare. Efter detta tar signeringstjänsten över och hanterar presentationen av signeringsklineten (t.ex. NetID) med allt vad det innebär, signeringstjänsten tar även hand om certifikatskontrollen som bla. verifierar att certifikatet som används i signaturen inte är spärrat. Det den nyttjande applikationen behöver ta hänsyn till är lagringen av signaturen. Nedan visas en schematisk bild över hur flödet ser ut, de heldragna pilarna är de interaktioner som måste hanteras/implementeras av applikationen.
 http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Signatureservice-process.png
