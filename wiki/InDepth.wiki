@@ -76,7 +76,14 @@ Att sätta upp en utvecklingsmiljö för signeringstjänsten är relativt enkelt
  # Ladda ner källkoden från https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk/
  # Kopiera hela katalogen core-bc/modules/web/doc/.ss till din hemkatalog (ex. {{{/Users/<name>/.ss}}}). Mer om vad den innehåller finns beskrivet i avsnittet [InDepth#Konfiguration konfiguration]
  # Navigera dig fram till core-bc/modules/web i ett terminal-/kommandofönster
- # Kör maven-kommandot {{{mvn jetty:run}}}
+ # Kör maven-kommandot {{{mvn install jetty:run}}}
+
+Vill man istället använda tomcat från sin IDE bör man utöver [http://code.google.com/p/oppna-program/wiki/Anvisningar_Utvecklingsmiljo#Uppsättning_av_Tomcat_(vid_utveckling_av_web_applikationer) normal serverkonfiguration] lägga till en System Property via D-flaggan när tomcat startar. Detta görs enklast genom att:
+ # Dubbelklicka på din server i eclipse server-vy
+ # Klicka på länken _Open launch configuration_
+ # Välj fliken _Arguments_
+ # I fältet _VM arguments_ lägg in {{{-Dssl.hostname.verification=lenient}}} 
+ # För att slå på SSL/TLS debug lägg även in {{{-Djavax.net.debug=ssl}}} 
 
 === Produktionsmiljö ===
 
