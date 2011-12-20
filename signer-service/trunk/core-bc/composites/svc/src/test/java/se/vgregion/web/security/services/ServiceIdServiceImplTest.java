@@ -77,6 +77,7 @@ public class ServiceIdServiceImplTest {
 
         Thread.sleep(3000);
 
+        System.out.println("Finished waiting. Checking again...");
         assertTrue(service.containsServiceId("externallyAddedServiceId"));
     }
     
