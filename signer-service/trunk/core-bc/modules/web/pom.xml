@@ -40,10 +40,10 @@
             </connector>
           </connectors>
           <systemProperties>
-            <systemProperty>
+            <!--<systemProperty>
               <name>javax.net.debug</name>
               <value>ssl</value>
-            </systemProperty>
+            </systemProperty>-->
             <systemProperty>
               <!-- In development we use Jetty with this system property to turn off host name verification -->
               <name>ssl.hostname.verification</name>
