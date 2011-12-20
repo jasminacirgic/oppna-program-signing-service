@@ -34,7 +34,6 @@ import javax.ws.rs.core.Response;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.XMLSignature;
-import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.parsers.DocumentBuilder;
@@ -99,19 +98,18 @@ public class RestSignController extends AbstractSignController {
         return super.prepareSign(signData);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see AbstractSignController#verifySignature(SignatureData)
+    /**
+     * Method that verifies an incoming signature and returns the response as application/xml.
+     *
+     * @param signatureVerificationRequest the request which is converted to a {@link SignatureVerificationRequest}
+     *                                     from xml
+     * @return the {@link SignatureVerificationResponse} as application/xml
      */
-    //    @Override
     @POST
     @Path("/verifySignature")
     @Consumes("application/xml")
     @Produces("application/xml")
-    public SignatureVerificationResponse verifySignature(SignatureVerificationRequest signatureVerificationRequest)
-            throws CMSException, IOException, ParserConfigurationException, SAXException, MarshalException,
-            XMLSignatureException {
+    public SignatureVerificationResponse verifySignature(SignatureVerificationRequest signatureVerificationRequest) {
 
         SignatureVerificationResponse response = new SignatureVerificationResponse();
         response.setCertificateInfos(new CertificateInfos());
@@ -119,85 +117,112 @@ public class RestSignController extends AbstractSignController {
         boolean verified = false;
         String message = null;
 
-        SignatureFormat format = signatureVerificationRequest.getSignatureFormat();
-        if (SignatureFormat.XMLDIGSIG.equals(format)) {
-            String signature = new String(Base64.decode(signatureVerificationRequest.getSignature()));
+        try {
 
-            InputStream is = new ByteArrayInputStream(signature.getBytes());
+            SignatureFormat format = signatureVerificationRequest.getSignatureFormat();
+            if (SignatureFormat.XMLDIGSIG.equals(format)) {
+                try {
+                    SignatureData signatureData = getFromXmlDigSigSignature(signatureVerificationRequest, response);
 
-            Document document = createDocument(is, true);
+                    verified = super.verifySignature(signatureData);
+                } catch (SignatureException e) {
+                    e.printStackTrace();
+                    message = e.getMessage();
+                }
+            } else if (SignatureFormat.CMS.equals(format)) {
+                SignatureData signData = getFromCmsSignature(signatureVerificationRequest, response);
 
-            XMLSignature xmlSignature = XMLSignatureFactory.getInstance().unmarshalXMLSignature(new DOMStructure(document));
-
-            List contentList = xmlSignature.getKeyInfo().getContent();
-
-            for (Object content : contentList) {
-                if (content instanceof X509Data) {
-                    List certificateList = ((X509Data) content).getContent();
-                    for (Object certificateObject : certificateList) {
-                        if (certificateObject instanceof X509Certificate) {
-                            X509Certificate cert = (X509Certificate) certificateObject;
-                            CertificateInfo ci = new CertificateInfo();
-                            ci.setSubjectDn(cert.getSubjectDN().getName());
-                            ci.setValidTo(simpleDateFormat.format(cert.getNotAfter()));
-                            response.getCertificateInfos().getCertificateInfo().add(ci);
-                        }
-                    }
+                try {
+                    //Verify
+                    verified = super.verifySignature(signData);
+                } catch (SignatureException e) {
+                    e.printStackTrace();
+                    message = e.getMessage();
                 }
             }
 
-            try {
-                SignatureData signatureData = createSignatureDataFromXmlDigSig(signature);
-                verified = super.verifySignature(signatureData);
-            } catch (SignatureException e) {
-                e.printStackTrace();
-                message = e.getMessage();
-            }
-        } else if (SignatureFormat.CMS.equals(format)) {
-            String signature = signatureVerificationRequest.getSignature();
-            byte[] decoded = Base64.decode(signature);
-            CMSSignedData cmsSignedData = new CMSSignedData(decoded);
-            String encodedSignedData = new String((byte[]) cmsSignedData.getSignedContent().getContent());
-
-            //Fetch information about the issuers
-            List<String> certInfos = new ArrayList<String>();
-            Collection certificates = cmsSignedData.getCertificates().getMatches(null);
-            for (Object certificate : certificates) {
-                X509CertificateHolder holder = (X509CertificateHolder) certificate;
-                certInfos.add(holder.getSubject().toString());
-                CertificateInfo ci = new CertificateInfo();
-                ci.setSubjectDn(holder.getSubject().toString());
-                ci.setValidTo(simpleDateFormat.format(holder.getNotAfter()));
-                response.getCertificateInfos().getCertificateInfo().add(ci);
+            response.setStatus(verified ? SignatureStatus.SUCCESS : SignatureStatus.FAILURE);
+            if (message != null) {
+                response.setMessage(message);
             }
 
-            //Fetch timestamp
-            Date signingDate = findTimestamp(cmsSignedData);
-            String dateString = simpleDateFormat.format(signingDate);
-            response.setSignatureDate(dateString);
-
-            //Create the SignatureData to be verified
-            SignatureData signData = new SignatureData();
-            signData.setEncodedTbs(encodedSignedData);
-            signData.setSignature(signature);
-            ELegType clientType = new ELegType("test", "test", PkiClient.NETMAKER_NETID_4);
-            signData.setClientType(clientType);
-
-            try {
-                //Verify
-                verified = super.verifySignature(signData);
-            } catch (SignatureException e) {
-                e.printStackTrace();
-                message = e.getMessage();
-            }
-        }
-
-        response.setStatus(verified ? SignatureStatus.SUCCESS : SignatureStatus.FAILURE);
-        if (message != null) {
-            response.setMessage(message);
+        } catch (IOException ex) {
+            throw new WebApplicationException(ex, Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (MarshalException ex) {
+            throw new WebApplicationException(ex, Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (ParserConfigurationException ex) {
+            throw new WebApplicationException(ex, Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (SAXException ex) {
+            throw new WebApplicationException(ex, Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (CMSException ex) {
+            throw new WebApplicationException(ex, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
         return response;
+    }
+
+    private SignatureData getFromXmlDigSigSignature(SignatureVerificationRequest signatureVerificationRequest,
+                                                    SignatureVerificationResponse response)
+            throws ParserConfigurationException, SAXException, IOException, MarshalException, SignatureException {
+        String signature = new String(Base64.decode(signatureVerificationRequest.getSignature()));
+
+        InputStream is = new ByteArrayInputStream(signature.getBytes());
+
+        Document document = createDocument(is, true);
+
+        XMLSignature xmlSignature = XMLSignatureFactory.getInstance().unmarshalXMLSignature(new DOMStructure(document));
+
+        List contentList = xmlSignature.getKeyInfo().getContent();
+
+        for (Object content : contentList) {
+            if (content instanceof X509Data) {
+                List certificateList = ((X509Data) content).getContent();
+                for (Object certificateObject : certificateList) {
+                    if (certificateObject instanceof X509Certificate) {
+                        X509Certificate cert = (X509Certificate) certificateObject;
+                        CertificateInfo ci = new CertificateInfo();
+                        ci.setSubjectDn(cert.getSubjectDN().getName());
+                        ci.setValidTo(simpleDateFormat.format(cert.getNotAfter()));
+                        response.getCertificateInfos().getCertificateInfo().add(ci);
+                    }
+                }
+            }
+        }
+
+        return createSignatureDataFromXmlDigSig(signature);
+    }
+
+    private SignatureData getFromCmsSignature(SignatureVerificationRequest signatureVerificationRequest,
+                                              SignatureVerificationResponse response) throws CMSException {
+        String signature = signatureVerificationRequest.getSignature();
+        byte[] decoded = Base64.decode(signature);
+        CMSSignedData cmsSignedData = new CMSSignedData(decoded);
+        String encodedSignedData = new String((byte[]) cmsSignedData.getSignedContent().getContent());
+
+        //Fetch information about the issuers
+        List<String> certInfos = new ArrayList<String>();
+        Collection certificates = cmsSignedData.getCertificates().getMatches(null);
+        for (Object certificate : certificates) {
+            X509CertificateHolder holder = (X509CertificateHolder) certificate;
+            certInfos.add(holder.getSubject().toString());
+            CertificateInfo ci = new CertificateInfo();
+            ci.setSubjectDn(holder.getSubject().toString());
+            ci.setValidTo(simpleDateFormat.format(holder.getNotAfter()));
+            response.getCertificateInfos().getCertificateInfo().add(ci);
+        }
+
+        //Fetch timestamp
+        Date signingDate = findTimestamp(cmsSignedData);
+        String dateString = simpleDateFormat.format(signingDate);
+        response.setSignatureDate(dateString);
+
+        //Create the SignatureData to be verified
+        SignatureData signData = new SignatureData();
+        signData.setEncodedTbs(encodedSignedData);
+        signData.setSignature(signature);
+        ELegType clientType = new ELegType("test", "test", PkiClient.NETMAKER_NETID_4);
+        signData.setClientType(clientType);
+        return signData;
     }
 
     private Document createDocument(InputStream is, boolean namespaceAware)
@@ -223,7 +248,7 @@ public class RestSignController extends AbstractSignController {
             switch (v.size()) {
                 case 0:
                     continue;
-                case 1: {
+                case 1:
                     Attribute t = (Attribute) v.get(0);
                     ASN1Set attrValues = t.getAttrValues();
                     if (attrValues.size() != 1) {
@@ -236,8 +261,7 @@ public class RestSignController extends AbstractSignController {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
-                }
+                    continue;
                 default:
                     continue;
             }
@@ -262,7 +286,7 @@ public class RestSignController extends AbstractSignController {
             XPath xpath = XPathFactory.newInstance().newXPath();
             XPathExpression expression = xpath.compile("/Signature/Object/bankIdSignedData/srvInfo/nonce/text()");
             String encodedNonce = (String) expression.evaluate(document, XPathConstants.STRING);
-            String decodedNonce = new String(Base64.decode(encodedNonce)); //this will be re-encoded again before it is sent
+            String decodedNonce = new String(Base64.decode(encodedNonce)); //will be re-encoded again before it is sent
             signatureData.setNonce(decodedNonce);
 
             expression = xpath.compile("/Signature/Object/bankIdSignedData/usrVisibleData/text()");

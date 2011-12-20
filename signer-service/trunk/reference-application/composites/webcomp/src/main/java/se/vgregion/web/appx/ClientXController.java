@@ -1,7 +1,22 @@
 package se.vgregion.web.appx;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.bouncycastle.cms.CMSException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import se.vgregion.dao.domain.patterns.repository.Repository;
+import se.vgregion.signera.signature._1.SignatureEnvelope;
+import se.vgregion.signera.signature._1.SignatureFormat;
+import se.vgregion.signera.signature._1.SignatureVerificationRequest;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,34 +26,8 @@ import java.security.NoSuchProviderException;
 import java.security.cert.CertStoreException;
 import java.util.Collection;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.bouncycastle.cms.CMSException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
-
-import se.vgregion.dao.domain.patterns.repository.Repository;
-import se.vgregion.signera.signature._1.SignatureEnvelope;
-import se.vgregion.signera.signature._1.SignatureFormat;
-import se.vgregion.signera.signature._1.SignatureVerificationRequest;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class ClientXController {
@@ -50,10 +39,8 @@ public class ClientXController {
     @Autowired
     private String submitUrl;
     @Autowired
-    private WebClient client;// = WebClient.create("https://localhost:9443/service/solveTicket/");
+    private WebClient client;
 
-    @Value("${service-id}")
-    private String serviceId;
     @Value("${verify_signature.url}")
     private String verifySignatureUrl;
     @Value("${ticket.url}")
@@ -77,14 +64,14 @@ public class ClientXController {
     /**
      * Handler method called by Spring.
      *
-     * @param req request
+     * @param req      request
      * @param response response
      * @param envelope envelope
      * @throws IOException IOException
      */
     @RequestMapping(value = "/saveSignature", method = POST)
     public void postback(HttpServletRequest req, HttpServletResponse response,
-            @RequestBody SignatureEnvelope envelope) throws IOException {
+                         @RequestBody SignatureEnvelope envelope) throws IOException {
         StringBuilder relocateUrl = new StringBuilder("http://").append(req.getLocalName()).append(":7080")
                 .append(req.getContextPath()).append(req.getServletPath());
 
@@ -104,15 +91,15 @@ public class ClientXController {
      * Handler method called by Spring.
      *
      * @return a view
-     * @throws CMSException CMSException
+     * @throws CMSException             CMSException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
-     * @throws NoSuchProviderException NoSuchProviderException
-     * @throws CertStoreException CertStoreException
-     * @throws IOException IOException
+     * @throws NoSuchProviderException  NoSuchProviderException
+     * @throws CertStoreException       CertStoreException
+     * @throws IOException              IOException
      */
     @RequestMapping(value = "/showSignStatus", method = GET)
     public String status() throws CMSException, NoSuchAlgorithmException, NoSuchProviderException,
-    CertStoreException, IOException {
+            CertStoreException, IOException {
         // for (Signature signature : getSignatures()) {
         // String s = signature.getDecoded();
         //
@@ -125,6 +112,12 @@ public class ClientXController {
         return "showSignatures";
     }
 
+    /**
+     * Handler method called by Spring. Verifies a signature.
+     *
+     * @param httpServletRequest  the request
+     * @param httpServletResponse the response
+     */
     @RequestMapping(value = "/verifySignature", method = POST)
     @ResponseBody
     public void verifySignature(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -194,7 +187,7 @@ public class ClientXController {
     /**
      * Handler method called by Spring.
      *
-     * @param model the model
+     * @param model        the model
      * @param errorMessage errorMessage
      * @return a view
      */
@@ -218,11 +211,4 @@ public class ClientXController {
         return "showSignatures";
     }
 
-    public static void main(String[] args) {
-        final WebClient client = WebClient.create("https://localhost:9443/service/solveTicket/",
-                "/Users/anders/src/vgr/oppna-program-signing-service/signer-service/trunk/reference-application/modules/web/src/main/resources/https.xml");
-        client.accept("application/json");
-        String ticket = client.path("{serviceId}", "someServiceId").get(String.class);
-        System.out.println(ticket);
-    }
 }
