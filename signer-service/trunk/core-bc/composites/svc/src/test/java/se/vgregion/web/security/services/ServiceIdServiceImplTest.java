@@ -67,7 +67,7 @@ public class ServiceIdServiceImplTest {
         File file = new File(SERVICE_ID_TEST_FILE_NAME);
         FileWriter fileWriter = new FileWriter(file, true);
 
-        fileWriter.append(newLine + "externallyAddedServiceId=name");
+        fileWriter.append("externallyAddedServiceId=name" + newLine);
         fileWriter.close();
 
         FileReader in = new FileReader(file);
