@@ -68,7 +68,7 @@ public class ServiceIdServiceImplTest {
         //first check that it doesn't exist directly
         assertFalse(service.containsServiceId("externallyAddedServiceId"));
 
-        Thread.sleep(1000);
+        Thread.sleep(3000);
 
         assertTrue(service.containsServiceId("externallyAddedServiceId"));
     }
