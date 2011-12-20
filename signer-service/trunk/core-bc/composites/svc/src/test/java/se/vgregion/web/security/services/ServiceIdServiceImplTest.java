@@ -2,9 +2,7 @@ package se.vgregion.web.security.services;
 
 import org.junit.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 import static org.junit.Assert.*;
 
@@ -71,6 +69,18 @@ public class ServiceIdServiceImplTest {
 
         fileWriter.append(newLine + "externallyAddedServiceId=name");
         fileWriter.close();
+
+        FileReader in = new FileReader(file);
+        BufferedReader br = new BufferedReader(in);
+
+        System.out.println("File contents:");
+        String buf;
+        while ((buf = br.readLine()) != null) {
+            System.out.println(buf);
+        }
+        
+        br.close();
+        in.close();
         
         //first check that it doesn't exist directly
         assertFalse(service.containsServiceId("externallyAddedServiceId"));

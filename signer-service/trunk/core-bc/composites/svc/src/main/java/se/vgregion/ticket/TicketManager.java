@@ -66,7 +66,7 @@ public final class TicketManager {
      *
      * @return the instance
      */
-    public static TicketManager getInstance() {
+    public static synchronized TicketManager getInstance() {
         if (instance == null) {
             TicketManager ticketManager = new TicketManager();
             instance = ticketManager;
