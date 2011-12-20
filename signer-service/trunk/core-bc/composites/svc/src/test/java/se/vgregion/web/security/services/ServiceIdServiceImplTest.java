@@ -22,13 +22,20 @@ public class ServiceIdServiceImplTest {
     @BeforeClass
     public static void setupFile() throws IOException {
         ServiceIdServiceImpl serviceIdTestFile = new ServiceIdServiceImpl(SERVICE_ID_TEST_FILE_NAME, 100000000);
+        File file = new File(SERVICE_ID_TEST_FILE_NAME);
+        if (!file.exists()) {
+            throw new IllegalStateException("The file " + file.getAbsolutePath() + " wasn't created by the service.");
+        } else {
+            System.out.println(file.getAbsolutePath() + " was created.");
+        }
         serviceIdTestFile.storeServiceId(MY_SERVICE_ID, MY_SERVICE_NAME);
     }
     
     @AfterClass
     public static void tearDown() {
         File file = new File(SERVICE_ID_TEST_FILE_NAME);
-        file.delete();
+        boolean delete = file.delete();
+        System.out.println("Deletion of " + file.getAbsolutePath() + ": Success=" + delete);
     }
 
     @Before
