@@ -116,15 +116,21 @@ Utöver denna konfiguration har man även möjlighet att sätta en System Proper
 
 Slutligen, SSL/TLS-konfigurationen som exponeras mot webb-läsarna görs på den server som signerinstjänstens installerats. På en tomcat görs denna konfiguation i $TOMCAT_HOME/conf/server.xml. Där skall en ny https-connector skapas med inställningar för vilken bla. port och keystore som skall användas. Ett exempel på hur detta kan se ut:
 {{{
-<Connector port="7443" protocol="HTTP/1.1" SSLEnabled="true"
+<Connector port="443" protocol="HTTP/1.1" SSLEnabled="true"
   maxThreads="150" scheme="https" secure="true"
   clientAuth="false" sslProtocol="TLS" keystoreFile="${user.home}/.ss/keystore.jks"
   keystorePass="s3cr3t-passw0rd" keystoreType="JKS"/>
 }}}
 
-== Certikathantering ==
-Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
+== Certifikathantering ==
+Signeringstjänsten använder en hel del certifikat, i följande avsnitt beskrivs vilka certifikat som används och vart i applikationen de hör hemma. Även några mindre exempel på hur nya certifikat kan genereras och importeras kommer att visas.
+
+Signeringstjänsten agerar både som tjänstekonsument samt tjänsteproducent och i samtliga fall är det krav eller åtminstone rekommenderat att kommunikationen sker insynsskyddat. I samtliga fall är detta implementerat med hjälp av [http://en.wikipedia.org/wiki/Transport_Layer_Security TLS]. I vissa fall är det dessutom krav eller rekommendation att även kunna autentisera klienten detta görs antingen på protokollnivå med sk. [http://en.wikipedia.org/wiki/Mutual_authentication Mutual Authentication] eller på applikationsnivå med en biljett(ticket) som måste bifogas för att få utnyttja tjänsten.
+
+Nedan visas en bild över vilka certifikat som används samt vilken metod som används för att autentisera klienten: 
 http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Certifikathantering.png
+
+
 
 == Anslut till signeringstjänsten ==
 In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
