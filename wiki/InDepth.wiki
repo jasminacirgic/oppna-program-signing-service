@@ -109,10 +109,17 @@ Med bakgrund till ovan nämnda blogg kommer här en förklaring till inställnin
 || eid.endpoint || För att verifiera en signatur använder sig signeringstjänsten av en annan tjänst. Denna tjänst kallas [http://sveid.episerverhotell.net/SVEIDtemplates/SVEIDpage.aspx?id=124 OSIF] och hostas idag av Logica. I detta fält anges servicens endpoint adress. ||
 || eid.serviceid || För att få nyttja [http://sveid.episerverhotell.net/SVEIDtemplates/SVEIDpage.aspx?id=124 OSIF]-tjänsten krävs att man skickar med ett seriviceId. Detta seriviceId anges här. ||
 
-Utöver denna konfiguration har man även möjlighet att sätta en System Properties vid uppstart av applikationen. Dessa sätts mha -D-flaggan när jvm;en startas.
+Utöver denna konfiguration har man även möjlighet att sätta en System Properties vid uppstart av applikationen. Denna sätts mha -D-flaggan när jvm:en startas.
 
 || System Property || Värden || Beskrivning ||
 || {{{ssl.hostname.verification}}} || {{{strict}}} eller {{{lenient}}} || Normalt när ett certifikat verifieras vid en TLS-konversation krävs att hostnamnet överensstämmer med certifikatnamnet. Genom att sätta denna property till {{{lenient}}} så kan man komma runt det kravet. Detta är bra framför allt under utveckling och test. I en produktionsmiljö är det rekommenderat att använda {{{strict}}} validering av hostnamnet. Utelämnas denna konfiguration så används {{{strict}}} som default.||
+
+Slutligen, SSL/TLS-konfigurationen som exponeras mot webb-läsarna görs på den server som signerinstjänstens installerats. På en tomcat görs denna konfiguation i $TOMCAT_HOME/conf/server.xml. Där skall en ny https-connector skapas med inställningar för vilken bla. port och keystore som skall användas. Ett exempel på hur detta kan se ut:
+{{{
+<Connector port="7443" protocol="HTTP/1.1" SSLEnabled="true"
+  maxThreads="150" scheme="https" secure="true"
+  clientAuth="false" sslProtocol="TLS" keystoreFile="${user.home}/.ss/keystore.jks"
+  keystorePass="s3cr3t-passw0rd" keystoreType="JKS"/>}}}
 
 == Certikathantering ==
 Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
