@@ -119,7 +119,8 @@ Slutligen, SSL/TLS-konfigurationen som exponeras mot webb-läsarna görs på den
 <Connector port="7443" protocol="HTTP/1.1" SSLEnabled="true"
   maxThreads="150" scheme="https" secure="true"
   clientAuth="false" sslProtocol="TLS" keystoreFile="${user.home}/.ss/keystore.jks"
-  keystorePass="s3cr3t-passw0rd" keystoreType="JKS"/>}}}
+  keystorePass="s3cr3t-passw0rd" keystoreType="JKS"/>
+}}}
 
 == Certikathantering ==
 Nedan visas en bild över vilka certifikat som används i de olika delarna av signaturprocessen: 
