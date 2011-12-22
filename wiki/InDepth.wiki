@@ -123,7 +123,7 @@ Vill man istället använda tomcat från sin IDE bör man utöver [http://code.g
 
 Alla dessa inställningar som görs för tomcat är redan förkonfigurerade i web-modulens pom.xml om man väljer att använda jetty.
 
-Sätter man upp allt själv så kan man för certifikatkonfigurationen utgå från produktionsmiljöns konfiguration.
+Sätter man upp allt själv så kan man för certifikatkonfigurationen utgå från [InDepth#Certfikathantering produktionsmiljöns] konfiguration.
 
 = Säkerhet =
 == Certifikathantering ==
