@@ -131,11 +131,22 @@ Nedan visas en bild över vilka certifikat som används samt vilken metod som an
 http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Certifikathantering.png
 
 *Förklaring till bilden*:
- * Vid inkommande kommunikation bör signeringstjänsten exponera ett certifikat som är betrott av de vanliga webbläsarna.
+ * Vid inkommande kommunikation bör signeringstjänsten exponera ett certifikat som är betrott av de vanliga webbläsarna. Klienten behöver skicka med en biljett vid varje anrop för att signeringsstjänsten skall kunna bekräfta behörigheten.
  * För utgående kommunikation med Logicas eID-tjänst krävs att signeringstjänsten betror det certifikat som eID-tjänsten exponerar. Detta certifikat läggs in i signeringstjänstens Truststore. eID-tjänsten kan även kräva att någon form av biljett skickas med vid anrop.
  * För utgående kommunikation med AppX är det rekommenderat att AppX använder sig av en TLS-anslutning med [http://en.wikipedia.org/wiki/Mutual_authentication Mutual Authentication]. Det krävs då att signeringsstjänsten har ett eget certifikat i sin keystore samt AppX publika nyckel i sin truststore. Samma sak gäller hos AppX, dvs. sitt eget certifikat i keystore samt signeringstjänstens certifikat i truststore.
 
 === Konfigurera certifikat ===
+För att konfigurera certifikaten krävs att man använder sig av ett verktyg där man kan skapa keystores och truststores samt importera certifikat. Ett exempel på sådant verktyg är keytool som följer med Javas JDK. Keytool är ett kommandotolkverktyg vilket innebär att man behöver en kommandotolk till hands för att utnyttja det. Nedan följer några exempel på användbara kommandon:
+
+* Lista innehållet i en keystore/truststore *
+{{{keytool -v -list -keystore keystore.jks}}}
+* Skapa en keystore/truststore *
+{{{keytool -genkey -keyalg RSA -alias selfsigned -keystore keystore.jks -storepass password -validity 360 -keysize 2048}}}
+* Exportera den publika nyckeln från ett keystore *
+{{{keytool -export -alias mydomain -file mydomain.crt -keystore keystore.jks}}}
+* Importera en publik nyckel i en befintlig truststore *
+{{{keytool -import -trustcacerts -alias mydomain -file mydomain.crt -keystore keystore.jks}}}
+
 ==== Utvecklingsmiljö ====
 ==== Produktionsmiljö ====
 
