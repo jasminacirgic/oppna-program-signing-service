@@ -6,7 +6,9 @@
 = Referenser =
  * [http://www.bankid.com/Global/wwwbankidcom/Calle/BISP%20-%20beskrivning%20till%20f%C3%B6rlitande%20part%202.0.pdf API BankID]
  * [http://avtal.skane.se/HolgerDokument/09/02273/Bilaga20NetiDDeveloper'sGuidev2.01.pdf API NetId]
- * [http://www.bankid.com/Global/wwwbankidcom/RP/Test%20BankIDn.zip Testcertifikat]
+ * [http://www.bankid.com/Global/wwwbankidcom/RP/Test%20BankIDn.zip Testcertifikat BankID]
+ * [http://eid.trust.telia.com/Testcertifikat/Teliaelegmjukt/tabid/59/Default.aspx Testcertifikat Telia]
+ * 
 
 = Bakgrund och ändamål =
 En elektronisk signatur ska säkerställa att elektroniskt överförd information inte har ändrats
@@ -113,6 +115,7 @@ Slutligen, SSL/TLS-konfigurationen som exponeras mot webb-läsarna görs på den
 = Loggning =
 
 = Lokal Utvecklingsmiljö =
+== Signeringstjänsten ==
 Att sätta upp en utvecklingsmiljö för signeringstjänsten är relativt enkelt:
  # Ladda ner källkoden från https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk/
  # Kopiera hela katalogen core-bc/modules/web/doc/.ss till din hemkatalog (ex. {{{/Users/<name>/.ss}}}). Mer om vad den innehåller finns beskrivet i avsnittet [InDepth#Konfiguration konfiguration]
@@ -129,6 +132,13 @@ Vill man istället använda tomcat från sin IDE bör man utöver [http://code.g
 Alla dessa inställningar som görs för tomcat är redan förkonfigurerade i web-modulens pom.xml om man väljer att använda jetty.
 
 Sätter man upp allt själv så kan man för certifikatkonfigurationen utgå från [InDepth#Certfikathantering produktionsmiljöns] konfiguration.
+
+== Referensapplikation ==
+
+== Testcertifkat ==
+För att kunna testa är det bra om man använder sig av testcertifikat. Dessa hittas under följande länkar:
+ * [http://www.bankid.com/Global/wwwbankidcom/RP/Test%20BankIDn.zip BankID]
+ * [http://eid.trust.telia.com/Testcertifikat/Teliaelegmjukt/tabid/59/Default.aspx Telia]
 
 = Säkerhet =
 == Certifikathantering ==
