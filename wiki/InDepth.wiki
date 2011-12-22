@@ -155,8 +155,20 @@ keytool -export -alias mydomain -file mydomain.crt -keystore keystore.jks
 keytool -import -trustcacerts -alias mydomain -file mydomain.crt -keystore keystore.jks
 }}}
 
+Mer information om keytool och olika kommandon kan hittas här:
+ * http://www.sslshopper.com/article-most-common-java-keytool-keystore-commands.html
+ * http://docs.oracle.com/javase/6/docs/technotes/tools/windows/keytool.html (Windows)
+ * http://docs.oracle.com/javase/6/docs/technotes/tools/solaris/keytool.html (Linux/Mac)
+ * http://www.devdaily.com/java/java-keytool-keystore-certificate-tutorials
+
 ==== Utvecklingsmiljö ====
+Inget skall behöva göras utöver de steg som beskrivs under avsnittet om [http://code.google.com/p/oppna-program-signing-service/wiki/InDepth#Utvecklingsmiljö utvecklingsmiljö]. Om man däremot vill använda sig av en annan konfiguration än default kan man utgå från konfigurationen för produktionsmiljön istället.
+
 ==== Produktionsmiljö ====
+ # Skapa ett keystore med ett "CA-trustat" certifikat. Detta keystore pekas sedan ut i tomcat:ens server.xml. Se sist i avsnittet [InDepth#Konfiguration konfiguration]. I VGR:s fall används deras certifikat *.vgregion.se som är i formatet [http://en.wikipedia.org/wiki/PKCS12 PKCS #12].
+ # Skapa ett till keystore med ett SHITS-certifikat. Detta certifkat används för [http://en.wikipedia.org/wiki/Mutual_authentication Mutual Authentication] gentemot AppX. Detta keystore pekas ut i signeringstjänstens config.properties under variablerna keystore.*.
+ # Exportera den publika delen av SITHS-certifikatet och dela ut till alla konsumerande applikationer. De behöver ha detta certifikat i deras truststore.
+ # Skapa ett truststore där AppX och Logicas eID-tjänsts publika nyckel importeras. Truststoret pekas ut ut i signeringstjänstens config.properties under variablerna truststore.*. AppX måste skicka över sin publika nyckel till signeringstjänsten.
 
 == Anslut till signeringstjänsten ==
 In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
