@@ -6,7 +6,8 @@
 = Referenser =
  * [http://www.bankid.com/Global/wwwbankidcom/Calle/BISP%20-%20beskrivning%20till%20f%C3%B6rlitande%20part%202.0.pdf API BankID]
  * [http://avtal.skane.se/HolgerDokument/09/02273/Bilaga20NetiDDeveloper'sGuidev2.01.pdf API NetId]
- * 
+ * [http://www.bankid.com/Global/wwwbankidcom/RP/Test%20BankIDn.zip Testcertifikat]
+
 = Bakgrund och ändamål =
 En elektronisk signatur ska säkerställa att elektroniskt överförd information inte har ändrats
 och för att identifiera informationens avsändare. Genom kryptering skyddas uppgifter i ett
