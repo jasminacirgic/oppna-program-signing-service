@@ -71,27 +71,9 @@ Signeringstjänsten behöver konfigureras en hel  innan den kan startas. Detta b
 Även konsumenterna av signeringstjänsten kräver en del TLS-konfiguration vilket finns beskrivet i avsnittet [http://code.google.com/p/oppna-program-signing-service/wiki/InDepth#Anslut_till_signeringstjänsten Anslut till signeringstjänsten].
 
 ==  Sätta upp en instans av signeringstjänsten ==
-
-=== Utvecklingsmiljö ===
-Att sätta upp en utvecklingsmiljö för signeringstjänsten är relativt enkelt:
- # Ladda ner källkoden från https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk/
- # Kopiera hela katalogen core-bc/modules/web/doc/.ss till din hemkatalog (ex. {{{/Users/<name>/.ss}}}). Mer om vad den innehåller finns beskrivet i avsnittet [InDepth#Konfiguration konfiguration]
- # Navigera dig fram till core-bc/modules/web i ett terminal-/kommandofönster
- # Kör maven-kommandot {{{mvn install jetty:run}}}
-
-Vill man istället använda tomcat från sin IDE bör man utöver [http://code.google.com/p/oppna-program/wiki/Anvisningar_Utvecklingsmiljo#Uppsättning_av_Tomcat_(vid_utveckling_av_web_applikationer) normal serverkonfiguration] lägga till en System Property via D-flaggan när tomcat startar. Detta görs enklast genom att:
- # Dubbelklicka på din server i eclipse server-vy
- # Klicka på länken _Open launch configuration_
- # Välj fliken _Arguments_
- # I fältet _VM arguments_ lägg in {{{-Dssl.hostname.verification=lenient}}} 
- # För att slå på SSL/TLS debug lägg även in {{{-Djavax.net.debug=ssl}}} 
-
-Alla dessa inställningar som görs för tomcat är redan förkonfigurerade i web-modulens pom.xml om man väljer att använda jetty.
-
-=== Produktionsmiljö ===
 Att installera och konfigurera signeringstjänsten i en produktionsmiljö ganska trixit. Installationen består av två steg: först skapar man en katalog med namnet {{{.ss}}} i hemkatalogen (här kommer konfigurationen att hamna) för den användare som kör webbservern (t.ex. Tomcat) och sen installerar man war-filen. Mellan dessa steg måste dock en hel del konfiguration göras, se avsnittet om [InDepth#Konfiguration konfiguration].
 
-== Konfiguration ==
+= Konfiguration =
 För att få en bakgrund till hur man skall konfigurera signeringstjänsten är det lämpligt att läsa  [http://blog.callistaenterprise.se/2011/11/17/configure-your-spring-web-application/ denna blog-post] som på ett bra sätt beskriver hur applikationen läser in sin konfiguration.
 
 Med bakgrund till ovan nämnda blogg kommer här en förklaring till inställningar som kan göras för signeringstjänsten. Till att börja med måste en fil med namnet {{{config.properties}}} skapas och läggas in under {{{~/.ss}}}. Om man vill ha en mall att utgå ifrån så kan man använda sig av default-konfigurationen som ligger i projektets web-modul ({{{$PROJECT_HOME/core-bc/modules/web/src/main/resources/default.properties}}}). I denna fil kan följande parametrar sättas:
@@ -122,6 +104,28 @@ Slutligen, SSL/TLS-konfigurationen som exponeras mot webb-läsarna görs på den
   keystorePass="s3cr3t-passw0rd" keystoreType="JKS"/>
 }}}
 
+= Felhantering =
+= Loggning =
+
+= Lokal Utvecklingsmiljö =
+Att sätta upp en utvecklingsmiljö för signeringstjänsten är relativt enkelt:
+ # Ladda ner källkoden från https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk/
+ # Kopiera hela katalogen core-bc/modules/web/doc/.ss till din hemkatalog (ex. {{{/Users/<name>/.ss}}}). Mer om vad den innehåller finns beskrivet i avsnittet [InDepth#Konfiguration konfiguration]
+ # Navigera dig fram till core-bc/modules/web i ett terminal-/kommandofönster
+ # Kör maven-kommandot {{{mvn install jetty:run}}}
+
+Vill man istället använda tomcat från sin IDE bör man utöver [http://code.google.com/p/oppna-program/wiki/Anvisningar_Utvecklingsmiljo#Uppsättning_av_Tomcat_(vid_utveckling_av_web_applikationer) normal serverkonfiguration] lägga till en System Property via D-flaggan när tomcat startar. Detta görs enklast genom att:
+ # Dubbelklicka på din server i eclipse server-vy
+ # Klicka på länken _Open launch configuration_
+ # Välj fliken _Arguments_
+ # I fältet _VM arguments_ lägg in {{{-Dssl.hostname.verification=lenient}}} 
+ # För att slå på SSL/TLS debug lägg även in {{{-Djavax.net.debug=ssl}}} 
+
+Alla dessa inställningar som görs för tomcat är redan förkonfigurerade i web-modulens pom.xml om man väljer att använda jetty.
+
+Sätter man upp allt själv så kan man för certifikatkonfigurationen utgå från produktionsmiljöns konfiguration.
+
+= Säkerhet =
 == Certifikathantering ==
 Signeringstjänsten använder en hel del certifikat, i följande avsnitt beskrivs vilka certifikat som används och vart i applikationen de hör hemma. Även några mindre exempel på hur nya certifikat kan genereras och importeras kommer att visas.
 
@@ -135,7 +139,6 @@ http://oppna-program-signing-service.googlecode.com/svn/wiki/images/Certifikatha
  * För utgående kommunikation med Logicas eID-tjänst krävs att signeringstjänsten betror det certifikat som eID-tjänsten exponerar. Detta certifikat läggs in i signeringstjänstens Truststore. eID-tjänsten kan även kräva att någon form av biljett skickas med vid anrop.
  * För utgående kommunikation med AppX är det rekommenderat att AppX använder sig av en TLS-anslutning med [http://en.wikipedia.org/wiki/Mutual_authentication Mutual Authentication]. Det krävs då att signeringsstjänsten har ett eget certifikat i sin keystore samt AppX publika nyckel i sin truststore. Samma sak gäller hos AppX, dvs. sitt eget certifikat i keystore samt signeringstjänstens certifikat i truststore.
 
-=== Konfigurera certifikat ===
 För att konfigurera certifikaten krävs att man använder sig av ett verktyg där man kan skapa keystores och truststores samt importera certifikat. Ett exempel på sådant verktyg är keytool som följer med Javas JDK. Keytool är ett kommandotolkverktyg vilket innebär att man behöver en kommandotolk till hands för att utnyttja det. Nedan följer några exempel på användbara kommandon:
 
 * Lista innehållet i en keystore/truststore *
@@ -161,14 +164,11 @@ Mer information om keytool och olika kommandon kan hittas här:
  * http://docs.oracle.com/javase/6/docs/technotes/tools/solaris/keytool.html (Linux/Mac)
  * http://www.devdaily.com/java/java-keytool-keystore-certificate-tutorials
 
-==== Utvecklingsmiljö ====
-Inget skall behöva göras utöver de steg som beskrivs under avsnittet om [http://code.google.com/p/oppna-program-signing-service/wiki/InDepth#Utvecklingsmiljö utvecklingsmiljö]. Om man däremot vill använda sig av en annan konfiguration än default kan man utgå från konfigurationen för produktionsmiljön istället.
-
-==== Produktionsmiljö ====
  # Skapa ett keystore med ett "CA-trustat" certifikat. Detta keystore pekas sedan ut i tomcat:ens server.xml. Se sist i avsnittet [InDepth#Konfiguration konfiguration]. I VGR:s fall används deras certifikat `*`.vgregion.se som är i formatet [http://en.wikipedia.org/wiki/PKCS12 PKCS #12].
  # Skapa ett till keystore med ett SHITS-certifikat. Detta certifkat används för [http://en.wikipedia.org/wiki/Mutual_authentication Mutual Authentication] gentemot AppX. Detta keystore pekas ut i signeringstjänstens config.properties under variablerna keystore.`*`.
  # Exportera den publika delen av SITHS-certifikatet och dela ut till alla konsumerande applikationer. De behöver ha detta certifikat i deras truststore.
  # Skapa ett truststore där AppX och Logicas eID-tjänsts publika nyckel importeras. Truststoret pekas ut ut i signeringstjänstens config.properties under variablerna truststore.`*`. AppX måste skicka över sin publika nyckel till signeringstjänsten.
+
 
 == Anslut till signeringstjänsten ==
 In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
@@ -186,3 +186,5 @@ In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter 
  # Slutligen så skall vi aktivera Mutual Authentication, detta för att den anslutande applikationen skall veta att det är signeringstjänsten som skickar signaturen och inte någon annan som utger sig för att vara det. Detta t.ex. kan ske i en [http://en.wikipedia.org/wiki/Man-in-the-middle_attack man-in-the-middle-attack]. Vi gör även detta i två steg:
   # Aktivera Mutual Authentication på webbservern. Detta är levereantörsspecifikt, på tomcat t.ex. sätts attributet clientAuth på connector-taggen i server.xml till true.
   # Ladda ner och lägg in signeringstjänstens [klient-certifikat] i ditt truststore.
+
+= Kvarstående utvecklingspunkter =
