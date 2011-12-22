@@ -169,8 +169,10 @@ Mer information om keytool och olika kommandon kan hittas här:
  # Exportera den publika delen av SITHS-certifikatet och dela ut till alla konsumerande applikationer. De behöver ha detta certifikat i deras truststore.
  # Skapa ett truststore där AppX och Logicas eID-tjänsts publika nyckel importeras. Truststoret pekas ut ut i signeringstjänstens config.properties under variablerna truststore.`*`. AppX måste skicka över sin publika nyckel till signeringstjänsten.
 
+= Kvarstående utvecklingspunkter =
+ * Som konsument skall man kunna begränsa valmöjligheten av vilka certifikat som man får signera med. T.ex. i fallet där AppX är behörighetsskyddad med eID, då skall AppX kunna välja att endast den inloggades certifikat skall få användas för signering. Detta görs genom att skicka in ett id för certifikatet till signeringstjänsten vilken sen endast exponerar signeringsrutan om certifikatet finns hos användaren. Läs mer.
 
-== Anslut till signeringstjänsten ==
+= Anslut till signeringstjänsten =
 In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
 
  # Det första vi behöver sätta upp är en tjänst dit signeringstjänsten kan leverera signaturen. Detta kan vara antingen i form av en http- eller ftp-server, här kommer vi att beskriva fallet http-server. Tjänsten måste acceptera POST med följande parametrar i dess body:
@@ -186,5 +188,3 @@ In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter 
  # Slutligen så skall vi aktivera Mutual Authentication, detta för att den anslutande applikationen skall veta att det är signeringstjänsten som skickar signaturen och inte någon annan som utger sig för att vara det. Detta t.ex. kan ske i en [http://en.wikipedia.org/wiki/Man-in-the-middle_attack man-in-the-middle-attack]. Vi gör även detta i två steg:
   # Aktivera Mutual Authentication på webbservern. Detta är levereantörsspecifikt, på tomcat t.ex. sätts attributet clientAuth på connector-taggen i server.xml till true.
   # Ladda ner och lägg in signeringstjänstens [klient-certifikat] i ditt truststore.
-
-= Kvarstående utvecklingspunkter =
