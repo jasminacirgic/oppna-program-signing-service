@@ -3,6 +3,10 @@
 = Innehållsförteckning =
 <wiki:toc max_depth="4" />
 
+= Referenser =
+ * [http://www.bankid.com/Global/wwwbankidcom/Calle/BISP%20-%20beskrivning%20till%20f%C3%B6rlitande%20part%202.0.pdf API BankID]
+ * [http://avtal.skane.se/HolgerDokument/09/02273/Bilaga20NetiDDeveloper'sGuidev2.01.pdf API NetId]
+ * 
 = Bakgrund och ändamål =
 En elektronisk signatur ska säkerställa att elektroniskt överförd information inte har ändrats
 och för att identifiera informationens avsändare. Genom kryptering skyddas uppgifter i ett
@@ -170,7 +174,7 @@ Mer information om keytool och olika kommandon kan hittas här:
  # Skapa ett truststore där AppX och Logicas eID-tjänsts publika nyckel importeras. Truststoret pekas ut ut i signeringstjänstens config.properties under variablerna truststore.`*`. AppX måste skicka över sin publika nyckel till signeringstjänsten.
 
 = Kvarstående utvecklingspunkter =
- * Som konsument skall man kunna begränsa valmöjligheten av vilka certifikat som man får signera med. T.ex. i fallet där AppX är behörighetsskyddad med eID, då skall AppX kunna välja att endast den inloggades certifikat skall få användas för signering. Detta görs genom att skicka in ett id för certifikatet till signeringstjänsten vilken sen endast exponerar signeringsrutan om certifikatet finns hos användaren. Läs mer.
+ * Som konsument skall man kunna begränsa valmöjligheten av vilka certifikat som man får signera med. T.ex. i fallet där AppX är behörighetsskyddad med eID, då skall AppX kunna välja att endast den inloggades certifikat skall få användas för signering. Detta görs genom att skicka in ett id för certifikatet till signeringstjänsten vilken sen endast exponerar signeringsrutan om certifikatet finns hos användaren. Detta kan göras genom att sätt fältet subject eller issuers i api:t för pki-klienterna. 
 
 = Anslut till signeringstjänsten =
 In nedanstående guide kommer vi att gå igenom steg för steg hur man ansluter till signeringstjänsten. För att underlätta processen så kommer vi att göra det iterativt, första steget är att få det fungera över vanlig http, nästa steg blir att aktivera SSL/TLS och i sista steget lägger vi på Mutual Authentication.
