@@ -1,7 +1,7 @@
 #summary Djupgående genomgång av hur man använder signeringstjänsten.
 
 = Innehållsförteckning =
-<wiki:toc max_depth="3" />
+<wiki:toc max_depth="4" />
 
 = Bakgrund och ändamål =
 En elektronisk signatur ska säkerställa att elektroniskt överförd information inte har ändrats
