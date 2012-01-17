@@ -140,7 +140,8 @@ public class WebSignController extends AbstractSignController {
         super.verifySignature(signData);
         String redirectLocation = getSignatureService().save(signData);
         if (!StringUtils.isBlank(redirectLocation)) {
-            System.out.printf("WebSignController.verifyAndSaveSignature(%s)\n", "redirect:" + redirectLocation);
+            LOGGER.debug(String.format("WebSignController.verifyAndSaveSignature(%s)\n", "redirect:"
+                    + redirectLocation));
             return "redirect:" + redirectLocation;
         }
         return "verified";
@@ -157,10 +158,9 @@ public class WebSignController extends AbstractSignController {
     @RequestMapping(value = "/cancel", method = POST)
     public String cancelSignature(@ModelAttribute SignatureData signData, HttpServletResponse response)
             throws SignatureException {
-        System.out.println(signData);
         String redirectLocation = getSignatureService().abort(signData);
         if (!StringUtils.isBlank(redirectLocation)) {
-            System.out.printf("WebSignController.cancelSignature(%s)\n", redirectLocation);
+            LOGGER.debug(String.format("WebSignController.cancelSignature(%s)\n", redirectLocation));
             return "redirect:" + redirectLocation;
         }
         return "errorForm";

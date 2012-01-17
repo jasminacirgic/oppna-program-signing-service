@@ -146,8 +146,8 @@ public class RestSignControllerTest {
 
         assertEquals(body.getStatus(), SignatureStatus.SUCCESS);
 
-       //just to see the response in raw format
-       ResponseEntity<String> stringResponse = template.exchange(baseAddress + "/verifySignature",
+        //just to see the response in raw format
+        ResponseEntity<String> stringResponse = template.exchange(baseAddress + "/verifySignature",
                 HttpMethod.POST, entity, String.class);
 
         System.out.println(stringResponse.getBody());
