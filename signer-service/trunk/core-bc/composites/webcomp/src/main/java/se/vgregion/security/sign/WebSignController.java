@@ -60,10 +60,13 @@ public class WebSignController extends AbstractSignController {
     @Autowired
     @Required
     public void setInternalIps(String internalIps) {
-        String[] internalIpsArray = internalIps.replaceAll(" ", "").split(",");
-        this.internalIps = new HashSet<String>(Arrays.asList(internalIpsArray));
+        if (internalIps.length() >= 7) { //minimum length of an ip
+            String[] internalIpsArray = internalIps.replaceAll(" ", "").split(",");
+            this.internalIps = new HashSet<String>(Arrays.asList(internalIpsArray));
+        } else {
+            this.internalIps = new HashSet<String>();
+        }
     }
-
 
 
     /**
