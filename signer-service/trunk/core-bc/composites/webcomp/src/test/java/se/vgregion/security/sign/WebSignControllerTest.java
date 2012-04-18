@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
+import se.vgregion.ticket.TicketException;
 import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.ServiceIdService;
@@ -43,6 +44,7 @@ public class WebSignControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         signController = new WebSignController(signatureService, eLegTypes, TicketManager.getInstance());
+        signController.setInternalIps("xxx.xxx.xxx.xxx, yyy.yyy.yyy.yyy");
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -75,11 +77,7 @@ public class WebSignControllerTest {
         // Given
         final Model model = new ExtendedModelMap();
         final SignatureData signData = new SignatureData();
-        TicketManager ticketManager = TicketManager.getInstance();
-        ServiceIdService service = mock(ServiceIdService.class);
-        given(service.containsServiceId(eq("existingServiceId"))).willReturn(true);
-        ticketManager.setServiceIdService(service);
-        signData.setTicket(new TicketDto(ticketManager.solveTicket("existingServiceId")).toString());
+        setATicketOnSignatureData(signData);
         given(request.getRemoteHost()).willReturn("example.com");
         // When
         String viewName = signController.prepareSignNoClientType(signData, model, request);
@@ -87,6 +85,14 @@ public class WebSignControllerTest {
         assertEquals("clientTypeSelection", viewName);
         assertTrue(model.asMap().containsKey("signData"));
         assertTrue(model.asMap().containsValue(signData));
+    }
+
+    private void setATicketOnSignatureData(SignatureData signData) throws TicketException {
+        TicketManager ticketManager = TicketManager.getInstance();
+        ServiceIdService service = mock(ServiceIdService.class);
+        given(service.containsServiceId(eq("existingServiceId"))).willReturn(true);
+        ticketManager.setServiceIdService(service);
+        signData.setTicket(new TicketDto(ticketManager.solveTicket("existingServiceId")).toString());
     }
 
     @Test
@@ -98,6 +104,7 @@ public class WebSignControllerTest {
         final String nonce = "nonce";
         final Model model = new ExtendedModelMap();
         signData.setClientType(new ELegType("", "", clientType));
+        setATicketOnSignatureData(signData);
 
         given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
         given(signatureService.generateNonce(any(PkiClient.class))).willReturn(nonce);
@@ -126,6 +133,7 @@ public class WebSignControllerTest {
         final String nonce = "nonce";
         final Model model = new ExtendedModelMap();
         signData.setClientType(new ELegType("", "", clientType));
+        setATicketOnSignatureData(signData);
 
         given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
         given(signatureService.generateNonce(any(PkiClient.class))).willReturn(nonce);

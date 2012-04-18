@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -26,7 +27,7 @@ import se.vgregion.web.security.services.SignatureService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SignatureException;
-import java.util.Collection;
+import java.util.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -41,6 +42,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class WebSignController extends AbstractSignController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSignController.class);
 
+    private Set<String> internalIps;
+
     /**
      * Constructs an instance of WebSignController.
      *
@@ -52,8 +55,16 @@ public class WebSignController extends AbstractSignController {
     public WebSignController(SignatureService signatureService, Repository<ELegType, String> eLegTypes,
                              TicketManager ticketManager) {
         super(signatureService, eLegTypes, ticketManager);
-
     }
+
+    @Autowired
+    @Required
+    public void setInternalIps(String internalIps) {
+        String[] internalIpsArray = internalIps.replaceAll(" ", "").split(",");
+        this.internalIps = new HashSet<String>(Arrays.asList(internalIpsArray));
+    }
+
+
 
     /**
      * Setup an {@link java.beans.PropertyEditor.PropertyEditor} to handle conversion of a {@link String}
@@ -86,15 +97,29 @@ public class WebSignController extends AbstractSignController {
      * @return name of the view which displays a list of pki clients
      * @throws TicketException if the {@link Ticket} validation fails
      */
-    @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri" })
+    @RequestMapping(value = "/prepare", method = POST, params = {"tbs", "submitUri"})
     public String prepareSignNoClientType(@ModelAttribute SignatureData signData, Model model,
                                           HttpServletRequest req) throws TicketException {
         LOGGER.info("Incoming sign request from {}", req.getRemoteHost());
-        TicketDto ticketDto = new TicketDto(signData.getTicket());
-        LOGGER.info("Ticket used: " + ticketDto.toString());
-        validateTicket(ticketDto.toTicket());
+        String ticket = signData.getTicket();
+        if (ticket != null) {
+            TicketDto ticketDto = new TicketDto(ticket);
+            LOGGER.debug("Ticket used: " + ticketDto.toString());
+            validateTicket(ticketDto.toTicket());
+        } else {
+            validateInternalIp(req);
+        }
+        model.addAttribute("ticket", signData.getTicket());
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
+    }
+
+    private void validateInternalIp(HttpServletRequest req) throws TicketException {
+        String remoteIp = req.getRemoteAddr();
+        if (!internalIps.contains(remoteIp)) {
+            LOGGER.warn("The ip " + remoteIp + " is not allowed to access the Signing Service without a ticket.");
+            throw new TicketException("A ticket is needed in order to proceed.");
+        }
     }
 
     private void validateTicket(Ticket ticket) throws TicketException {
@@ -116,12 +141,18 @@ public class WebSignController extends AbstractSignController {
      * @param req      the HttpServletRequest
      * @return the name of the pki client
      * @throws SignatureException if preparation fails
-     * @throws java.io.UnsupportedEncodingException
-     *
      */
-    @RequestMapping(value = "/prepare", method = POST, params = { "tbs", "submitUri", "clientType" })
+    @RequestMapping(value = "/prepare", method = POST, params = {"tbs", "submitUri", "clientType"})
     public String prepareSign(@ModelAttribute SignatureData signData, Model model, HttpServletRequest req)
-            throws SignatureException {
+            throws SignatureException, TicketException {
+        String ticket = signData.getTicket();
+        if (ticket != null) {
+            TicketDto ticketDto = new TicketDto(ticket);
+            LOGGER.debug("Ticket used: " + ticketDto.toString());
+            validateTicket(ticketDto.toTicket());
+        } else {
+            validateInternalIp(req);
+        }
         model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
         model.addAttribute("signData", signData);
         return super.prepareSign(signData);
@@ -134,8 +165,8 @@ public class WebSignController extends AbstractSignController {
      * @return name of view to show to the client
      * @throws SignatureException if validation or submission fails
      */
-    @RequestMapping(value = "/verify", method = POST, params = { "encodedTbs", "submitUri", "clientType",
-            "signature" })
+    @RequestMapping(value = "/verify", method = POST, params = {"encodedTbs", "submitUri", "clientType",
+            "signature"})
     public String verifyAndSaveSignature(@ModelAttribute SignatureData signData) throws SignatureException {
         super.verifySignature(signData);
         String redirectLocation = getSignatureService().save(signData);
@@ -183,7 +214,7 @@ public class WebSignController extends AbstractSignController {
      * @param request the httpServletRequest
      * @return a {@link ModelAndView} with an error message and the view to display
      */
-    @ExceptionHandler({ SignatureException.class, TicketException.class })
+    @ExceptionHandler({SignatureException.class, TicketException.class})
     public ModelAndView handleException(Exception ex, HttpServletRequest request) {
         ex.printStackTrace();
         LOGGER.error("Generic Error Handling", ex);

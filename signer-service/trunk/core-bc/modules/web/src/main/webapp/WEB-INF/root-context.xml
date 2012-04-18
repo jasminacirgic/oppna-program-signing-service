@@ -9,6 +9,10 @@
   <import resource="classpath:rest-service-config.xml" />
   <import resource="controllers.xml" />
 
+  <bean class="java.lang.String">
+    <constructor-arg value="${internal.ips}"/>
+  </bean>
+
   <context:property-placeholder
     location="classpath:default.properties, file:${user.home}/.ss/config.properties, ${ss.properties}"
     ignore-resource-not-found="true" ignore-unresolvable="true" />

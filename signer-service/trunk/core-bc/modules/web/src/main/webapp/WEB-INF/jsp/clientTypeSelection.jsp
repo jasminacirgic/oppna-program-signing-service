@@ -34,6 +34,7 @@
     </fieldset>
     <form:hidden id="tbs" path="tbs" />
     <form:hidden id="submitUri" path="submitUri" />
+    <form:hidden id="ticket" path="ticket" />
   </form:form>
 </body>
 </html>
