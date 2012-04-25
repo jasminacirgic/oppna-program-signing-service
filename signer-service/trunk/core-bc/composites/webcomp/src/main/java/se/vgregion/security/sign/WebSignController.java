@@ -118,16 +118,21 @@ public class WebSignController extends AbstractSignController {
     }
 
     private void validateInternalAccess(HttpServletRequest req) throws TicketException {
-        String header = req.getHeader("x-forward-for");
+        String header = req.getHeader("x-forwarded-for");
+
+        LOGGER.debug("No ticket provided. Validate request with x-forwarded-for header [" + header + "].");
+
         if (header == null) {
             throwTicketException(header);
         }
+
         boolean internal = false;
         for (String network : internalNetworks) {
             if (header.startsWith(network)) {
                 internal = true;
             }
         }
+
         if (!internal) {
             throwTicketException(header);
         }
