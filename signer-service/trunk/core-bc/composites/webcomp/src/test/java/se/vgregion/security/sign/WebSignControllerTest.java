@@ -44,7 +44,7 @@ public class WebSignControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         signController = new WebSignController(signatureService, eLegTypes, TicketManager.getInstance());
-        signController.setInternalIps("xxx.xxx.xxx.xxx, yyy.yyy.yyy.yyy");
+        signController.setInternalNetworks("xxx, yyy");
     }
 
     @Test(expected = UnsupportedOperationException.class)

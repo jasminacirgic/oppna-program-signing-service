@@ -42,7 +42,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class WebSignController extends AbstractSignController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSignController.class);
 
-    private Set<String> internalIps;
+    private Set<String> internalNetworks;
 
     /**
      * Constructs an instance of WebSignController.
@@ -59,12 +59,12 @@ public class WebSignController extends AbstractSignController {
 
     @Autowired
     @Required
-    public void setInternalIps(String internalIps) {
-        if (internalIps.length() >= 7) { //minimum length of an ip
-            String[] internalIpsArray = internalIps.replaceAll(" ", "").split(",");
-            this.internalIps = new HashSet<String>(Arrays.asList(internalIpsArray));
+    public void setInternalNetworks(String internalNetworks) {
+        if (internalNetworks.length() >= 3) { //minimum length of a network
+            String[] internalIpsArray = internalNetworks.replaceAll(" ", "").split(",");
+            this.internalNetworks = new HashSet<String>(Arrays.asList(internalIpsArray));
         } else {
-            this.internalIps = new HashSet<String>();
+            this.internalNetworks = new HashSet<String>();
         }
     }
 
@@ -110,19 +110,33 @@ public class WebSignController extends AbstractSignController {
             LOGGER.debug("Ticket used: " + ticketDto.toString());
             validateTicket(ticketDto.toTicket());
         } else {
-            validateInternalIp(req);
+            validateInternalAccess(req);
         }
         model.addAttribute("ticket", signData.getTicket());
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
     }
 
-    private void validateInternalIp(HttpServletRequest req) throws TicketException {
-        String remoteIp = req.getRemoteAddr();
-        if (!internalIps.contains(remoteIp)) {
-            LOGGER.warn("The ip " + remoteIp + " is not allowed to access the Signing Service without a ticket.");
-            throw new TicketException("A ticket is needed in order to proceed.");
+    private void validateInternalAccess(HttpServletRequest req) throws TicketException {
+        String header = req.getHeader("x-forward-for");
+        if (header == null) {
+            throwTicketException(header);
         }
+        boolean internal = false;
+        for (String network : internalNetworks) {
+            if (header.startsWith(network)) {
+                internal = true;
+            }
+        }
+        if (!internal) {
+            throwTicketException(header);
+        }
+    }
+
+    private void throwTicketException(String header) throws TicketException {
+        LOGGER.warn("The x-forward-for header was " + header + " which is not allowed for access to the Signing Service"
+                + " without a ticket.");
+        throw new TicketException("A ticket is needed in order to proceed.");
     }
 
     private void validateTicket(Ticket ticket) throws TicketException {
@@ -154,7 +168,7 @@ public class WebSignController extends AbstractSignController {
             LOGGER.debug("Ticket used: " + ticketDto.toString());
             validateTicket(ticketDto.toTicket());
         } else {
-            validateInternalIp(req);
+            validateInternalAccess(req);
         }
         model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
         model.addAttribute("signData", signData);

@@ -10,7 +10,7 @@
   <import resource="controllers.xml" />
 
   <bean class="java.lang.String">
-    <constructor-arg value="${internal.ips}"/>
+    <constructor-arg value="${internal.networks}"/>
   </bean>
 
   <context:property-placeholder
