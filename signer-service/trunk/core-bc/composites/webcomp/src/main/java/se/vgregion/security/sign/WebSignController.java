@@ -105,7 +105,7 @@ public class WebSignController extends AbstractSignController {
                                           HttpServletRequest req) throws TicketException {
         LOGGER.info("Incoming sign request from {}", req.getRemoteHost());
         String ticket = signData.getTicket();
-        if (ticket != null) {
+        if (ticket != null && ticket.length() > 0) {
             TicketDto ticketDto = new TicketDto(ticket);
             LOGGER.debug("Ticket used: " + ticketDto.toString());
             validateTicket(ticketDto.toTicket());
@@ -168,7 +168,7 @@ public class WebSignController extends AbstractSignController {
     public String prepareSign(@ModelAttribute SignatureData signData, Model model, HttpServletRequest req)
             throws SignatureException, TicketException {
         String ticket = signData.getTicket();
-        if (ticket != null) {
+        if (ticket != null && ticket.length() > 0) {
             TicketDto ticketDto = new TicketDto(ticket);
             LOGGER.debug("Ticket used: " + ticketDto.toString());
             validateTicket(ticketDto.toTicket());
