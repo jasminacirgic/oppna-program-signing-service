@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://signera.vgregion.se/signature/1/"
+  xmlns="http://signera.vgregion.se/signature/1/"
+  elementFormDefault="qualified"
+  version="1.0">
+
+  <xs:element name="signatureVerificationResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="status" type="signatureStatus" minOccurs="1" maxOccurs="1" />
+        <xs:element name="message" type="xs:string" minOccurs="0" maxOccurs="1" />
+        <xs:element name="certificateInfos" type="certificateInfos" minOccurs="0" maxOccurs="1" />
+        <xs:element name="signatureDate" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="signatureStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SUCCESS" />
+      <xs:enumeration value="FAILURE" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="certificateInfos">
+    <xs:sequence>
+      <xs:element name="certificateInfo" type="certificateInfo" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="certificateInfo">
+    <xs:sequence>
+      <xs:element name="subjectDn" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="validTo" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

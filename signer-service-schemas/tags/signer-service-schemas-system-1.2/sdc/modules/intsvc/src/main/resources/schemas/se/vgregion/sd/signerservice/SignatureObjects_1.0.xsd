@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://signera.vgregion.se/signature/1/"
+  xmlns="http://signera.vgregion.se/signature/1/"
+  elementFormDefault="qualified"
+  version="1.0">
+
+  <xs:include schemaLocation="SignatureEnvelope_1.0.xsd"/>
+  <xs:include schemaLocation="SignatureVerificationRequest_1.0.xsd"/>
+  <xs:include schemaLocation="SignatureVerificationResponse_1.0.xsd"/>
+
+</xs:schema>
