@@ -13,7 +13,7 @@
   <groupId>se.vgregion.signer-service</groupId>
   <artifactId>signer-service-system</artifactId>
   <packaging>pom</packaging>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>${project.artifactId}</name>
 
   <modules>
@@ -24,8 +24,8 @@
   <!--NB! SCM config below assumes system name equals VGR subversion/googlecode project name! -->
   <!-- Open Source repo -->
   <scm>
-    <developerConnection>scm:svn:https://oppna-program-signing-service.googlecode.com/svn/signer-service/tags/signer-service-system-1.0</developerConnection>
-    <url>https://oppna-program-signing-service.googlecode.com/svn/signer-service/tags/signer-service-system-1.0</url>
+    <developerConnection>scm:svn:https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk</developerConnection>
+    <url>https://oppna-program-signing-service.googlecode.com/svn/signer-service/trunk/</url>
   </scm>
 
 </project>
