@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <import resource="classpath:ssl-config.xml" />
+
+  <bean id="keyManager" class="se.vgregion.web.ftp.KeyManagerFactoryBean">
+    <property name="keyStore" ref="keyStore" />
+    <property name="password" value="${keystore.password}" />
+  </bean>
+
+  <!-- FTPS Client Setup -->
+  <bean id="ftps-client" class="org.apache.commons.net.ftp.FTPSClient" scope="prototype">
+    <property name="keyManager" ref="keyManager" />
+    <property name="authValue" value="TLS" />
+    <property name="defaultPort" value="990" />
+  </bean>
+
+  <!-- FTP Client Setup -->
+  <bean id="ftp-client" class="org.apache.commons.net.ftp.FTPClient" scope="prototype">
+    <property name="defaultPort" value="21" />
+  </bean>
+
+
+  <bean id="ftpUploadClient" class="se.vgregion.web.ftp.SimpleFtpUploadClient" />
+
+  <bean id="ftp-signature-storage" name="ftps-signature-storage" class="se.vgregion.web.signaturestorage.impl.FtpSignatureStorage"
+    scope="prototype">
+    <constructor-arg ref="ftpUploadClient" />
+  </bean>
+</beans>
