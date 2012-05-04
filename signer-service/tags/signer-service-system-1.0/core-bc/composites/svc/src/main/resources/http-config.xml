@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <import resource="classpath:ssl-config.xml" />
+  <import resource="classpath:${ssl.hostname.verification:strict}-hostname.xml" />
+  
+  <bean id="schemeReg" class="org.apache.http.conn.scheme.SchemeRegistry" />
+
+  <!-- http client setup -->
+  <bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
+  <bean id="scheme-http" class="org.apache.http.conn.scheme.Scheme">
+    <constructor-arg value="http" />
+    <constructor-arg ref="plainSocketFactory" />
+    <constructor-arg type="int" value="80" />
+  </bean>
+
+
+  <!-- https client setup -->
+  <bean id="sslSocketFactory" class="org.apache.http.conn.ssl.SSLSocketFactory">
+    <constructor-arg ref="sslContext" />
+    <property name="hostnameVerifier" ref="hostNameVerifier" />
+  </bean>
+
+  <bean id="scheme-https" class="org.apache.http.conn.scheme.Scheme">
+    <constructor-arg value="https" />
+    <constructor-arg ref="sslSocketFactory" />
+    <constructor-arg type="int" value="443" />
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject">
+      <ref local="schemeReg" />
+    </property>
+    <property name="targetMethod" value="register" />
+    <property name="arguments">
+      <list>
+        <ref bean="scheme-http" />
+      </list>
+    </property>
+  </bean>
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject">
+      <ref local="schemeReg" />
+    </property>
+    <property name="targetMethod" value="register" />
+    <property name="arguments">
+      <list>
+        <ref bean="scheme-https" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="params" class="org.apache.http.params.BasicHttpParams" />
+
+  <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+    <constructor-arg>
+      <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager">
+        <constructor-arg ref="params" />
+        <constructor-arg ref="schemeReg" />
+      </bean>
+    </constructor-arg>
+    <constructor-arg ref="params" />
+  </bean>
+
+  <bean id="http-signature-storage" name="https-signature-storage" class="se.vgregion.web.signaturestorage.impl.HttpSignatureStorage">
+    <constructor-arg ref="httpClient" />
+    <constructor-arg>
+      <bean class="se.vgregion.web.HttpMessageHelper" />
+    </constructor-arg>
+    <constructor-arg>
+      <bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="se.vgregion.signera.signature._1" />
+      </bean>
+    </constructor-arg>
+  </bean>
+
+</beans>
