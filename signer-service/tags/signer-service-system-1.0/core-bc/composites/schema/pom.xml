@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!-- This is the Schema-composite that produces a jar of JAX-WS interfaces (SEI) - and JAXB2 binding classes for the 
+  contained schemas. Template version: 1.5-SNAPSHOT Generation time : 2010-12-06 10:30:41 CET -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>se.vgregion.signer-service</groupId>
+    <artifactId>signer-service-core-bc</artifactId>
+    <version>1.0</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <groupId>se.vgregion.signer-service</groupId>
+  <artifactId>signer-service-core-bc-composite-schema</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+
+  <properties>
+    <apache.cxf.version>2.3.0</apache.cxf.version>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-codegen-plugin</artifactId>
+        <version>${apache.cxf.version}</version>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceRoot>${project.build.directory}/generated/wsdl</sourceRoot>
+              <wsdlOptions>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/main/resources/osif.wsdl</wsdl>
+                </wsdlOption>
+              </wsdlOptions>
+            </configuration>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <instrumentation>
+            <excludes>
+              <!-- Exclude generated files -->
+              <exclude>se/sll/**/*.class</exclude>
+            </excludes>
+          </instrumentation>
+        </configuration>
+        <goals>
+          <goal>instrument</goal>
+        </goals>
+      </plugin>
+      <plugin>
+        <groupId>org.zeroturnaround</groupId>
+        <artifactId>jrebel-maven-plugin</artifactId>
+        <version>1.0.7</version>
+        <executions>
+          <execution>
+            <id>generate-rebel-xml</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>signer-service-core-bc-composite-types</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>
