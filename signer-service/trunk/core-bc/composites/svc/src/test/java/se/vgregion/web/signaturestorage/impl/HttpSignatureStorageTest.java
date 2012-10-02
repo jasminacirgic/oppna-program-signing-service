@@ -1,28 +1,27 @@
 package se.vgregion.web.signaturestorage.impl;
 
-import static org.junit.Assert.*;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Matchers.*;
-import static org.springframework.http.HttpStatus.*;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.params.HttpParams;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.oxm.Marshaller;
-
 import se.vgregion.signera.signature._1.SignatureEnvelope;
 import se.vgregion.signera.signature._1.SignatureFormat;
 import se.vgregion.web.HttpMessageHelper;
 import se.vgregion.web.security.services.SignatureEnvelopeFactory;
 import se.vgregion.web.signaturestorage.SignatureStoreageException;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.http.HttpStatus.*;
 
 public class HttpSignatureStorageTest {
     private static final String SIGNATURE_NAME = "signaturename";
@@ -39,6 +38,8 @@ public class HttpSignatureStorageTest {
     private HttpPost httpPost;
     @Mock
     private HttpResponse httpResponse;
+    @Mock
+    private HttpParams httpParams;
 
     private SignatureEnvelope envelope;
 
@@ -59,6 +60,7 @@ public class HttpSignatureStorageTest {
         MockitoAnnotations.initMocks(this);
         signatureStorage = new HttpSignatureStorage(httpClient, httpHelper, marshaller);
         envelope = SignatureEnvelopeFactory.createSignatureEnvelope(SIGNATURE_NAME, SIGNATURE_FORMAT, SIGNATURE);
+        given(httpPost.getParams()).willReturn(httpParams);
     }
 
     @Test
