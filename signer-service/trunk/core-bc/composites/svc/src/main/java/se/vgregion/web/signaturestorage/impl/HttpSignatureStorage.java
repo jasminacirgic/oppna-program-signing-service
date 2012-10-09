@@ -5,7 +5,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.ClientPNames;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.Marshaller;
 import se.vgregion.signera.signature._1.SignatureEnvelope;
@@ -16,7 +15,6 @@ import se.vgregion.web.signaturestorage.SignatureStoreageException;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.CookiePolicy;
 import java.net.URI;
 
 import static org.springframework.http.HttpStatus.MOVED_TEMPORARILY;
@@ -65,7 +63,6 @@ public class HttpSignatureStorage implements SignatureStorage {
         }
 
         HttpPost httpPost = httpHelper.createHttpPostMethod(submitUri);
-        httpPost.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.ACCEPT_NONE);
 
         ByteArrayOutputStream boas = new ByteArrayOutputStream();
         marshaller.marshal(envelope, new StreamResult(boas));

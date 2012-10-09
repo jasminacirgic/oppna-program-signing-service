@@ -53,6 +53,8 @@
 
   <bean id="params" class="org.apache.http.params.BasicHttpParams" />
 
+  <bean id="acceptNoneCookieStore" class="se.vgregion.web.signaturestorage.impl.AcceptNoneCookieStore" />
+
   <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
     <constructor-arg>
       <bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager">
@@ -61,6 +63,7 @@
       </bean>
     </constructor-arg>
     <constructor-arg ref="params" />
+    <property name="cookieStore" ref="acceptNoneCookieStore"/>
   </bean>
 
   <bean id="http-signature-storage" name="https-signature-storage" class="se.vgregion.web.signaturestorage.impl.HttpSignatureStorage">
