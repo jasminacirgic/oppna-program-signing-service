@@ -2,6 +2,7 @@ package se.vgregion.web.security.services;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.SignatureException;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ import se.vgregion.web.signaturestorage.SignatureStoreageException;
 
 /**
  * Signature Service class. Contains methods to process a signature in different ways, such as verify and save it.
- * 
+ *
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  */
 public class SignatureServiceOsif implements ApplicationContextAware, SignatureService {
@@ -38,11 +39,9 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
     /**
      * Constructs a signature service instance. The serviceId is used by the OSIF service provider to identify the
      * consumer of the service.
-     * 
-     * @param osif
-     *            an instance of {@link Osif}
-     * @param serviceId
-     *            the serviceId - used by the OSIF service provider to identify the consumer of the service
+     *
+     * @param osif      an instance of {@link Osif}
+     * @param serviceId the serviceId - used by the OSIF service provider to identify the consumer of the service
      * @see <a href="http://sveid.episerverhotell.net/upload/OSIF%20API%20Specifikation%202%200.pdf">OSIF
      *      API-Specifikation 2.0</a>
      */
@@ -180,7 +179,12 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
     }
 
     private String submitEnvelope(SignatureData signData, SignatureEnvelope envelope) throws SignatureException {
-        URI submitUri = signData.getSubmitUri();
+        URI submitUri = null;
+        try {
+            submitUri = new URI(signData.getSubmitUriDecoded());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         SignatureStorage storage = getIOBackend(submitUri.getScheme());
         if (storage == null) {
             throw new SignatureException(new IllegalStateException(

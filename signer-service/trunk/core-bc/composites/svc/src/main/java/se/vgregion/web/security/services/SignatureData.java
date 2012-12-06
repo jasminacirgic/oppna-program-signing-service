@@ -8,7 +8,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Bean containing various signature data.
@@ -17,7 +19,7 @@ import java.net.URI;
  * 
  */
 public class SignatureData {
-    private URI submitUri;
+    private String submitUri;
     private String nonce = "";
     private String tbs = "";
     private String encodedTbs = "";
@@ -42,12 +44,35 @@ public class SignatureData {
         return encodedTbs;
     }
 
-    public void setSubmitUri(URI submitUri) {
-        this.submitUri = submitUri;
+    public void setSubmitUri(String submitUri) {
+        try {
+            if (!submitUri.startsWith("BASE64")) {
+                // Validate
+                try {
+                    new URI(submitUri);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+                this.submitUri = "BASE64" + Base64.encodeBase64String(submitUri.getBytes("UTF-8"));
+            } else {
+                this.submitUri = submitUri;
+            }
+        } catch (UnsupportedEncodingException e) {
+            // won't happen
+        }
     }
 
-    public URI getSubmitUri() {
+    public String getSubmitUri() {
         return submitUri;
+    }
+
+    public String getSubmitUriDecoded() {
+        try {
+            return new String(Base64.decodeBase64(submitUri.replaceAll("BASE64", "")), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // won't happen
+            throw new RuntimeException("won't happen");
+        }
     }
 
     public void setNonce(String nonce) {
