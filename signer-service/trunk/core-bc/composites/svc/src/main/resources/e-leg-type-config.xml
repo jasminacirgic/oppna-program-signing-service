@@ -13,14 +13,14 @@
     <property name="arguments">
       <list value-type="se.vgregion.domain.security.pkiclient.ELegType">
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">
-          <constructor-arg name="name" value="BankId" />
+          <constructor-arg name="name" value="BankId och Nordea" />
           <constructor-arg name="description"
-            value="Danske Bank/Östgöta Enskilda Bank, Handelsbanken, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank" />
+            value="Danske Bank/Östgöta Enskilda Bank, Handelsbanken, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank, Nordea" />
           <constructor-arg name="pkiClient" value="NEXUS_PERSONAL_4X" />
         </bean>
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">
-          <constructor-arg name="name" value="Nordea" />
-          <constructor-arg name="description" value="Nordea" />
+          <constructor-arg name="name" value="Gamla Nordea" />
+          <constructor-arg name="description" value="Om du inte har BankId installerat men har Nexus Personal vilken är under utfasning. Vi rekommenderar att du installerar BankId genom att gå till https://install.bankid.com/" />
           <constructor-arg name="pkiClient" value="NEXUS_PERSONAL_4" />
         </bean>
         <bean class="se.vgregion.domain.security.pkiclient.ELegType">
