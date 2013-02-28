@@ -34,6 +34,9 @@
                 <wsdlOption>
                   <wsdl>${basedir}/src/main/resources/osif.wsdl</wsdl>
                 </wsdlOption>
+                <wsdlOption>
+                  <wsdl>http://eidt.funktionstjanster.se:18899/mbi/service?wsdl</wsdl>
+                </wsdlOption>
               </wsdlOptions>
             </configuration>
             <goals>
@@ -80,6 +83,13 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>signer-service-core-bc-composite-types</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.6</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

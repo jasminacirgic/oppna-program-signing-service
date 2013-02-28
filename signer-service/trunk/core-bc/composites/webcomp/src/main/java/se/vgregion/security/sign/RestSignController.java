@@ -220,7 +220,7 @@ public class RestSignController extends AbstractSignController {
         SignatureData signData = new SignatureData();
         signData.setEncodedTbs(encodedSignedData);
         signData.setSignature(signature);
-        ELegType clientType = new ELegType("test", "test", PkiClient.NETMAKER_NETID_4);
+        ELegType clientType = new ELegType("test", "test", "test", PkiClient.NETMAKER_NETID_4);
         signData.setClientType(clientType);
         return signData;
     }
@@ -275,7 +275,7 @@ public class RestSignController extends AbstractSignController {
 
         //Start with setting some fields that are known directly
         SignatureData signatureData = new SignatureData();
-        signatureData.setClientType(new ELegType("test", "test", PkiClient.NEXUS_PERSONAL_4X));
+        signatureData.setClientType(new ELegType("test", "test", "test", PkiClient.NEXUS_PERSONAL_4X));
         signatureData.setSignature(new String(Base64.encode(signature.getBytes())));
 
         //For the rest we need to parse the XML

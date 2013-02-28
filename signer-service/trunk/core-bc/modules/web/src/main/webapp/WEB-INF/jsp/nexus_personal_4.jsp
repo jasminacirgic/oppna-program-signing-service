@@ -4,6 +4,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
   <title>Signering - Nordea</title>
   <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.1.min.js"></script>
   <script type="text/javascript" src="resources/scripts/nordea-plugin.js"></script>

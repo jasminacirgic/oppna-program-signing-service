@@ -50,8 +50,8 @@ public class WebSignControllerTest {
     @Test(expected = UnsupportedOperationException.class)
     public final void shouldReturnUnmodifiableCollectionOfClientTypes() throws Exception {
         // Given
-        final Collection<ELegType> allTypes = Arrays.asList(new ELegType("a", "a", PkiClient.NEXUS_PERSONAL_4),
-                new ELegType("b", "b", PkiClient.NEXUS_PERSONAL_4));
+        final Collection<ELegType> allTypes = Arrays.asList(new ELegType("a", "a", "a", PkiClient.NEXUS_PERSONAL_4),
+                new ELegType("b", "b", "b", PkiClient.NEXUS_PERSONAL_4));
         given(eLegTypes.findAll()).willReturn(allTypes);
 
         // When
@@ -59,7 +59,7 @@ public class WebSignControllerTest {
 
         // Then
         assertEquals(allTypes.size(), actualTypes.size());
-        actualTypes.add(new ELegType("c", "c", PkiClient.NETMAKER_NETID_4));
+        actualTypes.add(new ELegType("c", "c", "c", PkiClient.NETMAKER_NETID_4));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class WebSignControllerTest {
         final String encodedTbs = "encodedTbs";
         final String nonce = "nonce";
         final Model model = new ExtendedModelMap();
-        signData.setClientType(new ELegType("", "", clientType));
+        signData.setClientType(new ELegType("", "", "", clientType));
         setATicketOnSignatureData(signData);
 
         given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
@@ -132,7 +132,7 @@ public class WebSignControllerTest {
         final String encodedTbs = "encodedTbs";
         final String nonce = "nonce";
         final Model model = new ExtendedModelMap();
-        signData.setClientType(new ELegType("", "", clientType));
+        signData.setClientType(new ELegType("", "", "", clientType));
         setATicketOnSignatureData(signData);
 
         given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
@@ -159,7 +159,7 @@ public class WebSignControllerTest {
         final PkiClient clientType = PkiClient.NETMAKER_NETID_4;
         final String encodedTbs = "encodedTbs";
         final String expectedRedirectUrl = "http://www.example.com";
-        signData.setClientType(new ELegType("", "", clientType));
+        signData.setClientType(new ELegType("", "", "", clientType));
 
         // Given
         given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
@@ -177,7 +177,7 @@ public class WebSignControllerTest {
         final SignatureData signData = new SignatureData();
         final PkiClient clientType = PkiClient.NETMAKER_NETID_4;
         final String encodedTbs = "encodedTbs";
-        signData.setClientType(new ELegType("", "", clientType));
+        signData.setClientType(new ELegType("", "", "", clientType));
 
         // Given
         given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);

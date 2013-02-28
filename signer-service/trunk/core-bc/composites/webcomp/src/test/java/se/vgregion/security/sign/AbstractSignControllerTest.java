@@ -46,8 +46,8 @@ public class AbstractSignControllerTest {
     @Test(expected = UnsupportedOperationException.class)
     public final void shouldReturnUnmodifiableCollectionOfClientTypes() throws Exception {
         // Given
-        Collection<ELegType> allTypes = Arrays.asList(new ELegType("a", "a", PkiClient.NEXUS_PERSONAL_4),
-                new ELegType("b", "b", PkiClient.NEXUS_PERSONAL_4));
+        Collection<ELegType> allTypes = Arrays.asList(new ELegType("a", "a", "a", PkiClient.NEXUS_PERSONAL_4),
+                new ELegType("b", "b", "b", PkiClient.NEXUS_PERSONAL_4));
         given(eLegTypes.findAll()).willReturn(allTypes);
 
         // When
@@ -55,7 +55,7 @@ public class AbstractSignControllerTest {
 
         // Then
         assertEquals(allTypes.size(), actualTypes.size());
-        actualTypes.add(new ELegType("c", "c", PkiClient.NETMAKER_NETID_4));
+        actualTypes.add(new ELegType("c", "c", "c", PkiClient.NETMAKER_NETID_4));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class AbstractSignControllerTest {
         final PkiClient clientType = PkiClient.NETMAKER_NETID_4;
         final String encodedTbs = "encodedTbs";
         final String nonce = "nonce";
-        signData.setClientType(new ELegType("", "", clientType));
+        signData.setClientType(new ELegType("", "", "", clientType));
 
         // Given
         given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
@@ -83,7 +83,7 @@ public class AbstractSignControllerTest {
     public final void shouldVerifySignature() throws Exception {
         final SignatureData signData = new SignatureData();
         final PkiClient clientType = PkiClient.NETMAKER_NETID_4;
-        signData.setClientType(new ELegType("", "", clientType));
+        signData.setClientType(new ELegType("", "", "", clientType));
 
         // Given
         // given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);
@@ -100,7 +100,7 @@ public class AbstractSignControllerTest {
         final SignatureData signData = new SignatureData();
         final PkiClient clientType = PkiClient.NETMAKER_NETID_4;
         final String encodedTbs = "encodedTbs";
-        signData.setClientType(new ELegType("", "", clientType));
+        signData.setClientType(new ELegType("", "", "", clientType));
 
         // Given
         given(signatureService.encodeTbs(anyString(), any(PkiClient.class))).willReturn(encodedTbs);

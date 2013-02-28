@@ -18,6 +18,7 @@ import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
 public class ELegType extends AbstractEntity<String> {
     // Instances of this bean is created through spring configuration.
 
+    private String id;
     private String name;
     private String description;
     private PkiClient pkiClient;
@@ -32,7 +33,8 @@ public class ELegType extends AbstractEntity<String> {
      * @param pkiClient
      *            the pki client to use when signing data with this e-legitimation
      */
-    public ELegType(String name, String description, PkiClient pkiClient) {
+    public ELegType(String id, String name, String description, PkiClient pkiClient) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.pkiClient = pkiClient;
@@ -40,7 +42,7 @@ public class ELegType extends AbstractEntity<String> {
 
     @Override
     public String getId() {
-        return name;
+        return id;
     }
 
     public String getName() {

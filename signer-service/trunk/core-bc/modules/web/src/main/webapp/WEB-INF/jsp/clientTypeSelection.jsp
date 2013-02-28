@@ -29,7 +29,7 @@
       </c:forEach>
       </ul>
     </fieldset>
-    <fieldset class="submit">   
+    <fieldset class="submit">
       <input type="submit" value="Signera" class="submit" />
     </fieldset>
     <form:hidden id="tbs" path="tbs" />
