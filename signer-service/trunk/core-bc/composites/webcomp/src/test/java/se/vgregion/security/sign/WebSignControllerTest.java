@@ -199,4 +199,32 @@ public class WebSignControllerTest {
         assertTrue(modelAndView.getModelMap().containsKey("class"));
         assertTrue(modelAndView.getModelMap().containsValue(ClassUtils.getShortName(exception.getClass())));
     }
+
+    @Test
+    public final void signMobileBankId() throws Exception {
+
+        // Given
+        TicketManager ticketManager = TicketManager.getInstance();
+        ServiceIdService serviceIdService = mock(ServiceIdService.class);
+        ticketManager.setServiceIdService(serviceIdService);
+
+        given(serviceIdService.containsServiceId(anyString())).willReturn(true);
+
+        SignatureData signatureData = new SignatureData();
+        signatureData.setTicket(new TicketDto(ticketManager.solveTicket("someString")).toString());
+
+        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
+
+        given(signatureService.sendMobileSignRequest(any(SignatureData.class))).willReturn("theOrderRef");
+        given(servletRequest.getHeader(eq("User-Agent"))).willReturn("salkdfjasklj Mobile aslkjdfalkj");
+
+        Model model = mock(Model.class);
+
+        // When
+        signController.signMobileBankId(signatureData, servletRequest, model);
+
+        // Then
+        verify(model).addAttribute("isMobileDevice", true);
+
+    }
 }

@@ -6,6 +6,12 @@ import java.net.URISyntaxException;
 import java.security.SignatureException;
 import java.util.UUID;
 
+import com.logica.mbi.service.v1_0.CollectRequestType;
+import com.logica.mbi.service.v1_0.CollectResponseType;
+import com.logica.mbi.service.v1_0.SignRequestType;
+import com.logica.mbi.service.v1_0.SignResponseType;
+import com.logica.mbi.service.v1_0_0.MbiFault;
+import com.logica.mbi.service.v1_0_0.MbiServicePortType;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +40,9 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
 
     private ApplicationContext applicationContext;
     private Osif osif;
+    private MbiServicePortType mbiServicePortType;
     private String policy;
+    private String displayName;
 
     /**
      * Constructs a signature service instance. The serviceId is used by the OSIF service provider to identify the
@@ -45,13 +53,15 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
      * @see <a href="http://sveid.episerverhotell.net/upload/OSIF%20API%20Specifikation%202%200.pdf">OSIF
      *      API-Specifikation 2.0</a>
      */
-    public SignatureServiceOsif(Osif osif, String serviceId) {
+    public SignatureServiceOsif(Osif osif, String serviceId, MbiServicePortType mbiServicePortType, String displayName) {
         this.osif = osif;
+        this.mbiServicePortType = mbiServicePortType;
         /*
          * In the osif spec the consumer identifier is called policy while Logica,
          * as the osif serivce provider, uses the term serviceId for the same thing.
          */
         this.policy = serviceId;
+        this.displayName = displayName;
     }
 
     /*
@@ -178,8 +188,38 @@ public class SignatureServiceOsif implements ApplicationContextAware, SignatureS
         return submitEnvelope(signData, envelope);
     }
 
+    @Override
+    public String sendMobileSignRequest(SignatureData signData) throws SignatureException {
+        SignRequestType signRequest = new SignRequestType();
+        signRequest.setUserVisibleData(signData.getEncodedTbs());
+        signRequest.setPolicy(policy);
+        signRequest.setDisplayName(displayName);
+        signRequest.setPersonalNumber(signData.getPersonalNumber());
+
+        try {
+            SignResponseType responseType = mbiServicePortType.sign(signRequest);
+            return responseType.getOrderRef();
+        } catch (MbiFault mbiFault) {
+            throw new SignatureException(mbiFault);
+        }
+    }
+
+    @Override
+    public CollectResponseType collectRequest(String orderRef) throws SignatureException {
+        try {
+            CollectRequestType collectRequest = new CollectRequestType();
+            collectRequest.setOrderRef(orderRef);
+            collectRequest.setPolicy(policy);
+            collectRequest.setDisplayName(displayName);
+
+            return mbiServicePortType.collect(collectRequest);
+        } catch (MbiFault mbiFault) {
+            throw new SignatureException(mbiFault);
+        }
+    }
+
     private String submitEnvelope(SignatureData signData, SignatureEnvelope envelope) throws SignatureException {
-        URI submitUri = null;
+        URI submitUri;
         try {
             submitUri = new URI(signData.getSubmitUriDecoded());
         } catch (URISyntaxException e) {

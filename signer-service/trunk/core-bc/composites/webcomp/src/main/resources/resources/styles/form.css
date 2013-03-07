@@ -1,5 +1,10 @@
 @CHARSET "UTF-8";
 
+h2 {
+    margin-top: 1%;
+    text-align: center;
+}
+
 legend {
   margin-left: 1em;
   color: #000000;
@@ -12,7 +17,7 @@ fieldset ul {
   display: table;
 }
 
-label { #
+label {
   float: left;
   width: 10em;
   margin-right: 1em;
@@ -32,7 +37,7 @@ fieldset {
   clear: both;
   width: 450px;
   margin: 0 0 1.5em 0;
-  padding: 0;
+  padding: 10px;
   border: 1px solid #BFBAB0;
   background-color: #F2EFE9;
   background-image: url('../images/fieldset_gradient.jpeg');
@@ -47,7 +52,27 @@ fieldset.submit {
   background-image: none;
 }
 
+fieldset.mobileSignWrapper {
+    width: 333px;
+}
+
 div.e-leg-type-description {
   display: table-cell;
   margin-left: 3em;
+}
+
+#selectClientTypeWrapper {
+    margin: 0 auto;
+    width: 473px;
+}
+
+#mobileSignWrapper {
+    margin: 1% auto;
+    text-align: center;
+    width: 333px;
+}
+
+#spinner {
+    display: block;
+    margin: 10px auto
 }

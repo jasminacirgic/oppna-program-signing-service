@@ -25,7 +25,9 @@ public enum PkiClient {
     /**
      * PKI Client used when signing with certificates supplied by BankId.
      */
-    NEXUS_PERSONAL_4X(6, XMLDIGSIG);
+    NEXUS_PERSONAL_4X(6, XMLDIGSIG),
+
+    MOBILE_BANKID(7, XMLDIGSIG);
 
     private int id;
     private SignatureFormat signatureFormat;

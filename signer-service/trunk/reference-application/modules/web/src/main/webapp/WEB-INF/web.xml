@@ -28,7 +28,7 @@
     <servlet-name>appx</servlet-name>
     <url-pattern>/appx/*</url-pattern>
   </servlet-mapping>
-  
+
   <servlet-mapping>
     <servlet-name>jsp</servlet-name>
     <url-pattern>/WEB-INF/jsp/*</url-pattern>

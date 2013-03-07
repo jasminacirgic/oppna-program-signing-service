@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
 
+import java.io.Serializable;
+
 /**
  * Stores data about a type of e-legitimation. Existing e-legitimation is:
  * <ul>
@@ -15,8 +17,10 @@ import se.vgregion.dao.domain.patterns.entity.AbstractEntity;
  * 
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  */
-public class ELegType extends AbstractEntity<String> {
+public class ELegType extends AbstractEntity<String> implements Serializable {
     // Instances of this bean is created through spring configuration.
+
+    private static final long serialVersionUID = 5037231646277785506L;
 
     private String id;
     private String name;

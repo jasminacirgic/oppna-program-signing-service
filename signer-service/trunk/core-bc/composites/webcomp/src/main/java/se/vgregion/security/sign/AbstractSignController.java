@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
+import se.vgregion.domain.security.pkiclient.PkiClient;
 import se.vgregion.ticket.TicketManager;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
@@ -66,8 +67,10 @@ public abstract class AbstractSignController {
      */
     public String prepareSign(SignatureData signData) throws SignatureException {
         encodeTbs(signData);
-        String nonce = signatureService.generateNonce(signData.getPkiClient());
-        signData.setNonce(nonce);
+        if (!signData.getPkiClient().equals(PkiClient.MOBILE_BANKID)) {
+            String nonce = signatureService.generateNonce(signData.getPkiClient());
+            signData.setNonce(nonce);
+        }
         return signData.getPkiClient().toString();
     }
 

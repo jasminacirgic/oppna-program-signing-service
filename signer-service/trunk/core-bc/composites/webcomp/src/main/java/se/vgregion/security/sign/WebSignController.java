@@ -1,5 +1,8 @@
 package se.vgregion.security.sign;
 
+import com.logica.mbi.service.v1_0.CollectResponseType;
+import com.logica.mbi.service.v1_0.ProgressStatusType;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import se.vgregion.dao.domain.patterns.repository.Repository;
 import se.vgregion.domain.security.pkiclient.ELegType;
@@ -24,8 +24,10 @@ import se.vgregion.web.dto.TicketDto;
 import se.vgregion.web.security.services.SignatureData;
 import se.vgregion.web.security.services.SignatureService;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.security.SignatureException;
 import java.util.*;
 
@@ -43,6 +45,7 @@ public class WebSignController extends AbstractSignController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSignController.class);
 
     private Set<String> internalNetworks;
+    private float sleepFactor = 1f; // For test purposes
 
     /**
      * Constructs an instance of WebSignController.
@@ -105,13 +108,9 @@ public class WebSignController extends AbstractSignController {
                                           HttpServletRequest req) throws TicketException {
         LOGGER.info("Incoming sign request from {}", req.getRemoteHost());
         String ticket = signData.getTicket();
-        if (ticket != null && ticket.length() > 0) {
-            TicketDto ticketDto = new TicketDto(ticket);
-            LOGGER.debug("Ticket used: " + ticketDto.toString());
-            validateTicket(ticketDto.toTicket());
-        } else {
-            validateInternalAccess(req);
-        }
+
+        assertPermission(req, ticket);
+
         model.addAttribute("ticket", signData.getTicket());
         model.addAttribute("signData", signData);
         return "clientTypeSelection";
@@ -168,15 +167,10 @@ public class WebSignController extends AbstractSignController {
     public String prepareSign(@ModelAttribute SignatureData signData, Model model, HttpServletRequest req)
             throws SignatureException, TicketException {
         String ticket = signData.getTicket();
-        if (ticket != null && ticket.length() > 0) {
-            TicketDto ticketDto = new TicketDto(ticket);
-            LOGGER.debug("Ticket used: " + ticketDto.toString());
-            validateTicket(ticketDto.toTicket());
-        } else {
-            validateInternalAccess(req);
-        }
+        assertPermission(req, ticket);
         model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
         model.addAttribute("signData", signData);
+        model.addAttribute("ticket", ticket);
         return super.prepareSign(signData);
     }
 
@@ -198,6 +192,135 @@ public class WebSignController extends AbstractSignController {
             return "redirect:" + redirectLocation;
         }
         return "verified";
+    }
+
+    @RequestMapping(value = "/signMobileBankId", method = POST, params = {"encodedTbs", "submitUri", "personalNumber"})
+    public String signMobileBankId(@ModelAttribute SignatureData signData, HttpServletRequest request, Model model)
+            throws SignatureException, TicketException {
+
+        String ticket = signData.getTicket();
+
+        assertPermission(request, ticket);
+
+        String orderRef = getSignatureService().sendMobileSignRequest(signData);
+
+        model.addAttribute("orderRef", orderRef);
+        String userAgent = request.getHeader("User-Agent");
+
+        boolean isMobileDevice;
+        if (userAgent != null && userAgent.toLowerCase().matches("(.*ipad.*)|(.*iphone.*)|(.*android.*)|(.*mobile.*)")) {
+            isMobileDevice = true;
+        } else {
+            isMobileDevice = false;
+        }
+
+        model.addAttribute("isMobileDevice", isMobileDevice);
+//        model.addAttribute("agent", userAgent);
+        model.addAttribute("data", objectToString(signData));
+//        model.addAttribute("clientType", signData.getPkiClient().getId());
+
+        return "awaitResponse";
+    }
+
+    String objectToString(SignatureData signData) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(signData);
+            oos.close();
+            baos.close();
+            return new String(Base64.encodeBase64(baos.toByteArray()), "UTF-8");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    Object stringToObject(String string) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(Base64.decodeBase64(string.getBytes("UTF-8")));
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            Object object = ois.readObject();
+            ois.close();
+            bais.close();
+            return object;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    @RequestMapping(value = "/awaitResponse", method = POST, params = {"orderRef"})
+    public void awaitMobileBankIdResponse(@RequestParam("orderRef") String orderRef, @RequestParam("data") String data,
+                                          Model model, HttpServletResponse response)
+            throws SignatureException, InterruptedException, IOException {
+//        super.verifySignature(signData);
+//        String redirectLocation = getSignatureService().save(signData);
+
+        SignatureData signData = (SignatureData) stringToObject(data);
+
+        Thread.sleep((long) (7000 * sleepFactor));
+        CollectResponseType collectResponse = null;// = getSignatureService().collectRequest(orderRef);
+
+        try {
+            int n = 0;
+            do {
+                n++;
+                if (n > 20) {
+                    break;
+                }
+                Thread.sleep((long) (3000 * sleepFactor));
+                collectResponse = getSignatureService().collectRequest(orderRef);
+
+                if (collectResponse.getProgressStatus().equals(ProgressStatusType.COMPLETE)) {
+                    signData.setSignature(collectResponse.getSignature());
+                    String redirectLocation = getSignatureService().save(signData);
+                    if (!StringUtils.isBlank(redirectLocation)) {
+                        LOGGER.debug(String.format("WebSignController.verifyAndSaveSignature(%s)\n", "redirect:"
+                                + redirectLocation));
+                        writeToOutput(response, "redirect:" + redirectLocation);
+                        return;
+                    } else {
+                        writeToOutput(response, "Signeringen är nu slutförd.");
+                        return;
+                    }
+                }
+            } while (!collectResponse.getProgressStatus().equals(ProgressStatusType.COMPLETE));
+//            response.sendRedirect("http://google.com");
+            String message;
+            if (collectResponse.getProgressStatus().equals(ProgressStatusType.OUTSTANDING_TRANSACTION)) {
+                message = "Tiden för signering har gått ut.";
+            } else {
+                message = "Status för signering: " + collectResponse.getProgressStatus().value();
+            }
+
+            writeToOutput(response, message);
+        } catch (SignatureException e) {
+            if (e.getCause() != null) {
+                writeToOutput(response, e.getCause().getMessage());
+            } else {
+                writeToOutput(response, e.getMessage());
+            }
+        }
+    }
+
+    private void writeToOutput(HttpServletResponse response, String value) {
+        ServletOutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+            outputStream.write(value.getBytes("UTF-8"));
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+        }
     }
 
     /**
@@ -246,4 +369,17 @@ public class WebSignController extends AbstractSignController {
         return new ModelAndView("errorHandling", model);
     }
 
+    private void assertPermission(HttpServletRequest req, String ticket) throws TicketException {
+        if (ticket != null && ticket.length() > 0) {
+            TicketDto ticketDto = new TicketDto(ticket);
+            LOGGER.debug("Ticket used: " + ticketDto.toString());
+            validateTicket(ticketDto.toTicket());
+        } else {
+            validateInternalAccess(req);
+        }
+    }
+
+    void setSleepFactor(float sleepFactor) {
+        this.sleepFactor = sleepFactor;
+    }
 }

@@ -37,6 +37,12 @@
           <constructor-arg name="description" value="TjänsteId" />
           <constructor-arg name="pkiClient" value="NETMAKER_NETID_4" />
         </bean>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="id" value="MobileBankId" />
+          <constructor-arg name="name" value="Mobilt BankID" />
+          <constructor-arg name="description" value="Använd din smartphone för att signera. Detta alternativ kan väljas oavsett om du surfar med din smartphone eller en dator. Använder du datorn kommer du behöva starta appen Mobilt BankId manuellt i din smartphone." />
+          <constructor-arg name="pkiClient" value="MOBILE_BANKID" />
+        </bean>
       </list>
     </property>
   </bean>

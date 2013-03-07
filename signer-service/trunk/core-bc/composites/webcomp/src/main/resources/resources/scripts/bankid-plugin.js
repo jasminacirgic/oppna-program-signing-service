@@ -6,8 +6,8 @@ $(document).ready(function() {
   startSign($tbs.val(), $nonce.val())
 })
 var startSign = function(tbs, nonce) {
-    var isBrowserMetroMode = isBrowserMetroMode();
-    if (isBrowserMetroMode) {
+    var browserMetroMode = isBrowserMetroMode();
+    if (browserMetroMode) {
       alert("Användning av BankID kräver en webbläsare startad i skrivbordsläge.");
   } else {
       var typeOfPlugin = isSignIntalled();

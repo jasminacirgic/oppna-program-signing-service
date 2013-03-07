@@ -2,6 +2,7 @@ package se.vgregion.web.security.services;
 
 import java.security.SignatureException;
 
+import com.logica.mbi.service.v1_0.CollectResponseType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
 
 public interface SignatureService {
@@ -80,4 +81,7 @@ public interface SignatureService {
      */
     String abort(SignatureData signData) throws SignatureException;
 
+    String sendMobileSignRequest(SignatureData signData) throws SignatureException;
+
+    CollectResponseType collectRequest(String orderRef) throws SignatureException;
 }

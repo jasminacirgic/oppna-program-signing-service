@@ -8,6 +8,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import se.vgregion.domain.security.pkiclient.ELegType;
 import se.vgregion.domain.security.pkiclient.PkiClient;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,7 +19,10 @@ import java.net.URISyntaxException;
  * @author Anders Asplund - <a href="http://www.callistaenterprise.se">Callista Enterprise</a>
  * 
  */
-public class SignatureData {
+public class SignatureData implements Serializable {
+
+    private static final long serialVersionUID = -4504464078848411704L;
+
     private String submitUri;
     private String nonce = "";
     private String tbs = "";
@@ -27,6 +31,7 @@ public class SignatureData {
     private String signature = "";
     private int errorCode = 0;
     private String ticket;
+    private String personalNumber;
 
     public String getTbs() {
         return tbs;
@@ -135,5 +140,13 @@ public class SignatureData {
 
     public void setTicket(String ticket) {
         this.ticket = ticket;
+    }
+
+    public String getPersonalNumber() {
+        return personalNumber;
+    }
+
+    public void setPersonalNumber(String personalNumber) {
+        this.personalNumber = personalNumber;
     }
 }
