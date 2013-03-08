@@ -45,7 +45,6 @@ public class WebSignController extends AbstractSignController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSignController.class);
 
     private Set<String> internalNetworks;
-    private float sleepFactor = 1f; // For test purposes
 
     /**
      * Constructs an instance of WebSignController.
@@ -215,11 +214,89 @@ public class WebSignController extends AbstractSignController {
         }
 
         model.addAttribute("isMobileDevice", isMobileDevice);
-//        model.addAttribute("agent", userAgent);
         model.addAttribute("data", objectToString(signData));
-//        model.addAttribute("clientType", signData.getPkiClient().getId());
 
         return "awaitResponse";
+    }
+
+    @RequestMapping(value = "/awaitResponse", method = POST, params = {"orderRef"})
+    public void checkMobileBankIdResponse(@RequestParam("orderRef") String orderRef, @RequestParam("data") String data,
+                                          Model model, HttpServletResponse response)
+            throws SignatureException, InterruptedException, IOException {
+
+        response.setContentType("application/json");
+
+        SignatureData signData = (SignatureData) stringToObject(data);
+
+        CollectResponseType collectResponse;
+
+        try {
+            collectResponse = getSignatureService().collectRequest(orderRef);
+
+            if (collectResponse.getProgressStatus().equals(ProgressStatusType.COMPLETE)) {
+                signData.setSignature(collectResponse.getSignature());
+                String redirectLocation = getSignatureService().save(signData);
+                String status = ProgressStatusType.COMPLETE.value();
+                if (!StringUtils.isBlank(redirectLocation)) {
+                    LOGGER.debug(String.format("WebSignController.verifyAndSaveSignature(%s)\n", "redirect:"
+                            + redirectLocation));
+                    writeToOutput(response, "{\"status\":\"" + status + "\", \"redirect\":\"" + redirectLocation + "\"}");
+                    return;
+                } else {
+                    writeToOutput(response, "{\"status\":\"" + status + "\", \"message\":\"Signeringen är nu slutförd.\"}");
+                    return;
+                }
+            }
+
+            String message;
+            String status = collectResponse.getProgressStatus().value();
+            message = "{\"status\":\"" + status + "\"}";
+
+            writeToOutput(response, message);
+        } catch (SignatureException e) {
+            if (e.getCause() != null) {
+                writeToOutput(response, "\"status\":\"FAILURE\",\"message\":\"" + e.getCause().getMessage() + "\"}");
+            } else {
+                writeToOutput(response, "\"status\":\"FAILURE\",\"message\":\"" + e.getMessage() + "\"}");
+            }
+        }
+    }
+
+    /**
+     * Cancel the signing and informs the consumer.
+     *
+     * @param signData data used during verification
+     * @param response the {@link HttpServletResponse}
+     * @return name of view to show to the client
+     * @throws SignatureException if validation or submission fails
+     */
+    @RequestMapping(value = "/cancel", method = POST)
+    public String cancelSignature(@ModelAttribute SignatureData signData, HttpServletResponse response)
+            throws SignatureException {
+        String redirectLocation = getSignatureService().abort(signData);
+        if (!StringUtils.isBlank(redirectLocation)) {
+            LOGGER.debug(String.format("WebSignController.cancelSignature(%s)\n", redirectLocation));
+            return "redirect:" + redirectLocation;
+        }
+        return "errorForm";
+    }
+
+    /**
+     * Handles all exceptions so that no stacktraces is displayed on a web page. Logs the complete stacktrace in
+     * the configured log.
+     *
+     * @param ex      the exception
+     * @param request the httpServletRequest
+     * @return a {@link ModelAndView} with an error message and the view to display
+     */
+    @ExceptionHandler({SignatureException.class, TicketException.class})
+    public ModelAndView handleException(Exception ex, HttpServletRequest request) {
+        ex.printStackTrace();
+        LOGGER.error("Generic Error Handling", ex);
+        ModelMap model = new ModelMap();
+        model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));
+        model.addAttribute("message", ex.getMessage());
+        return new ModelAndView("errorHandling", model);
     }
 
     String objectToString(SignatureData signData) {
@@ -251,57 +328,22 @@ public class WebSignController extends AbstractSignController {
         }
     }
 
-    @RequestMapping(value = "/awaitResponse", method = POST, params = {"orderRef"})
-    public void awaitMobileBankIdResponse(@RequestParam("orderRef") String orderRef, @RequestParam("data") String data,
-                                          Model model, HttpServletResponse response)
-            throws SignatureException, InterruptedException, IOException {
-//        super.verifySignature(signData);
-//        String redirectLocation = getSignatureService().save(signData);
+    private String getPkiPostBackUrl(HttpServletRequest req) {
+        StringBuilder pkiPostUrl = new StringBuilder();
+        String verifyUrl = "http" + (req.isSecure() ? "s" : "") + "://" + req.getServerName() + ":"
+                + req.getServerPort() + req.getContextPath() + "/sign";
+        pkiPostUrl.append(verifyUrl);
 
-        SignatureData signData = (SignatureData) stringToObject(data);
+        return pkiPostUrl.toString();
+    }
 
-        Thread.sleep((long) (7000 * sleepFactor));
-        CollectResponseType collectResponse = null;// = getSignatureService().collectRequest(orderRef);
-
-        try {
-            int n = 0;
-            do {
-                n++;
-                if (n > 20) {
-                    break;
-                }
-                Thread.sleep((long) (3000 * sleepFactor));
-                collectResponse = getSignatureService().collectRequest(orderRef);
-
-                if (collectResponse.getProgressStatus().equals(ProgressStatusType.COMPLETE)) {
-                    signData.setSignature(collectResponse.getSignature());
-                    String redirectLocation = getSignatureService().save(signData);
-                    if (!StringUtils.isBlank(redirectLocation)) {
-                        LOGGER.debug(String.format("WebSignController.verifyAndSaveSignature(%s)\n", "redirect:"
-                                + redirectLocation));
-                        writeToOutput(response, "redirect:" + redirectLocation);
-                        return;
-                    } else {
-                        writeToOutput(response, "Signeringen är nu slutförd.");
-                        return;
-                    }
-                }
-            } while (!collectResponse.getProgressStatus().equals(ProgressStatusType.COMPLETE));
-//            response.sendRedirect("http://google.com");
-            String message;
-            if (collectResponse.getProgressStatus().equals(ProgressStatusType.OUTSTANDING_TRANSACTION)) {
-                message = "Tiden för signering har gått ut.";
-            } else {
-                message = "Status för signering: " + collectResponse.getProgressStatus().value();
-            }
-
-            writeToOutput(response, message);
-        } catch (SignatureException e) {
-            if (e.getCause() != null) {
-                writeToOutput(response, e.getCause().getMessage());
-            } else {
-                writeToOutput(response, e.getMessage());
-            }
+    private void assertPermission(HttpServletRequest req, String ticket) throws TicketException {
+        if (ticket != null && ticket.length() > 0) {
+            TicketDto ticketDto = new TicketDto(ticket);
+            LOGGER.debug("Ticket used: " + ticketDto.toString());
+            validateTicket(ticketDto.toTicket());
+        } else {
+            validateInternalAccess(req);
         }
     }
 
@@ -321,65 +363,5 @@ public class WebSignController extends AbstractSignController {
                 }
             }
         }
-    }
-
-    /**
-     * Cancel the signing and informs the consumer.
-     *
-     * @param signData data used during verification
-     * @param response the {@link HttpServletResponse}
-     * @return name of view to show to the client
-     * @throws SignatureException if validation or submission fails
-     */
-    @RequestMapping(value = "/cancel", method = POST)
-    public String cancelSignature(@ModelAttribute SignatureData signData, HttpServletResponse response)
-            throws SignatureException {
-        String redirectLocation = getSignatureService().abort(signData);
-        if (!StringUtils.isBlank(redirectLocation)) {
-            LOGGER.debug(String.format("WebSignController.cancelSignature(%s)\n", redirectLocation));
-            return "redirect:" + redirectLocation;
-        }
-        return "errorForm";
-    }
-
-    private String getPkiPostBackUrl(HttpServletRequest req) {
-        StringBuilder pkiPostUrl = new StringBuilder();
-        String verifyUrl = "http" + (req.isSecure() ? "s" : "") + "://" + req.getServerName() + ":"
-                + req.getServerPort() + req.getContextPath() + "/sign";
-        pkiPostUrl.append(verifyUrl);
-
-        return pkiPostUrl.toString();
-    }
-
-    /**
-     * Handles all exceptions so that no stacktraces is displayed on a web page. Logs the complete stacktrace in
-     * the configured log.
-     *
-     * @param ex      the exception
-     * @param request the httpServletRequest
-     * @return a {@link ModelAndView} with an error message and the view to display
-     */
-    @ExceptionHandler({SignatureException.class, TicketException.class})
-    public ModelAndView handleException(Exception ex, HttpServletRequest request) {
-        ex.printStackTrace();
-        LOGGER.error("Generic Error Handling", ex);
-        ModelMap model = new ModelMap();
-        model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));
-        model.addAttribute("message", ex.getMessage());
-        return new ModelAndView("errorHandling", model);
-    }
-
-    private void assertPermission(HttpServletRequest req, String ticket) throws TicketException {
-        if (ticket != null && ticket.length() > 0) {
-            TicketDto ticketDto = new TicketDto(ticket);
-            LOGGER.debug("Ticket used: " + ticketDto.toString());
-            validateTicket(ticketDto.toTicket());
-        } else {
-            validateInternalAccess(req);
-        }
-    }
-
-    void setSleepFactor(float sleepFactor) {
-        this.sleepFactor = sleepFactor;
     }
 }

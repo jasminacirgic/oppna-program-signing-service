@@ -33,28 +33,33 @@ function isBrowserMetroMode() {
     }
 }
 
-function longPollForCompletion(orderRef, data) {
-    $(document).ready(function () {
+function pollForCompletion(orderRef, data, counter) {
+
+    if (counter < 30) {
         $.ajax('awaitResponse', {
             data: {'orderRef': orderRef, 'data': data},
+            dataType: 'json',
             type: 'POST'
-        }).done(function (msg) {
-                $('#responseText').html('done');
-                var whetherRedirect = msg.substring(0, 'redirect'.length) === 'redirect';
-                if (whetherRedirect) {
-                    document.location.href = msg.split('redirect:')[1];
+        }).done(function (response) {
+                var status = response['status'];
+                if (status === 'COMPLETE') {
+                    if (response['redirect'] != null) {
+                        document.location.href = response['redirect'];
+                    } else {
+                        $('#responseText').html(response['message']);
+                    }
+                } else if (status === 'FAILURE') {
+                    $('#responseText').html(response['message']);
                 } else {
-                    $('#responseText').html(msg);
-                    $('#spinner').css('visibility', 'hidden');
+                    setTimeout(function () {pollForCompletion(orderRef, data, counter + 1)}, 3000);
                 }
-            }).error(function (msg) {
-                $('#responseText').html('error ' + msg + " " + msg[0] + " " + msg[1]);
-                longPollForCompletion(orderRef, data);
-            }).always(function (msg) {
-                $('#responseText').html('always ' + msg + " " + msg[0] + " " + msg[1]);
-                longPollForCompletion(orderRef, data);
+            }).error(function (response) {
+                setTimeout(function () {pollForCompletion(orderRef, data, counter + 1)}, 3000);
             });
-    });
+    } else {
+        $('#responseText').html('Tiden för signering har gått ut.');
+        $('#spinner').css('visibility', 'hidden');
+    }
 }
 
 function validatePersonalNumber(form) {

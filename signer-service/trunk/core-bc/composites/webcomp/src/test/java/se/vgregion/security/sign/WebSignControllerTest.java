@@ -3,15 +3,20 @@ package se.vgregion.security.sign;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.logica.mbi.service.v1_0.CollectResponseType;
+import com.logica.mbi.service.v1_0.ProgressStatusType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.DelegatingServletOutputStream;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.util.ClassUtils;
@@ -225,6 +230,47 @@ public class WebSignControllerTest {
 
         // Then
         verify(model).addAttribute("isMobileDevice", true);
+    }
 
+    @Test
+    public final void checkMobileBankIdResponseComplete() throws Exception {
+
+        // Given
+        Model model = mock(Model.class);
+        HttpServletResponse servletResponse = mock(HttpServletResponse.class);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CollectResponseType collectResponseType = new CollectResponseType();
+        collectResponseType.setProgressStatus(ProgressStatusType.COMPLETE);
+
+        given(servletResponse.getOutputStream()).willReturn(new DelegatingServletOutputStream(baos));
+        given(signatureService.collectRequest(eq("theOrderRef"))).willReturn(collectResponseType);
+
+        // When
+        signController.checkMobileBankIdResponse("theOrderRef", signController.objectToString(new SignatureData()),
+                model, servletResponse);
+
+        // Then
+        assertTrue(baos.toString().contains("COMPLETE"));
+    }
+
+    @Test
+    public final void checkMobileBankIdResponseOutstanding() throws Exception {
+
+        // Given
+        Model model = mock(Model.class);
+        HttpServletResponse servletResponse = mock(HttpServletResponse.class);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CollectResponseType collectResponseType = new CollectResponseType();
+        collectResponseType.setProgressStatus(ProgressStatusType.OUTSTANDING_TRANSACTION);
+
+        given(servletResponse.getOutputStream()).willReturn(new DelegatingServletOutputStream(baos));
+        given(signatureService.collectRequest(eq("theOrderRef"))).willReturn(collectResponseType);
+
+        // When
+        signController.checkMobileBankIdResponse("theOrderRef", signController.objectToString(new SignatureData()),
+                model, servletResponse);
+
+        // Then
+        assertTrue(baos.toString().contains("OUTSTANDING_TRANSACTION"));
     }
 }

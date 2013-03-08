@@ -43,7 +43,9 @@
     var orderRef = '${orderRef}';
     var data = '${data}';
 
-    longPollForCompletion(orderRef, data);
+    $(document).ready(function () {
+        setTimeout(pollForCompletion(orderRef, data, 0), 10000);
+    });
 </script>
 
 </html>
