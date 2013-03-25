@@ -11,7 +11,7 @@
 
   <jaxws:client id="osifCxfWebService" wsdlLocation="osif.wsdl"
                 address="${eid.endpoint}" serviceClass="se.sll.wsdl.soap.osif.Osif"/>
-  <jaxws:client id="mbiServicePortType" address="${mbi.endpiont}"
+  <jaxws:client id="mbiServicePortType" address="${mbi.endpoint}"
                 serviceClass="com.logica.mbi.service.v1_0_0.MbiServicePortType"/>
 
   <!-- The name of a conduit cannot be configured with a property (${property.name} style) so we need to hard code. We
