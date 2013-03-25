@@ -53,6 +53,7 @@
           <instrumentation>
             <excludes>
               <!-- Exclude generated files -->
+              <exclude>se/sll/**/*.class</exclude>
               <exclude>com/logica/**/*.class</exclude>
             </excludes>
           </instrumentation>
