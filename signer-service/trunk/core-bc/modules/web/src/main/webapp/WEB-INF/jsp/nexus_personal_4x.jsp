@@ -10,7 +10,7 @@
 <title>Signering - BankId</title>
   <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.1.min.js"></script>
   <script type="text/javascript" src="resources/scripts/bankid-plugin.js"></script>
-  <script type="text/javascript" src="resources/scripts/plugin-detection.js"></script>
+  <script type="text/javascript" src="resources/scripts/main.js"></script>
 </head>
 
 <body>
@@ -30,6 +30,11 @@
     <form:hidden path="submitUri" value="${submitUri}" />
     <input type="hidden" id="clientType" name="clientType" value="${signData.clientType.id}" />
   </form:form>
+
+  <div style="position: absolute; left: 50%; top: 50%; margin: -100px 0 0 -64px">
+    <img id="spinner" src="resources/images/animated_spinner.gif"/>
+  </div>
+
 </body>
 
 </html>
