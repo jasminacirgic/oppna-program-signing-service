@@ -11,6 +11,9 @@
   <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.1.min.js"></script>
   <script type="text/javascript" src="resources/scripts/bankid-plugin.js"></script>
   <script type="text/javascript" src="resources/scripts/main.js"></script>
+  <style type="text/css">
+    @import 'resources/styles/form.css';
+  </style>
 </head>
 
 <body>
@@ -31,7 +34,7 @@
     <input type="hidden" id="clientType" name="clientType" value="${signData.clientType.id}" />
   </form:form>
 
-  <div style="position: absolute; left: 50%; top: 50%; margin: -100px 0 0 -64px">
+  <div id="spinnerWrapper">
     <img id="spinner" src="resources/images/animated_spinner.gif"/>
   </div>
 

@@ -76,3 +76,10 @@ div.e-leg-type-description {
     display: block;
     margin: 10px auto
 }
+
+#spinnerWrapper {
+    left: 50%;
+    margin: -100px 0 0 -64px;
+    position: absolute;
+    top: 50%;
+}

@@ -8,6 +8,9 @@
   <title>Signering - Nordea</title>
   <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.1.min.js"></script>
   <script type="text/javascript" src="resources/scripts/nordea-plugin.js"></script>
+  <style type="text/css">
+    @import 'resources/styles/form.css';
+  </style>
 </head>
 
 <body>
@@ -42,6 +45,11 @@
       <param name="DataReturnName" value="encodedTbs">
     </object>
   </noscript>
+
+  <div id="spinnerWrapper">
+    <img id="spinner" src="resources/images/animated_spinner.gif"/>
+  </div>
+
 </body>
 
 </html>
