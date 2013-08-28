@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- Konfiguration av de, av Signeringtjänsten, godkända e-legitimationerna. Då detta är något som förmodas ändras 
+    väldigt sällan läggs denna konfigurtion i spring istället för en databas. -->
+    
+  <bean id="e-leg-repo" class="se.vgregion.security.infrastructure.inmemory.InMemoryBatchRepository" />
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="e-leg-repo" />
+    <property name="targetMethod" value="store" />
+    <property name="arguments">
+      <list value-type="se.vgregion.domain.security.pkiclient.ELegType">
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="id" value="BankId" />
+          <constructor-arg name="name" value="BankId och Nordea" />
+          <constructor-arg name="description"
+            value="Danske Bank/Östgöta Enskilda Bank, Handelsbanken, Ikanobanken, Länsförsäkringar Bank, Skandiabanken, Sparbanken Finn, Sparbanken Gripen, Swedbank, Nordea" />
+          <constructor-arg name="pkiClient" value="NEXUS_PERSONAL_4X" />
+        </bean>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="id" value="Nordea" />
+          <constructor-arg name="name" value="Gamla Nordea" />
+          <constructor-arg name="description" value="Om du inte har BankId installerat men har Nexus Personal vilken är under utfasning. Vi rekommenderar att du installerar BankId genom att gå till https://install.bankid.com/" />
+          <constructor-arg name="pkiClient" value="NEXUS_PERSONAL_4" />
+        </bean>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="id" value="Telia" />
+          <constructor-arg name="name" value="Telia" />
+          <constructor-arg name="description" value="ICA Banken, Posten, SEB, Skatteverket" />
+          <constructor-arg name="pkiClient" value="NETMAKER_NETID_4" />
+        </bean>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="id" value="SITHS" />
+          <constructor-arg name="name" value="SITHS" />
+          <constructor-arg name="description" value="TjänsteId" />
+          <constructor-arg name="pkiClient" value="NETMAKER_NETID_4" />
+        </bean>
+        <bean class="se.vgregion.domain.security.pkiclient.ELegType">
+          <constructor-arg name="id" value="MobileBankId" />
+          <constructor-arg name="name" value="Mobilt BankID" />
+          <constructor-arg name="description" value="Använd din smartphone för att signera. Detta alternativ kan väljas oavsett om du surfar med din smartphone eller en dator. Använder du datorn kommer du behöva starta appen Mobilt BankId manuellt i din smartphone." />
+          <constructor-arg name="pkiClient" value="MOBILE_BANKID" />
+        </bean>
+      </list>
+    </property>
+  </bean>
+</beans>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+  <import resource="classpath:signer-service-config.xml"/>
+  <import resource="classpath:http-config.xml"/>
+  <import resource="classpath:rest-service-config.xml"/>
+  <import resource="controllers-test.xml"/>
+
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-http.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
+
+  <context:property-placeholder
+          location="classpath:connection.properties"
+          ignore-resource-not-found="true" ignore-unresolvable="false"/>
+
+  <bean class="org.apache.http.params.HttpConnectionParamBean">
+    <constructor-arg ref="params"/>
+    <property name="connectionTimeout" value="${connectionTimeout}"/>
+    <property name="soTimeout" value="${soTimeout}"/>
+  </bean>
+
+  <bean class="org.apache.http.conn.params.ConnManagerParamBean">
+    <constructor-arg ref="params"/>
+    <property name="maxTotalConnections" value="${maxTotalConnections}"/>
+  </bean>
+
+</beans>

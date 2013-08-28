@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!-- This is the Web-composite Maven POM. Template version: 1.5-SNAPSHOT Generation time : 2010-10-14 11:29:06 CEST -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>se.vgregion.signer-service.reference-application</groupId>
+    <artifactId>sign-service-reference-application</artifactId>
+    <version>1.2</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <groupId>se.vgregion.signer-service.reference-application</groupId>
+  <artifactId>sign-service-reference-application-composite-webcomp</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sign-service-reference-application-composite-svc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sign-service-reference-application-composite-types</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>se.vgregion.signer-service-schemas</groupId>
+      <artifactId>signer-service-schemas-sdc-module-intsvc</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <version>2.4.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>se.vgregion.daoframework</groupId>
+      <artifactId>dao-framework</artifactId>
+      <version>3.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcmail-jdk16</artifactId>
+      <version>1.46</version>
+    </dependency>
+  </dependencies>
+
+</project>
