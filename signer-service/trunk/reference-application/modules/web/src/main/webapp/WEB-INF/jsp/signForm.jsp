@@ -13,7 +13,7 @@
 
 <body>
   <h2>Demo signering</h2>
-  <form method="post" action="${signerServiceLocation}/sign/prepare">
+  <form method="post" action="${signerServiceLocation}/sign/prepare" accept-charset="ISO-8859-1">
     <fieldset>   
       <ul>
         <li>
