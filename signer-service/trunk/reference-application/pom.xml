@@ -11,13 +11,13 @@ Generation time : 2010-10-14 11:29:06 CEST
   <parent>
     <groupId>se.vgregion.signer-service</groupId>
     <artifactId>signer-service-system</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>se.vgregion.signer-service.reference-application</groupId>
   <artifactId>sign-service-reference-application</artifactId>
   <packaging>pom</packaging>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <name>${project.artifactId}</name>
 
   <properties>
