@@ -2,8 +2,10 @@ package se.vgregion.web.signaturestorage.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,6 +104,8 @@ public class HttpSignatureStorageTest {
         given(httpClient.execute(any(HttpPost.class))).willReturn(httpResponse);
         given(httpHelper.getLocationHeader(any(HttpResponse.class))).willReturn(REDIRECT_URI);
         given(httpHelper.getResponseStatusCode(any(HttpResponse.class))).willReturn(BAD_REQUEST);
+        given(httpResponse.getStatusLine()).willReturn(new BasicStatusLine(new HttpVersion(1, 1), BAD_REQUEST.value()
+                , "Bad since..."));
 
         // When
         signatureStorage.submitSignature(anyUri, envelope);

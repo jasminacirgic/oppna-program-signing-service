@@ -78,7 +78,9 @@ public class HttpSignatureStorage implements SignatureStorage {
             if (MOVED_TEMPORARILY.value() == responseStatus.value()) {
                 returnLocation = httpHelper.getLocationHeader(response);
             } else if (OK.value() != responseStatus.value()) {
-                throw new SignatureStoreageException("Invalid status code: " + responseStatus.toString());
+                String reasonPhrase = response.getStatusLine().getReasonPhrase();
+                throw new SignatureStoreageException("Invalid status code: " + responseStatus.toString() + " - "
+                        + reasonPhrase);
             }
         } finally {
             httpHelper.closeQuitely(response);

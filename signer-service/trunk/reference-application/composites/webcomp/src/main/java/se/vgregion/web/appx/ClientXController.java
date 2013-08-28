@@ -79,7 +79,14 @@ public class ClientXController {
             relocateUrl.append("/abort?errormessage=").append(
                     URLEncoder.encode(envelope.getErrorMessage(), "UTF-8"));
         } else {
-            signaturesRepository.store(new Signature(envelope.getSignature().getBytes(),
+            String signature = envelope.getSignature();
+
+            if (signature == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No signature was received.");
+                return;
+            }
+
+            signaturesRepository.store(new Signature(signature.getBytes(),
                     envelope.getSignatureFormat()));
             relocateUrl.append("/showSignStatus");
         }
