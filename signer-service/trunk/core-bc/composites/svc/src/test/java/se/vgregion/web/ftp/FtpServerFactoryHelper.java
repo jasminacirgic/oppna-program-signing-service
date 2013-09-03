@@ -13,20 +13,14 @@ import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 
 public final class FtpServerFactoryHelper {
-    private static final File FTPSERVER_KEYSTORE = new File(getBaseDir(), "src/test/resources/ftpserver.jks");
-    private static final File USERS_FILE = new File(getBaseDir(), "src/test/resources/user.properties");
+    private static final File FTPSERVER_KEYSTORE = new File(getClasspathFilePath("ftpserver.jks"));
+    private static final File USERS_FILE = new File(getClasspathFilePath("user.properties"));
 
     private FtpServerFactoryHelper() {
     }
 
-    private static File getBaseDir() {
-        // check Maven system prop first and use if set
-        String basedir = System.getProperty("basedir");
-        if (basedir != null) {
-            return new File(basedir);
-        } else {
-            return new File(".");
-        }
+    private static String getClasspathFilePath(String file) {
+        return FtpServerFactoryHelper.class.getClassLoader().getResource(file).getFile();
     }
 
     private static SslConfigurationFactory createSslConfiguration() {

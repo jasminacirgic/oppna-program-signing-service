@@ -19,7 +19,7 @@
 <h2>Signera med E-legitimation från:</h2>
 
 <div id="selectClientTypeWrapper">
-    <form:form commandName="signData" id="sign-selection" action="prepare" method="post">
+    <form:form commandName="signData" id="sign-selection" acceptCharset="ISO-8859-1" action="prepare" method="post">
         <fieldset>
             <legend>E-legitimationer</legend>
             <ul id="e-leg-types">

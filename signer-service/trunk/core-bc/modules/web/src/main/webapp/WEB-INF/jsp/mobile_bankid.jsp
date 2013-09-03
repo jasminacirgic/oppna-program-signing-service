@@ -21,7 +21,7 @@
     <fieldset class="mobileSignWrapper">
         <legend>Signering Mobilt BankID</legend>
 
-        <form:form id='validate-form' commandName="signData" method="post" action="signMobileBankId" onsubmit="return validatePersonalNumber(this)">
+        <form:form id='validate-form' commandName="signData" method="post" acceptCharset="ISO-8859-1" action="signMobileBankId" onsubmit="return validatePersonalNumber(this)">
             <form:hidden path="encodedTbs" value="${encodedTbs}"/>
             <form:hidden path="submitUri" value="${submitUri}"/>
             <form:hidden path="ticket" value="${ticket}"/>
