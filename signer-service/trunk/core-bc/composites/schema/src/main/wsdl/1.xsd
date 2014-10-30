@@ -1,0 +1,91 @@
+<xs:schema xmlns:tns="http://logica.com/mbi/service/v1.0.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://logica.com/mbi/service/v1.0.0/">
+    <xs:element name="AuthenticateRequest" type="tns:AuthenticateRequestType"/>
+    <xs:element name="AuthenticateResponse" type="tns:AuthenticateResponseType"/>
+    <xs:element name="CollectRequest" type="tns:CollectRequestType"/>
+    <xs:element name="CollectResponse" type="tns:CollectResponseType"/>
+    <xs:element name="MbiFault" type="tns:MbiFaultType"/>
+    <xs:element name="SignRequest" type="tns:SignRequestType"/>
+    <xs:element name="SignResponse" type="tns:SignResponseType"/>
+    <xs:complexType name="AuthenticateResponseType">
+        <xs:sequence>
+            <xs:element name="transactionId" type="xs:string" minOccurs="0"/>
+            <xs:element name="orderRef" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SignResponseType">
+        <xs:sequence>
+            <xs:element name="transactionId" type="xs:string" minOccurs="0"/>
+            <xs:element name="orderRef" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SignRequestType">
+        <xs:sequence>
+            <xs:element name="policy" type="xs:string"/>
+            <xs:element name="displayName" type="xs:string" minOccurs="0"/>
+            <xs:element name="transactionId" type="xs:string" minOccurs="0"/>
+            <xs:element name="personalNumber" type="xs:string"/>
+            <xs:element name="userVisibleData" type="xs:string"/>
+            <xs:element name="userNonVisibleData" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CollectRequestType">
+        <xs:sequence>
+            <xs:element name="policy" type="xs:string"/>
+            <xs:element name="displayName" type="xs:string" minOccurs="0"/>
+            <xs:element name="transactionId" type="xs:string" minOccurs="0"/>
+            <xs:element name="orderRef" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MbiFaultType">
+        <xs:sequence>
+            <xs:element name="faultStatus" type="tns:FaultStatusType"/>
+            <xs:element name="detailedDescription" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CollectResponseType">
+        <xs:sequence>
+            <xs:element name="transactionId" type="xs:string" minOccurs="0"/>
+            <xs:element name="progressStatus" type="tns:ProgressStatusType"/>
+            <xs:element name="signature" type="xs:string" minOccurs="0"/>
+            <xs:element name="attributes" type="tns:Property" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Property">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="value" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AuthenticateRequestType">
+        <xs:sequence>
+            <xs:element name="policy" type="xs:string"/>
+            <xs:element name="displayName" type="xs:string" minOccurs="0"/>
+            <xs:element name="transactionId" type="xs:string" minOccurs="0"/>
+            <xs:element name="personalNumber" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="FaultStatusType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="INVALID_PARAMETERS"/>
+            <xs:enumeration value="ACCESS_DENIED_RP"/>
+            <xs:enumeration value="SIGN_VALIDATION_FAILED"/>
+            <xs:enumeration value="RETRY"/>
+            <xs:enumeration value="INTERNAL_ERROR"/>
+            <xs:enumeration value="UNKNOWN_USER"/>
+            <xs:enumeration value="ALREADY_COLLECTED"/>
+            <xs:enumeration value="EXPIRED_TRANSACTION"/>
+            <xs:enumeration value="TIMEOUT"/>
+            <xs:enumeration value="INVALID_DEVICESW"/>
+            <xs:enumeration value="ALREADY_IN_PROGRESS"/>
+            <xs:enumeration value="TIME_BLOCKED"/>
+            <xs:enumeration value="USER_CANCEL"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ProgressStatusType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="COMPLETE"/>
+            <xs:enumeration value="USER_SIGN"/>
+            <xs:enumeration value="OUTSTANDING_TRANSACTION"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

@@ -167,10 +167,18 @@ public class WebSignController extends AbstractSignController {
             throws SignatureException, TicketException {
         String ticket = signData.getTicket();
         assertPermission(req, ticket);
-        model.addAttribute("postbackUrl", getPkiPostBackUrl(req));
+        String pkiPostBackUrl = getPkiPostBackUrl(req);
+        model.addAttribute("postbackUrl", pkiPostBackUrl);
         model.addAttribute("signData", signData);
         model.addAttribute("ticket", ticket);
-        return super.prepareSign(signData);
+
+        String pkiClient = super.prepareSign(signData);
+
+        String postUrl = String.format("%s/verify?submitUri=%s&clientType=%s", pkiPostBackUrl, signData.getSubmitUri(),
+                signData.getClientType().getId());
+
+        LOGGER.info("Prepared sign complete. PkiClient: " + pkiClient + ", PostURL: " + postUrl);
+        return pkiClient;
     }
 
     /**

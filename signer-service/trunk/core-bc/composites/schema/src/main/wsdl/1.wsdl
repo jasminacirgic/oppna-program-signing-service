@@ -1,0 +1,45 @@
+<definitions xmlns:tns="http://logica.com/mbi/service/v1.0.0/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://logica.com/mbi/service/v1.0.0/">
+    <types>
+        <xsd:schema>
+            <xsd:import namespace="http://logica.com/mbi/service/v1.0.0/" schemaLocation="1.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="Authenticate">
+        <part name="AuthenticateRequest" element="tns:AuthenticateRequest"/>
+    </message>
+    <message name="AuthenticateResponse">
+        <part name="AuthenticateResponse" element="tns:AuthenticateResponse"/>
+    </message>
+    <message name="MbiFault">
+        <part name="fault" element="tns:MbiFault"/>
+    </message>
+    <message name="Sign">
+        <part name="SignRequest" element="tns:SignRequest"/>
+    </message>
+    <message name="SignResponse">
+        <part name="SignResponse" element="tns:SignResponse"/>
+    </message>
+    <message name="Collect">
+        <part name="CollectRequest" element="tns:CollectRequest"/>
+    </message>
+    <message name="CollectResponse">
+        <part name="CollectResponse" element="tns:CollectResponse"/>
+    </message>
+    <portType name="MbiServicePortType">
+        <operation name="Authenticate">
+            <input message="tns:Authenticate"/>
+            <output message="tns:AuthenticateResponse"/>
+            <fault message="tns:MbiFault" name="MbiFault"/>
+        </operation>
+        <operation name="Sign">
+            <input message="tns:Sign"/>
+            <output message="tns:SignResponse"/>
+            <fault message="tns:MbiFault" name="MbiFault"/>
+        </operation>
+        <operation name="Collect">
+            <input message="tns:Collect"/>
+            <output message="tns:CollectResponse"/>
+            <fault message="tns:MbiFault" name="MbiFault"/>
+        </operation>
+    </portType>
+</definitions>

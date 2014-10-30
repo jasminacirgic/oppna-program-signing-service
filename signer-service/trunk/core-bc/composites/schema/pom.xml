@@ -35,7 +35,9 @@
                   <wsdl>${basedir}/src/main/resources/osif.wsdl</wsdl>
                 </wsdlOption>
                 <wsdlOption>
-                  <wsdl>http://eidt.funktionstjanster.se:18899/mbi/service?wsdl</wsdl>
+                  <wsdl>${basedir}/src/main/wsdl/mbi.wsdl</wsdl>
+                  <!--<wsdl>https://eid.funktionstjanster.se:8890/mbi/service?wsdl</wsdl>-->
+                  <!--<wsdl>http://eidt.funktionstjanster.se:18899/mbi/service?wsdl</wsdl>-->
                 </wsdlOption>
               </wsdlOptions>
             </configuration>

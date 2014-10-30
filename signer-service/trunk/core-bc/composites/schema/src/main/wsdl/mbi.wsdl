@@ -1,0 +1,47 @@
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://logic.mbi.logica.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://logic.mbi.logica.com/" name="MbiServiceImplService">
+    <import namespace="http://logica.com/mbi/service/v1.0.0/" location="1.wsdl"/>
+    <binding xmlns:ns1="http://logica.com/mbi/service/v1.0.0/" name="MbiServiceImplPortBinding" type="ns1:MbiServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="Authenticate">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="MbiFault">
+                <soap:fault name="MbiFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="Sign">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="MbiFault">
+                <soap:fault name="MbiFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="Collect">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="MbiFault">
+                <soap:fault name="MbiFault" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="MbiServiceImplService">
+        <port name="MbiServiceImplPort" binding="tns:MbiServiceImplPortBinding">
+            <soap:address location="https://eid.funktionstjanster.se:8890/mbi/service"/>
+        </port>
+    </service>
+</definitions>
