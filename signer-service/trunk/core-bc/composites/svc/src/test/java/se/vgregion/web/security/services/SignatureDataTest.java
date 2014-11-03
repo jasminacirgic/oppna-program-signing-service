@@ -26,4 +26,13 @@ public class SignatureDataTest {
         // Then
         assertEquals(base64EncodedNonce, actualEncodedNonce);
     }
+
+    @Test
+    public void testSetSubmitUri() throws Exception {
+        SignatureData data = new SignatureData();
+
+        data.setSubmitUri("http://example.com/asdf?jkl=sdf");
+
+        assertTrue(!data.getSubmitUri().contains(" ") && !data.getSubmitUri().contains(System.getProperty("line.separator")));
+    }
 }

@@ -58,7 +58,7 @@ public class SignatureData implements Serializable {
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
-                this.submitUri = "BASE64" + Base64.encodeBase64String(submitUri.getBytes("UTF-8"));
+                this.submitUri = "BASE64" + Base64.encodeBase64String(submitUri.getBytes("UTF-8")).trim();
             } else {
                 this.submitUri = submitUri;
             }
