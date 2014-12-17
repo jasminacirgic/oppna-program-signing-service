@@ -174,9 +174,9 @@ public class RestSignControllerTest {
         String response = extractBodyAsString(httpURLConnection).trim(); //remove the \r\n
 
         Ticket ticket = new TicketDto(response).toTicket();
-        boolean valid = TicketManager.getInstance().verifyTicket(ticket);
+        TicketManager.TicketVerifyResponse verifyResponse = TicketManager.getInstance().verifyTicket(ticket);
 
-        assertTrue(valid);
+        assertTrue(verifyResponse.verifyOk());
 
     }
 

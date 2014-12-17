@@ -146,9 +146,10 @@ public class WebSignController extends AbstractSignController {
         if (ticket == null) {
             throw new TicketException("No ticket was attached with the request.");
         }
-        boolean valid = getTicketManager().verifyTicket(ticket);
-        if (!valid) {
-            throw new TicketException("Ticket is invalid. It is either too old or corrupt.");
+        TicketManager.TicketVerifyResponse ticketVerify = getTicketManager().verifyTicket(ticket);
+        if (!ticketVerify.verifyOk()) {
+            throw new TicketException("Ticket is invalid. dueOk = " + ticketVerify.isDueOk() + ", signatureOk = "
+                    + ticketVerify.isSignatureOk() + ".");
         }
     }
 
@@ -299,8 +300,7 @@ public class WebSignController extends AbstractSignController {
      */
     @ExceptionHandler({SignatureException.class, TicketException.class})
     public ModelAndView handleException(Exception ex, HttpServletRequest request) {
-        ex.printStackTrace();
-        LOGGER.error("Generic Error Handling", ex);
+        LOGGER.error("Generic Error Handling: " + ex.getMessage(), ex);
         ModelMap model = new ModelMap();
         model.addAttribute("class", ClassUtils.getShortName(ex.getClass()));
         model.addAttribute("message", ex.getMessage());

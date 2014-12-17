@@ -37,19 +37,19 @@ public class TicketManagerTest {
     public void testSignAndVerifySuccess() throws TicketException {
         Ticket ticket = ticketManager.solveTicket("asdf");
 
-        boolean valid = ticketManager.verifyTicket(ticket);
-        assertTrue(valid);
+        TicketManager.TicketVerifyResponse verifyResponse = ticketManager.verifyTicket(ticket);
+        assertTrue(verifyResponse.verifyOk());
 
         //create another one in between
         Ticket ticket2 = ticketManager.solveTicket("asdf33");
 
         //verify again to ensure nothing gets screwed up when repeated
-        valid = ticketManager.verifyTicket(ticket);
-        assertTrue(valid);
+        verifyResponse = ticketManager.verifyTicket(ticket);
+        assertTrue(verifyResponse.verifyOk());
 
         //and verify the second ticket too
-        valid = ticketManager.verifyTicket(ticket2);
-        assertTrue(valid);
+        verifyResponse = ticketManager.verifyTicket(ticket2);
+        assertTrue(verifyResponse.verifyOk());
     }
 
     @Test
@@ -62,8 +62,8 @@ public class TicketManagerTest {
         ReflectionTestUtils.setField(ticket, "due", due);
 
         //The signature does not verify the changed due date
-        boolean valid = ticketManager.verifyTicket(ticket);
+        TicketManager.TicketVerifyResponse verifyResponse = ticketManager.verifyTicket(ticket);
 
-        assertFalse(valid);
+        assertFalse(verifyResponse.verifyOk());
     }
 }

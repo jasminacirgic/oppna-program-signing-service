@@ -133,8 +133,8 @@ public final class TicketManager {
      * @param ticket the {@link Ticket}
      * @return <code>true</code> if the {@link Ticket} is valid or <code>false</code> otherwise
      */
-    public boolean verifyTicket(Ticket ticket) {
-        return verifyDue(ticket) && verifySignature(ticket);
+    public TicketVerifyResponse verifyTicket(Ticket ticket) {
+        return new TicketVerifyResponse(verifyDue(ticket), verifySignature(ticket));
     }
 
     private boolean verifyDue(Ticket ticket) {
@@ -151,4 +151,26 @@ public final class TicketManager {
         return due.toString().getBytes();
     }
 
+    public static class TicketVerifyResponse {
+
+        private boolean dueOk;
+        private boolean signatureOk;
+
+        public TicketVerifyResponse(boolean dueOk, boolean signatureOk) {
+            this.dueOk = dueOk;
+            this.signatureOk = signatureOk;
+        }
+
+        public boolean isDueOk() {
+            return dueOk;
+        }
+
+        public boolean isSignatureOk() {
+            return signatureOk;
+        }
+
+        public boolean verifyOk() {
+            return dueOk && signatureOk;
+        }
+    }
 }
