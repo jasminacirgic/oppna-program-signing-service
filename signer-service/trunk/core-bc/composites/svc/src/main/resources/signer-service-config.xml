@@ -16,6 +16,15 @@
 
   <!-- The name of a conduit cannot be configured with a property (${property.name} style) so we need to hard code. We
   can make several conduits if need arises. -->
+  <http:conduit name="https://grp.funktionstjanster.se:8890/.*">
+    <http:tlsClientParameters>
+      <sec:trustManagers>
+        <sec:keyStore type="JKS" password="${truststore.password}"
+                      file="${truststore.file.location}"/>
+      </sec:trustManagers>
+    </http:tlsClientParameters>
+  </http:conduit>
+
   <http:conduit name="https://eid.funktionstjanster.se:8890/.*">
     <http:tlsClientParameters>
       <sec:trustManagers>
